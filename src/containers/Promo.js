@@ -55,7 +55,7 @@ class Promo extends Component {
 class Promocard extends Component {
     render() {
         return (
-            <Cell col={3}>
+            <Cell col={4}>
                 <Card shadow={0} style={{width: '100%', height: '320px', margin: 'auto'}}>
                     <CardTitle expand style={{color: '#fff', background: 'url('+this.props.value.image+')bottom right 15% no-repeat #46B6AC',backgroundSize:'cover'}}></CardTitle>
                     <CardText>

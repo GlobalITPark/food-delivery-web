@@ -109,7 +109,7 @@ export default class HeaderUI extends Component {
                             <a style={{width:'80%'}} className="navbar-brand" href="#">
                                 {/* {Config.adminConfig.appName} */}
                                 {/* Ceylon One */}
-                                <img style={{marginTop:'-12px'}} alt="" src="assets/img/Ceylon one Wide.png"></img>
+                                <img style={{marginTop:'-78px',width:'480px',height: '200px'}} alt="" src="assets/img/kamakura.png"></img>
                             </a>
                         </div>
                         <div className="collapse navbar-collapse">
