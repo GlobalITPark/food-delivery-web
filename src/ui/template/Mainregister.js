@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Config from '../../config/app';
+// import Config from '../../config/app';
 
 // const ConditionalDisplay = ({condition, children}) => condition ? children : <div></div>;
 

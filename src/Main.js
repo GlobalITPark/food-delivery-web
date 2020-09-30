@@ -16,8 +16,6 @@ import {PrivateRoute,fakeAuth} from './Auth';
 import Config from   './config/app';
 import firebase from './config/database';
 import { PulseLoader } from 'halogenium';
-import ScrollToTop from './ScrollToTop';
-
 
 class Main extends Component{
     constructor(props){
