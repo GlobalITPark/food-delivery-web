@@ -25,6 +25,7 @@ class Newsfeed extends Component {
                 //     key:doc.id,
                 //     content
                 // });
+                console.log(doc.data())
                 if(doc.data().isNews==="yes"){
                     posts.push(doc.data())
                 }

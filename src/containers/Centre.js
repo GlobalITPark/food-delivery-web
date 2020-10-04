@@ -27,8 +27,6 @@ class Centre extends Component {
                     key:doc.id,
                     content
                 });
-                // centres.push(doc.data())
-                // console.log("doc data", centres);
                 
             });
 
@@ -55,9 +53,6 @@ class Centre extends Component {
                                 <div className="section-title-wrapper intro">
                                     <h2 className="section-title">レストラン</h2>
                                     <div className="section-divider"></div>
-                                    <div className="section-title subtitle">
-                                        本格的なスリランカの飲食物を提供するフェスティバルのフードマートには35以上の屋台があります。                                    
-                                    </div>
                                 </div>
                             </div>
                         </div>

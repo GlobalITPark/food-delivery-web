@@ -109,7 +109,7 @@ export default class HeaderUI extends Component {
                             <a style={{width:'80%'}} className="navbar-brand" href="#">
                                 {/* {Config.adminConfig.appName} */}
                                 {/* Ceylon One */}
-                                <img style={{marginTop:'-12px'}} alt="" src="assets/img/Ceylon one Wide.png"></img>
+                                <img style={{marginTop:'-78px',width:'480px',height: '200px'}} alt="" src="assets/img/kamakura.png"></img>
                             </a>
                         </div>
                         <div className="collapse navbar-collapse">
@@ -123,9 +123,6 @@ export default class HeaderUI extends Component {
                             </li> */}
                             <li>
                                 <NavLink exact activeStyle={{backgroundColor:'#0000003a'}} to="/centre">レストラン</NavLink> 
-                            </li>
-                            <li>
-                                <NavLink exact activeStyle={{backgroundColor:'#0000003a'}} to="/program">プログラム</NavLink> 
                             </li>
                             
                             {!this.props.isLoggedIn ?
@@ -178,9 +175,9 @@ export default class HeaderUI extends Component {
                     <div className="container w-container">
                         <div className="footer-row w-row">
                             <div className="footer-column first w-col w-col-10">
-                                <div className="footer-title">フェスティバルについて</div>
+                                <div className="footer-title">Kamakura</div>
                                 <div className="section-divider"></div>
-                                <p style={{color:'#b8b8b8'}}>
+                                {/* <p style={{color:'#b8b8b8'}}>
                                 スリランカビジネス協議会が主催するスリランカフェスティバルは、100を超えるブースや売店、主にスリランカで行われた製品のマーケティングや企画で構成されています。本格的なスリランカの飲食物を提供するフェスティバルのフードマートには35軒以上の屋台があります。その他衣料品、宝石＆ジュエリー、手工芸品、装飾品、金融、銀行サービスから占星術やアーユルヴェーダのサービスまで、数多くのスリランカの製品やサービスがブースや屋台で販売されています。                                </p>
                                 <p style={{color:'#b8b8b8'}}>
                                             <em>主催者</em>
@@ -189,7 +186,7 @@ export default class HeaderUI extends Component {
                                             <br></br>
                                             C / Oスリランカ大使館、2丁目-1-54東京都港区高輪1-55
                                             <br></br>
-                                        </p>
+                                        </p> */}
                             </div>
 
                             <div className="footer-column w-col w-col-2">
@@ -202,9 +199,9 @@ export default class HeaderUI extends Component {
                                     <li className="footer-list-item">
                                         <a style={{color:'#b8b8b8'}} className="link footer-link" href="tel:03-6868-8666"><strong>電話</strong>: 03-6868-8666</a>
                                     </li>
-                                    <li className="footer-list-item">
-                                        <a style={{color:'#b8b8b8'}} className="link footer-link email-link" href="mailto:info@srilankafestival.jp"><strong>メール</strong>: info@srilankafestival.jp</a>
-                                    </li>
+                                    {/* <li className="footer-list-item">
+                                        <a style={{color:'#b8b8b8'}} className="link footer-link email-link" href="mailto:info@srilankafestival.jp"><strong>メール</strong>: info@kamakura.jp</a>
+                                    </li> */}
                                 </ul>
                             </div>
 
