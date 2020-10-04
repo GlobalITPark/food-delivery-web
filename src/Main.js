@@ -2,7 +2,6 @@ import React,{Component}  from 'react';
 import User from './containers/User';
 import Ticket from './containers/Ticket';
 import Landingpage from './containers/Landingpage';
-import Program from './containers/Program';
 import About from './containers/About';
 import Centre from './containers/Centre';
 import Products from './containers/Products';
@@ -279,7 +278,6 @@ class Main extends Component{
                 <Route path="/about" component={About}/>
                 <Route path="/centre" component={Centre}/>
                 <Route path="/products/:id" component={Products}/>
-                <Route path="/program" component={Program}/>
                 <Route path="/login" component={(props)=>
                   <Mainlogin
                     isLoggedIn={this.state.isLoggedIn} 
