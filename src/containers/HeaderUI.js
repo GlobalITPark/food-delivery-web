@@ -6,9 +6,10 @@ import React, { Component } from 'react'
 import {BrowserRouter as Router, Link,NavLink } from 'react-router-dom'
 // import { Link } from 'react-router'
 import firebase from '../config/database'
+import {connect} from 'react-redux'
 var md5 = require('md5');
 
-export default class HeaderUI extends Component {
+class HeaderUI extends Component {
 
     constructor(props) {
         super(props);
@@ -157,7 +158,7 @@ export default class HeaderUI extends Component {
 
                             {(this.props.isLoggedIn && (this.props.currentUser==="visitor")) ?
                             <li>
-                                <NavLink exact activeStyle={{backgroundColor:'#fffcff1a'}} to="/cart"><i className="material-icons">shopping_cart</i></NavLink> 
+                                <NavLink exact activeStyle={{backgroundColor:'#fffcff1a'}} to="/cart"><i className="material-icons">shopping_cart</i>{this.props.cartItems.length}</NavLink> 
                             </li>
                             :""
                             }
@@ -242,3 +243,8 @@ export default class HeaderUI extends Component {
         )
     }
 }
+
+export default connect(
+    (state) => ({  cartItems : state.cart.cartItems }),
+    {}
+  )(HeaderUI);

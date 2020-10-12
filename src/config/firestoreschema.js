@@ -235,6 +235,16 @@ var collectionMeta={
 			"telephone":"",
 		},
 		"collections":[],
+	},
+	"orders":{
+		"fields":{
+			"firstname":"",
+			"lastname":"",
+			"address":"",
+			"total":"0",
+			"items": {},
+		},
+		"collections":[],
 	}
 }
 module.exports = collectionMeta;
