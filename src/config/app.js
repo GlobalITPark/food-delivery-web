@@ -159,13 +159,6 @@ exports.navigation=[
     "icon": "perm_identity",
     "tableFields":["qr_code","user","status"],
   },
-  // {
-  //   "link": "raffle",
-  //   "path": "",
-  //   "name": "Raffle",
-  //   "icon":"loyalty",
-  //   "tableFields":[],
-  // },
   {
     "link": "firestoreadmin",
     "path": "conference_venue",
@@ -173,21 +166,6 @@ exports.navigation=[
     "icon":"location_city",
     "tableFields":["title","locationName"],
   },
-  //Kobi
-  // {
-  //   "link": "firestoreadmin",
-  //   "path": "eventsnc",
-  //   "name": "Events",
-  //   "icon":"list",
-  //   "tableFields":["title","image","price"],
-  // },
-  // {
-  //   "link": "firestoreadmin",
-  //   "path": "eventsnc_collection",
-  //   "name": "Categories",
-  //   "icon":"layers",
-  //   "tableFields":[],
-  // },
   {
     "link": "firestoreadmin",
     "path": "news",
@@ -195,46 +173,6 @@ exports.navigation=[
     "icon":"list",
     "tableFields":["title","image",],
   },
-  
-  //kobi
-  // {
-  //   "link": "firestoreadmin",
-  //   "path": "news_collection",
-  //   "name": "Categories",
-  //   "icon":"layers",
-  //   "tableFields":[],
-  // },
-  
-  //kobi
-  // {
-  //   "link": "firestoreadmin",
-  //   "path": "events",
-  //   "name": "Events",
-  //   "icon":"shopping_cart",
-  //   "tableFields":["status","total"],
-  //   "subMenus":[
-  //     {
-  //       "link": "fireadmin",
-  //       "path": "events/sofia/items",
-  //       "name": "Sofia",
-  //       "icon":"brush",
-  //       "tableFields":["name","description"]
-  //     },{
-  //       "link": "fireadmin",
-  //       "path": "events/skopje/items",
-  //       "name": "Skopje",
-  //       "icon":"menu",
-  //       "tableFields":["name","description"],
-  //     },
-  //     {
-  //       "link": "fireadmin",
-  //       "path": "events/belgrade/items",
-  //       "name": "Belgrade",
-  //       "icon":"menu",
-  //       "tableFields":["name","description"],
-  //     }
-  //   ]
-  // },
   {
     "link": "firestoreadmin",
     "path": "ticket_collection",
@@ -248,9 +186,7 @@ exports.navigation=[
     "name": "Orders",
     "icon":"shopping_cart",
     "tableFields":["status","total"],
-  },
-
-  
+  }, 
   {
     "link": "firestoreadmin",
     "path": "restaurant",
@@ -279,13 +215,6 @@ exports.navigation=[
     "icon":"layers",
     "tableFields":[],
   },
-  // {
-  //   "link": "fireadmin",
-  //   "path": "static/cities",
-  //   "name": "Venue",
-  //   "icon":"location_city",
-  //   "tableFields":[],
-  // },
   {
     "link": "fireadmin",
     "path": "conference",
