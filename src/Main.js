@@ -6,6 +6,7 @@ import About from './containers/About';
 import Centre from './containers/Centre';
 import Cart from './containers/Cart';
 import Checkout from './containers/Checkout';
+import Summary from './containers/Summary';
 import Products from './containers/Products';
 import Dashboard from './containers/Dashboard';
 import RaffleDraw from './containers/RaffleDraw';
@@ -212,6 +213,11 @@ class Main extends Component{
                 />
                 <PrivateRoute path="/checkout" isLoggedIn={this.state.isLoggedIn} component={()=>
                   <Checkout 
+                    currentUser={this.state.currentUser}
+                  />}
+                />
+                <PrivateRoute path="/summary" isLoggedIn={this.state.isLoggedIn} component={()=>
+                  <Summary
                     currentUser={this.state.currentUser}
                   />}
                 />

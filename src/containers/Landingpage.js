@@ -25,7 +25,7 @@ class Landingpage extends Component {
                     
                         <div className="carousel-inner">
                             <div className="item active">
-                            <img style={{width:'100%',height:'480px',objectFit:'cover',opacity:'0.6'}} src="assets/img/sushi.jpg" alt="Los Angeles"></img>
+                            <img style={{width:'100%',height:'480px',objectFit:'cover',opacity:'0.6'}} src="/assets/img/sushi.jpg" alt="Los Angeles"></img>
                             </div>
                         </div>
                     </div>
