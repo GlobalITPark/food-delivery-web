@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import firebase from '../config/database';
+import { browserHistory } from 'react-router';
 
 class Checkout extends Component {
     constructor(props) {
@@ -9,7 +10,9 @@ class Checkout extends Component {
             user: {},
             firstName: '',
             lastName: '',
+            email: '',
             address: '',
+            address2: '',
             country: '',
             state: '',
             zip: '',
@@ -20,6 +23,10 @@ class Checkout extends Component {
         this.checkout = this.checkout.bind(this);
         this.handleChangeFirstName = this.handleChangeFirstName.bind(this);
         this.handleChangeLastName = this.handleChangeLastName.bind(this);
+        this.handleChangeEmail = this.handleChangeEmail.bind(this);
+        this.handleChangeAddress = this.handleChangeAddress.bind(this);
+        this.handleChangeAddress2 = this.handleChangeAddress2.bind(this);
+        this.handleChangeZip = this.handleChangeZip.bind(this);
     }
 
     componentDidMount(){
@@ -55,6 +62,22 @@ class Checkout extends Component {
         this.setState({ lastName: event.target.value }); 
     }
 
+    handleChangeEmail(event){
+        this.setState({ email: event.target.value }); 
+    }
+
+    handleChangeAddress(event){
+        this.setState({ address: event.target.value }); 
+    }
+
+    handleChangeAddress2(event){
+        this.setState({ address2: event.target.value }); 
+    }
+
+    handleChangeZip(event){
+        this.setState({ zip: event.target.value }); 
+    }
+
     
     componentWillMount() {
         this.state.subtotal = this.props.cartItems.reduce((a, c) => a + c.price * c.count, 0);
@@ -70,27 +93,21 @@ class Checkout extends Component {
         orderRef.set({
             firstName: this.state.firstName,
             lastName: this.state.lastName,
+            // email:this.state.email,
             address:this.state.address,
+            // address2:this.state.address2,
+            // zip:this.state.zip,
             items:this.props.cartItems,
             total: this.state.total,
             userID: this.state.user.uid,
         }).then(function(){
-            const ref = firebase.app.firestore().collection("orders");
-            ref.get()
-            .then(snapshot=>{
-            if(snapshot.empty){
-                console.log('No matching documents.');
-                return;
-            }
-            snapshot.forEach(doc => {
-                console.log(doc);
-                console.log(doc.data());
-            });
-            })
+            
         }).catch(function(error){
             console.log(error.message);
-        })
-        event.preventDefault();
+            event.preventDefault();
+        });
+        localStorage.clear("cartItems");
+        browserHistory.push("/summary");
     }
 
     render() {
@@ -114,17 +131,17 @@ class Checkout extends Component {
 
                 <div style={{marginBottom: '20px'}}>
                     <label>Email <span className="text-muted">(Optional)</span></label>
-                    <input type="email" className="form-control" id="email" placeholder="you@example.com" value={this.state.address}/>
+                    <input type="email" className="form-control" id="email" placeholder="you@example.com" onChange={this.handleChangeEmail} value={this.state.email}/>
                 </div>
 
                 <div  style={{marginBottom: '20px'}}>
                     <label>Address</label>
-                    <input type="text" className="form-control" id="address" placeholder="1234 Main St" required/>
+                    <input type="text" className="form-control" id="address" placeholder="1234 Main St" onChange={this.handleChangeAddress} value={this.state.address} required/>
                 </div>
 
                 <div  style={{marginBottom: '20px'}}>
                     <label>Address 2 <span className="text-muted">(Optional)</span></label>
-                    <input type="text" className="form-control" id="address2" placeholder="Apartment or suite"/>
+                    <input type="text" className="form-control" id="address2" placeholder="Apartment or suite" onChange={this.handleChangeAddress2}  value={this.state.address2} />
                 </div>
 
                 <div className="row"  style={{marginBottom: '30px'}}>

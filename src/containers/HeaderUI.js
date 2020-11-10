@@ -107,10 +107,9 @@ class HeaderUI extends Component {
                                 <span className="icon-bar"></span>
                                 <span className="icon-bar"></span>
                             </button>
-                            <a style={{width:'80%'}} className="navbar-brand" href="#">
-                                {/* {Config.adminConfig.appName} */}
-                                {/* Ceylon One */}
-                                <img style={{marginTop:'-78px',width:'480px',height: '200px'}} alt="" src="assets/img/kamakura.png"></img>
+                            <a style={{width:'80%',display: 'flex','justify-content': 'flex-start'}} className="navbar-brand" href="/">
+                                <img style={{marginTop:'-78px',width:'180px',height: '200px'}} alt="" src="/assets/img/kamakura.png"></img>
+                                <h5 style={{marginTop:'10px'}}>イートオン</h5>
                             </a>
                         </div>
                         <div className="collapse navbar-collapse">

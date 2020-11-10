@@ -81,7 +81,7 @@ export default class LoginUI extends Component {
                     </div>
                 </nav>
                 <div className="wrapper wrapper-full-page">
-                    <div className="full-page login-page" data-image="assets/img/lock.jpeg">
+                    <div className="full-page login-page" data-image="/assets/img/lock.jpeg">
                         <div className="content">
                             <div className="container">
                                 <div className="row">
