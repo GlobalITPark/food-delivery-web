@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import firebase from '../config/database'
 import Item from './Item'
+import AlertContainer from 'react-alert'
 import {Grid} from 'react-mdl';
 
 import { PulseLoader } from 'halogenium';
@@ -17,6 +18,14 @@ class Products extends Component {
      //       cartItems: []
           }
     }
+
+    alertOptions = {
+        offset: 60,
+        position: 'top right',
+        theme: 'dark',
+        time: 5000,
+        transition: 'scale'
+      }
 
     componentWillMount(){
         const { match: { params } } = this.props;
@@ -57,9 +66,10 @@ class Products extends Component {
 
     render(){
         const items = this.state.items.map((item, index) =>
-        <Item key={index} value={item}/>
+        <Item key={index} value={item} msg={this.msg} />
         );
         return(
+        
             <div className="wrapper wrapper-full-page">
                 <div className="full-page landing-page">
                     <div className="content">
@@ -75,6 +85,7 @@ class Products extends Component {
                             </div>
                         </div>
 
+                        <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
                         <div className="container w-container">
                             <div className="row">
                                 <div className="col-lg-8">
