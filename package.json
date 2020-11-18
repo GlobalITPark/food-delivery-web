@@ -17,6 +17,8 @@
     "qrcode.react": "^0.9.3",
     "randomstring": "^1.1.5",
     "react": "15.4.2",
+    "react-alert": "^2.0.0",
+    "react-alert-template-basic": "^1.0.0",
     "react-bootstrap": "^1.0.0-beta.8",
     "react-color": "2.13.5",
     "react-datetime": "2.15.0",

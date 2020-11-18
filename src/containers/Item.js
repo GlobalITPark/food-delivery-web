@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {addToCart} from '../actions/cartActions'
-import {NotificationContainer, NotificationManager} from '../../public/assets/js/react-notifications'
 import {Cell,Card,CardTitle,CardText,CardActions,Button} from 'react-mdl';
 
 
 class Item extends Component {
+
     render() {
         console.log(this.props.value);
         return (
@@ -19,8 +19,8 @@ class Item extends Component {
                     <div style={{display: 'flex','justify-content': 'space-between'}}>
                         <Button colored>{this.props.value.content.title}</Button>
                         <Button colored onClick={() => {
-                              NotificationManager.success('One item of '+this.props.value.content.title+' has added to the cart successfully')
-                             this.props.addToCart({
+                           this.props.msg.success('One item of '+this.props.value.content.title+' has added to the cart successfully')
+                           this.props.addToCart({
                                  key: this.props.value.key,
                                  price: this.props.value.content.price,
                                  image: this.props.value.content.image,
@@ -32,7 +32,6 @@ class Item extends Component {
                     </div>
                     </CardActions>
                 </Card>
-                <NotificationContainer/>
             </Cell>
             
             
