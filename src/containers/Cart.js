@@ -53,10 +53,8 @@ class Cart extends Component {
                     <div className="infoWrap"> 
                       <div className="cartSection">
                       <img src={item.image} alt={item.title} className="itemImg" />
-                        <p className="itemNumber">{item.key}</p>
                         <h3>{item.title}</h3>
                         <p>
-                           {/* <input type="text"  className="qty" placeholder={item.count}/> */}
                            {item.count} x  ¥{item.price}
                         </p>
                         <p className="stockStatus"> In Stock</p>
