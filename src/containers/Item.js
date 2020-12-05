@@ -7,7 +7,6 @@ import {Cell,Card,CardTitle,CardText,CardActions,Button} from 'react-mdl';
 class Item extends Component {
 
     render() {
-        console.log(this.props.value);
         return (
             <Cell col={4}>
                 <Card shadow={0} style={{width: '100%', height: '320px', margin: 'auto'}}>
