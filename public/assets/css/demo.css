@@ -269,6 +269,17 @@ width:80%; margin:0 auto;
   font-weight: 500;
 }
 
+.section-title-dinein {
+  display: block;
+  margin-top: 0px;
+  font-family: Montserrat, sans-serif;
+  font-size: 27px;
+  margin-bottom: 0px;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
 .section-title.subtitle {
   margin-bottom: 0px;
   font-size: 16px;

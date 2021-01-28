@@ -3,6 +3,10 @@ import firebase from '../config/database'
 import Item from './Item'
 import AlertContainer from 'react-alert'
 import {Grid} from 'react-mdl';
+import {Link} from 'react-router-dom'
+import { connect } from "react-redux";
+
+
 
 import { PulseLoader } from 'halogenium';
 
@@ -12,6 +16,7 @@ class Products extends Component {
         
         this.state = {
             items: [],
+            centreId:null,
             centreName:null,
             centreDesc:null,
             isLoading:true
@@ -38,6 +43,7 @@ class Products extends Component {
 
         collection.get().then(function(doc){
             _this.setState({
+                centreId:doc.id,
                 centreName:doc.data().title,
                 centreDesc:doc.data().description
             })
@@ -83,7 +89,10 @@ class Products extends Component {
                                     </div>
                                 </div>
                             </div>
+
                         </div>
+
+                        <div className="container w-container"><Link to={"/dinein/"+this.state.centreId} className="btn dinein">Dine In</Link></div>
 
                         <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
                         <div className="container w-container">

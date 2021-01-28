@@ -21,6 +21,7 @@ import { PulseLoader } from 'halogenium';
 import ScrollToTop from './ScrollToTop';
 import store from "./config/store";
 import { Provider } from "react-redux";
+import Dinein from './containers/Dinein';
 
 
 class Main extends Component{
@@ -219,6 +220,12 @@ class Main extends Component{
                 <PrivateRoute path="/summary" isLoggedIn={this.state.isLoggedIn} component={()=>
                   <Summary
                     currentUser={this.state.currentUser}
+                  />}
+                />
+                <PrivateRoute path="/dinein/:id" isLoggedIn={this.state.isLoggedIn} component={(props)=>
+                  <Dinein 
+                    currentUser={this.state.currentUser}
+                    {...props}
                   />}
                 />
               </HeaderUI>
