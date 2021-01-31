@@ -149,4 +149,7 @@
    z-index: 3;   
 }
 
-
+/* width */
+::-webkit-scrollbar {
+   width: 0px;
+ }

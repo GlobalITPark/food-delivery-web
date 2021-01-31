@@ -155,7 +155,7 @@ class HeaderUI extends Component {
                             this.createUserView()
                             }
 
-                            {(this.props.isLoggedIn && (this.props.currentUser==="visitor")) ?
+                            {(this.props.isLoggedIn && (this.props.currentUser==="visitor" || this.props.currentUser==="admin")) ?
                             <li>
                                 <NavLink exact activeStyle={{backgroundColor:'#fffcff1a'}} to="/cart"><i className="material-icons">shopping_cart</i>{this.props.cartItems.length}</NavLink> 
                             </li>

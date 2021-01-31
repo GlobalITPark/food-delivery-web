@@ -32,7 +32,7 @@ export default class CardUI extends Component {
                   {this.actionView()}
                   <form className="form-horizontal">
                     <div className="card-header card-header-text" data-background-color="rose">
-                      <h4 className="card-title">{this.props.title}</h4>
+                      <h5 className="card-title">{this.props.title}</h5>
                     </div>
                     <br />
                     <div className="col-md-12">
