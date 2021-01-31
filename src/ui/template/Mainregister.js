@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import Config from '../../config/app';
+import Config from '../../config/app'
+import {BrowserRouter as Router, Link,NavLink } from 'react-router-dom';
 
 // const ConditionalDisplay = ({condition, children}) => condition ? children : <div></div>;
 
@@ -139,6 +140,11 @@ export default class MainregisterUI extends Component {
                                             </div>
                                             <div className="footer text-center">
                                                 <input type="submit" className="btn btn-danger" />
+                                            </div>
+                                            <div style={{"text-align": "center"}}>
+                                                <Link to="/register-vendor">
+                                                    Register as a Vendor?
+                                                </Link>     
                                             </div>
                                         </div>
                                     </form> 
