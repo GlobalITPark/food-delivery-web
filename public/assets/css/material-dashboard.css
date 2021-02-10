@@ -10218,6 +10218,7 @@ box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
 border-radius: 6px;
 color: rgba(0,0,0, 0.87);
 background: #fff;
+padding-bottom: 15px;
 }
 .card .card-height-indicator {
 margin-top: 100%;

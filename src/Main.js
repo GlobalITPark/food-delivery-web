@@ -13,6 +13,7 @@ import RaffleDraw from './containers/RaffleDraw';
 import Mainlogin from './containers/Mainlogin';
 import Mainregister from './containers/Mainregister';
 import {BrowserRouter as Router,Route,hashHistory} from 'react-router-dom';
+import MainregisterVendor from './containers/MainregisterVendor';
 import HeaderUI from './containers/HeaderUI';
 import {PrivateRoute,fakeAuth} from './Auth';
 import Config from   './config/app';
@@ -183,6 +184,13 @@ class Main extends Component{
                 />
                 <Route path="/register" component={(props)=>
                   <Mainregister
+                    isLoggedIn={this.state.isLoggedIn} 
+                    isRegisteredUser={this.state.isRegisteredUser}
+                    {...props}
+                  />}
+                />
+                <Route path="/register-vendor" component={(props)=>
+                  <MainregisterVendor
                     isLoggedIn={this.state.isLoggedIn} 
                     isRegisteredUser={this.state.isRegisteredUser}
                     {...props}
