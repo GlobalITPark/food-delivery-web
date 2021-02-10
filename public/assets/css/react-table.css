@@ -1,0 +1,13 @@
+/*
+React Table CSS Modifications
+*/
+.ReactTable .rt-thead .rt-resizable-header-content {
+    font-weight: bold;
+}
+
+.ReactTable .rt-noData {
+	display: flex;
+    transform: none;
+    position: unset;
+    padding-left: 43%;
+}
