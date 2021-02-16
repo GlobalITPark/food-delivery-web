@@ -107,9 +107,9 @@ class HeaderUI extends Component {
                                 <span className="icon-bar"></span>
                                 <span className="icon-bar"></span>
                             </button>
-                            <a style={{width:'80%',display: 'flex','justify-content': 'flex-start'}} className="navbar-brand" href="/">
-                                <img style={{marginTop:'-78px',width:'180px',height: '200px'}} alt="" src="/assets/img/kamakura.png"></img>
-                                <h5 style={{marginTop:'10px'}}>イートン</h5>
+                            <a style={{display: 'flex','justify-content': 'flex-start'}} className="navbar-brand" href="/">
+                                <img style={{width:'65',height: '45'}} alt="" src="/assets/img/tabetai.png"></img>
+                                <h5 style={{marginTop:'10px'}}>食べたい</h5>
                             </a>
                         </div>
                         <div className="collapse navbar-collapse">
@@ -128,7 +128,7 @@ class HeaderUI extends Component {
                             {!this.props.isLoggedIn ?
                             <li className={this.props.isRegister ? "active" : ""}>
                                 <NavLink exact activeStyle={{backgroundColor:'#fffcff1a'}} to="/login">
-                                    <a style={{color:'#ff4307'}} className="nav-link" role="button" >
+                                    <a style={{color:'#771d03'}} className="nav-link" role="button" >
                                         <i className="material-icons">fingerprint</i>ログイン
                                     </a>
                                 </NavLink>
@@ -145,7 +145,7 @@ class HeaderUI extends Component {
                             {!this.props.isLoggedIn ?
                             <li className={this.props.isRegister ? "active" : ""} >
                                 <NavLink exact activeStyle={{backgroundColor:'#fffcff1a'}} to="/register">
-                                    <a style={{color:'#ff4307'}} className="nav-link" role="button" >
+                                    <a style={{color:'#771d03'}} className="nav-link" role="button" >
                                         <i className="material-icons">how_to_reg</i>登録
                                     </a>
                                 </NavLink>
@@ -155,7 +155,7 @@ class HeaderUI extends Component {
                             this.createUserView()
                             }
 
-                            {(this.props.isLoggedIn && (this.props.currentUser==="visitor" || this.props.currentUser==="admin")) ?
+                            {(this.props.isLoggedIn && (this.props.currentUser==="visitor")) ?
                             <li>
                                 <NavLink exact activeStyle={{backgroundColor:'#fffcff1a'}} to="/cart"><i className="material-icons">shopping_cart</i>{this.props.cartItems.length}</NavLink> 
                             </li>

@@ -174,7 +174,13 @@ class Main extends Component{
                 <Route path="/landing" component={Landingpage}/>
                 <Route path="/about" component={About}/>
                 <Route path="/centre" component={Centre}/>
-                <Route path="/products/:id" component={Products}/>
+                <Route path="/products/:id" component={(props)=>
+                  <Products
+                    isLoggedIn={this.state.isLoggedIn} 
+                    currentUser={this.state.currentUser}
+                    {...props}
+                  />}
+                />
                 <Route path="/login" component={(props)=>
                   <Mainlogin
                     isLoggedIn={this.state.isLoggedIn} 

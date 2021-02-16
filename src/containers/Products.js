@@ -72,7 +72,7 @@ class Products extends Component {
 
     render(){
         const items = this.state.items.map((item, index) =>
-        <Item key={index} value={item} msg={this.msg} />
+        <Item isLoggedIn={this.props.isLoggedIn} currentUser={this.props.currentUser} key={index} value={item} msg={this.msg} />
         );
         return(
         
@@ -92,7 +92,11 @@ class Products extends Component {
 
                         </div>
 
-                        <div className="container w-container"><Link to={"/dinein/"+this.state.centreId} className="btn dinein">Dine In</Link></div>
+                        {this.props.isLoggedIn && this.props.currentUser=="visitor" ?
+                            <div className="container w-container"><Link to={"/dinein/"+this.state.centreId} className="btn dinein">Dine In</Link></div>
+                        :
+                        ""
+                        }
 
                         <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
                         <div className="container w-container">
