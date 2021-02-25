@@ -196,6 +196,13 @@ exports.navigation=[
   },
   {
     "link": "firestoreadmin",
+    "path": "restaurant_category_collection",
+    "name": "Restaurant Categories",
+    "icon":"layers",
+    "tableFields":["category_name","image","is_active"],
+  },
+  {
+    "link": "firestoreadmin",
     "path": "restaurant_collection",
     "name": "Restaurants",
     "icon":"layers",

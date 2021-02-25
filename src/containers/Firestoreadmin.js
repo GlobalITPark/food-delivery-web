@@ -673,6 +673,7 @@ class Firestoreadmin extends Component {
     console.log(name+" vs "+withoutLast);
     //Find the fields to be inserted
     console.log("INSERT_STRUCTURE");
+    console.log(INSERT_STRUCTURE);
     var theInsertSchemaObject=INSERT_STRUCTURE[name.replace(this.getAppBuilderAppName(),"")].fields;
 
     //New in version 9.1.0
