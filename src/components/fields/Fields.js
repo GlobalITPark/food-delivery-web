@@ -10,6 +10,7 @@ import React, {Component} from 'react'
 import {Input,DateTime,Radio,CheckBox,TextArea,Select,Image,HTML,File,Color,Relation,Icons,GoogleMap} from './index'
 import Config from   '../../config/app';
 import Common from '../../common.js'
+import MultiSelect from './MultiSelect';
 
 class Fields extends Component {
 
@@ -58,6 +59,20 @@ class Fields extends Component {
 
     //Look into relations
     var options=Config.adminConfig.optionsForRelation;
+    for (var i = 0; options&&i < options.length; i++) {
+
+      //This is if we have found the coorect key
+      //console.log("Compare "+key+"  -----<")
+      if(options[i].key==key){
+        var appBuilderApp=this.getAppBuilderAppName();
+        options[i].path=options[i].path.replace("APP_NAME_", appBuilderApp);
+        return options[i];
+      }
+
+    }
+    
+    //Look into array of relations
+    var options=Config.adminConfig.optionsForArray;
     for (var i = 0; options&&i < options.length; i++) {
 
       //This is if we have found the coorect key
@@ -118,7 +133,9 @@ class Fields extends Component {
         if(doesThisFieldisOfTheCurrentType){
 
           //Get the field type by they key used
+          console.log(key);
           switch (key) {
+            
               case "iconmd":
                 {
                   Element = Icons;
@@ -195,6 +212,9 @@ class Fields extends Component {
                   break;
               case "dropdowns":
                   Element = Select;
+                  break;
+              case "array":
+                  Element = MultiSelect;
                   break;
               case "dateTime":
                   {

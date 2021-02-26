@@ -58,7 +58,8 @@ exports.adminConfig={
   "file":["videoField"],
   "rgbaColor":['rgba'],
   "hexColor":['*Color',"buttonText"],
-  "relation":['creator','collection','collection_recipe','eventsnc_collection'],
+  "relation":['creator','collection', 'collection_recipe','eventsnc_collection'],
+  "array":['categories'],
   "iconmd":['icon',"*Icon"],
   "iconfa":['iconfa'],
   "iconti":['iconti'],
@@ -82,6 +83,32 @@ exports.adminConfig={
     {"key":"navButtonAction","options":["add-to-favorites"]},
     {"key":"sectionType","options":["master-detail","cart","orders","wish-list"]},
 ],
+
+"optionsForArray":[
+  {
+    //Firestore - Native
+    "display": "category_name",
+    "isValuePath": true,
+    "key": "categories",
+    "path": "/restaurant_category_collection",
+    "produceRelationKey": false,
+    "relationJoiner": "-",
+    "relationKey": "type_eventid",
+    "value": "category_nasme"
+  },
+  {
+    //Firestore - Native
+    "display": "category_nsame",
+    "isValuePath": true,
+    "key": "categorises",
+    "path": "/restaurant_categorsy_collection",
+    "produceRelationKey": false,
+    "relationJoiner": "-",
+    "relationKey": "type_eventid",
+    "value": "category_nasme"
+  },
+],
+
 "optionsForRelation":[
   {
     //Firestore - Native
@@ -126,7 +153,18 @@ exports.adminConfig={
       "relationJoiner": "-",
       "relationKey": "news_collection",
       "value": "name"
-    }
+    },
+    // {
+    //   //Firestore - Native
+    //   "display": "category_name",
+    //   "isValuePath": true,
+    //   "key": "categories",
+    //   "path": "/restaurant_category_collection",
+    //   "produceRelationKey": false,
+    //   "relationJoiner": "-",
+    //   "relationKey": "type_eventid",
+    //   "value": "category_name"
+    // }
 ],
 "paging":{
   "pageSize": 20,
