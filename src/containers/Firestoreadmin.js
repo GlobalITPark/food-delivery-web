@@ -387,6 +387,7 @@ class Firestoreadmin extends Component {
                   if(currentElementClasss=="Array"){
                       //Add it in the arrays  list
                       arrays[key]=records[key];
+                      fields[key]=records[key];
                   }else if(currentElementClasss=="Object"){
                       //Add it in the elements list
                       var isElementMentForTheArray=false; //Do we have to put this object in the array
@@ -673,6 +674,7 @@ class Firestoreadmin extends Component {
     console.log(name+" vs "+withoutLast);
     //Find the fields to be inserted
     console.log("INSERT_STRUCTURE");
+    console.log(INSERT_STRUCTURE);
     var theInsertSchemaObject=INSERT_STRUCTURE[name.replace(this.getAppBuilderAppName(),"")].fields;
 
     //New in version 9.1.0
@@ -984,7 +986,7 @@ class Firestoreadmin extends Component {
    */
   makeArrayCard(name){
       return (
-        <CardUI name={name} showAction={true} action={()=>{this.addItemToArray(name,this.state.arrays[name].length)}} title={Common.capitalizeFirstLetter(name)}>
+        <CardUI key={Math.random()} name={name} showAction={true} action={()=>{this.addItemToArray(name,this.state.arrays[name].length)}} title={Common.capitalizeFirstLetter(name)}>
           <Table 
               caller={"firestore"}
               isFirestoreSubArray={true}
