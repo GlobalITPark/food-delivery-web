@@ -52,13 +52,13 @@ exports.adminConfig={
   "map":["map","latlng","location","eventLocation"],
   "textarea":["description"],
   "html":["content"],
-  "radio":["radio","radiotf","featured","isShopping","showPhotos","layout","coloring","outbound","rounded","sectionType","showNavButton"],
-  "checkbox":["checkbox"],
+  "radio":["availability","radio","radiotf","featured","isShopping","showPhotos","layout","coloring","outbound","rounded","sectionType","showNavButton"],
+  "checkbox":["checkbox","restaurant_category"],
   "dropdowns":["type","status","dropdowns","navButtonAction"],
   "file":["videoField"],
   "rgbaColor":['rgba'],
   "hexColor":['*Color',"buttonText"],
-  "relation":['creator','collection','collection_recipe','eventsnc_collection'],
+  "relation":['creator','collection',"category",'collection_recipe','eventsnc_collection'],
   "iconmd":['icon',"*Icon"],
   "iconfa":['iconfa'],
   "iconti":['iconti'],
@@ -67,9 +67,11 @@ exports.adminConfig={
 "optionsForSelect":[
     {"key":"dropdowns","options":["new","processing","rejected","completed"]},
     {"key":"checkbox","options":["Skopje","Belgrade","New York"]},
+    {"key":"restaurant_category","options":["Cat1","Cat2","Cat3"]},
     {"key":"type","options":["Bug fix","Feature","Improuvment","deleted","added","updated"]},
     {"key":"status","options":["order_received","order_confirmed","ready_to_pick","picked_up","order_canceled"]},
     {"key":"radio","options":["no","maybe","yes"]},
+    {"key":"availability","options":["true","false"]},
     {"key":"radiotf","options":["true","false"]},
     {"key":"featured","options":["true","false"]},
     {"key":"isShopping","options":["true","false"]},
@@ -105,17 +107,17 @@ exports.adminConfig={
     "relationKey": "type_eventid",
     "value": "name"
   },
-    {
-      //Firestore - Native
-      "display": "title",
-      "isValuePath": true,
-      "key": "collection_restaurant",
-      "path": "/restaurant_collection",
-      "produceRelationKey": true,
-      "relationJoiner": "-",
-      "relationKey": "restaurant_collection",
-      "value": "name"
-    },
+  {
+    //Firestore - Native
+    "display": "title",
+    "isValuePath": true,
+    "key": "collection_restaurant",
+    "path": "/restaurant_collection",
+    "produceRelationKey": true,
+    "relationJoiner": "-",
+    "relationKey": "restaurant_collection",
+    "value": "name"
+  },
     {
       //Firestore - Native
       "display": "title",

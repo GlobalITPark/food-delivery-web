@@ -103,7 +103,7 @@ var collectionMeta={
 			"title":"Your product title",
 			"options":"",
 			"shortDescription":"",
-			"status":false,
+			"availability":false,
 		},
 		"collections":["variants"],
 	},
