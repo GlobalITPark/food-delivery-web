@@ -414,6 +414,13 @@ exports.vendorNavigation=[
     "icon":"shopping_cart",
     "tableFields":["orderID","userID","status","total"],
   },
+  {
+    "link": "firestorevendor",
+    "path": "dinein",
+    "name": "Reservations",
+    "icon":"fastfood_outlined",
+    "tableFields":["userName","restaurantName","phone","noOfSeats","dineInDate","dineInTime"],
+  },
   // {
   //   "link": "firestoreadmin",
   //   "path": "eventsconference",
