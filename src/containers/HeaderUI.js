@@ -108,21 +108,21 @@ class HeaderUI extends Component {
                                 <span className="icon-bar"></span>
                             </button>
                             <a style={{display: 'flex','justify-content': 'flex-start'}} className="navbar-brand" href="/">
-                                <img style={{width:'65',height: '45'}} alt="" src="/assets/img/tabetai.png"></img>
-                                <h5 style={{marginTop:'10px'}}>食べたい</h5>
+                                <img style={{width:'200px',height: '35px'}} alt="" src="/assets/img/tabetai.png"></img>
+                                {/* <h5 style={{marginTop:'10px'}}>食べたい</h5> */}
                             </a>
                         </div>
                         <div className="collapse navbar-collapse">
                         
                         <ul className="nav navbar-nav navbar-right">
                             <li>
-                                <NavLink exact activeStyle={{backgroundColor:'#0000003a'}} to="/">ホーム</NavLink> 
+                                <NavLink style={{color:'#000'}} exact activeStyle={{backgroundColor:'#0000003a'}} to="/">ホーム</NavLink> 
                             </li>
                             {/* <li>
                                 <NavLink exact activeStyle={{backgroundColor:'#0000003a'}} to="/about">About</NavLink> 
                             </li> */}
                             <li>
-                                <NavLink exact activeStyle={{backgroundColor:'#0000003a'}} to="/centre">レストラン</NavLink> 
+                                <NavLink style={{color:'#000'}} exact activeStyle={{backgroundColor:'#0000003a'}} to="/centre">レストラン</NavLink> 
                             </li>
                             
                             {!this.props.isLoggedIn ?
@@ -175,7 +175,7 @@ class HeaderUI extends Component {
                     <div className="container w-container">
                         <div className="footer-row w-row">
                             <div className="footer-column first w-col w-col-10">
-                                <div className="footer-title">Kamakura</div>
+                                <div className="footer-title">Tabetai</div>
                                 <div className="section-divider"></div>
                                 {/* <p style={{color:'#b8b8b8'}}>
                                 スリランカビジネス協議会が主催するスリランカフェスティバルは、100を超えるブースや売店、主にスリランカで行われた製品のマーケティングや企画で構成されています。本格的なスリランカの飲食物を提供するフェスティバルのフードマートには35軒以上の屋台があります。その他衣料品、宝石＆ジュエリー、手工芸品、装飾品、金融、銀行サービスから占星術やアーユルヴェーダのサービスまで、数多くのスリランカの製品やサービスがブースや屋台で販売されています。                                </p>
