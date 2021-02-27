@@ -766,6 +766,17 @@ class Fireadmin extends Component {
       }
 
     }
+    
+    var options=Config.adminConfig.optionsForArray;
+    for (var i = 0; options&&i < options.length; i++) {
+
+      //This is if we have found the coorect key
+      if(options[i].relationKey==key){
+        console.log(key+" is Artifical. Don't show it")
+        return true;
+      }
+
+    }
     return false
   }
 

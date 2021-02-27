@@ -87,7 +87,7 @@ var collectionMeta={
 			"description":"restaurant description",
 			"image":"https://i.imgur.com/80vu1wL.jpg",
 			"owner":"",
-			"category":"",
+			"categories":"",
 			"count":1,
 			"active_status":0
 		},
