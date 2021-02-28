@@ -839,7 +839,8 @@ class Firestorevendor extends Component {
       description:this.state.restaurantDescription,
       owner:this.state.user.email,
       image:"https://i.imgur.com/80vu1wL.jpg",
-      active_status:0
+      active_status:0,
+      count:1
     }).then(function(){
       _this.cancelCreateRestaurantDialog();
       _this.resetDataFunction();

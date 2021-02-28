@@ -121,7 +121,8 @@ createRestaurant(event){
     description:this.state.description,
     owner:this.state.user.email,
     image:"https://i.imgur.com/80vu1wL.jpg",
-    status:0
+    active_status:0,
+    count:1
   }).then(function(){
     const ref = firebase.app.firestore().collection("users");
     ref.where('email','==',_this.state.user.email).get()
