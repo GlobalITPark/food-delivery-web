@@ -93,14 +93,25 @@ var collectionMeta={
 		},
 		"collections":[],
 	},
+	"food_category_collection":{
+		"fields":{
+			"category_name":"Your food category title",
+			"category_name_ja":"Your food category title in japanese",
+			"description":"description",
+			"description_ja":"description in japanese",
+			"is_active":1
+		},
+		"collections":[],
+	},
 	"restaurant":{
 		"fields":{
 			"calories":100,
 			"collection":"",
-			"description":"Your product description",
+			"food_categories":[],
+			"description":"Your food description",
 			"image":"https://i.imgur.com/80vu1wL.jpg",
 			"price":10,
-			"title":"Your product title",
+			"title":"Your food title",
 			"options":"",
 			"shortDescription":"",
 			"status":false,

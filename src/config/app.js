@@ -59,7 +59,7 @@ exports.adminConfig={
   "rgbaColor":['rgba'],
   "hexColor":['*Color',"buttonText"],
   "relation":['creator','collection', 'collection_recipe','eventsnc_collection'],
-  "array":['categories'],
+  "array":['categories', 'food_categories'],
   "iconmd":['icon',"*Icon"],
   "iconfa":['iconfa'],
   "iconti":['iconti'],
@@ -94,7 +94,18 @@ exports.adminConfig={
     "produceRelationKey": false,
     "relationJoiner": "-",
     "relationKey": "type_eventid",
-    "value": "category_nasme"
+    "value": "category_name"
+  },
+  {
+    //Firestore - Native
+    "display": "category_name",
+    "isValuePath": true,
+    "key": "food_categories",
+    "path": "/food_category_collection",
+    "produceRelationKey": false,
+    "relationJoiner": "-",
+    "relationKey": "type_eventid",
+    "value": "category_name"
   },
   {
     //Firestore - Native
@@ -225,6 +236,13 @@ exports.navigation=[
     "icon":"shopping_cart",
     "tableFields":["status","total"],
   }, 
+  {
+    "link": "firestoreadmin",
+    "path": "food_category_collection",
+    "name": "Food Categories",
+    "icon":"layers",
+    "tableFields":["category_name","is_active"],
+  },
   {
     "link": "firestoreadmin",
     "path": "restaurant",
