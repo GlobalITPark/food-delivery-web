@@ -23,6 +23,7 @@ class Dinein extends Component {
             time: '',
             instruction: '',
             dineInOrders:[],
+            centreOwner:'',
         };
         
         this.getDineinDetailsFromFirestore = this.getDineinDetailsFromFirestore.bind(this);
@@ -100,7 +101,8 @@ class Dinein extends Component {
                 centreId:doc.id,
                 centreName:doc.data().title,
                 centreDesc:doc.data().description,
-                centreImage:doc.data().image
+                centreImage:doc.data().image,
+                centreOwner:doc.data().owner,
             })
         })
 
@@ -156,6 +158,7 @@ class Dinein extends Component {
             restaurantID:params.id,
             restaurantName:this.state.centreName,
             restaurantImage:this.state.centreImage,
+            restaturantOwner:this.state.centreOwner
             }
             console.log( "requestDinein");
 

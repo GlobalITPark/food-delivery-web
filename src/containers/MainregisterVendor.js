@@ -84,7 +84,8 @@ class MainregisterVendor extends Component {
                       description: description,
                       owner: email,
                       image:"https://i.imgur.com/80vu1wL.jpg",
-                      status:0
+                      status:0,
+                      count:1
                     });
                   }
                   

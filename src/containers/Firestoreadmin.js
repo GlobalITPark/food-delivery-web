@@ -42,7 +42,8 @@ class Firestoreadmin extends Component {
       theSubLink:null,
       fieldsOfOnsert:null,
       isLoading:true,
-      showAddCollection:""
+      showAddCollection:"",
+      selectedResturantRow:[],
     };
 
     //Bind function to this
@@ -60,6 +61,9 @@ class Firestoreadmin extends Component {
     this.updatePartOfObject=this.updatePartOfObject.bind(this);
     this.addDocumentToCollection=this.addDocumentToCollection.bind(this);
     this.addItemToArray=this.addItemToArray.bind(this);
+    this.approveResturant=this.approveResturant.bind(this);
+    this.cancelApproveResturant=this.cancelApproveResturant.bind(this);
+    this.ResutrantApproveAction=this.ResutrantApproveAction.bind(this);
   }
 
   /**
@@ -968,7 +972,9 @@ class Firestoreadmin extends Component {
           <Table
               caller={"firestore"}
               headers={this.findHeadersBasedOnPath(this.state.firebasePath)} 
-              deleteFieldAction={this.deleteFieldAction} 
+              deleteFieldAction={this.deleteFieldAction}
+              approveAction={this.ResutrantApproveAction}
+              isAdmin={true} 
               fromObjectInArray={true} 
               name={name} 
               routerPath={this.props.route.path} 
@@ -979,6 +985,48 @@ class Firestoreadmin extends Component {
         </CardUI>
       )
   }
+  /**
+* ResutrantApproveAction - Approve resturant
+* @param {Object} row to be updated
+*/
+ResutrantApproveAction(row) {
+  this.setState({
+    selectedResturantRow:row
+  });
+
+  this.refs.approveResturantDialog.show();
+}
+
+/**
+* Cancel approve resturant modal.
+*/
+cancelApproveResturant() { 
+  this.refs.approveResturantDialog.hide();
+}
+
+/**
+* Approve resturant.
+*/
+approveResturant(event) {
+  var _this =this;
+
+  const key = this.state.selectedResturantRow.original.uidOfFirebase;
+  const ref = firebase.app.firestore().collection("restaurant_collection").doc(key);
+
+  ref.update({
+    active_status:1
+  }).then(function(){
+    _this.cancelApproveResturant();
+    _this.resetDataFunction();
+    _this.setState({ 
+      selectedResturantRow: [], 
+    }); 
+  }).catch(function(error){
+    console.log(error.message);
+  });
+
+  event.preventDefault();
+}
 
   /**
    * Creates single array section
@@ -1243,6 +1291,22 @@ class Firestoreadmin extends Component {
               <a onClick={this.addKey} className="btn btn-rose btn-round center-block"><i className="fa fa-save"></i>   Add key</a>
             </div>
             <div className="col-sm-3 ">
+            </div>
+          </div>
+        </SkyLight>
+        <SkyLight hideOnOverlayClicked ref="approveResturantDialog" title="">
+          <span><h4 className="center-block">Approve resturant</h4></span>
+          <div className="col-md-12">
+              <Notification type="danger" >Are you sure you want to approve this Resturant?</Notification>
+          </div>
+          <div className="col-sm-12" style={{marginTop:80}}>
+            <div className="col-sm-6">
+            </div>
+            <div className="col-sm-3 center-block">
+              <a onClick={this.cancelApproveResturant} className="btn btn-info">Cancel</a>
+            </div>
+            <div className="col-sm-3 center-block">
+              <a onClick={this.approveResturant} className="btn btn-danger">Approve</a>
             </div>
           </div>
         </SkyLight>

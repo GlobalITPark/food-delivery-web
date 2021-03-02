@@ -19,7 +19,9 @@ class Centre extends Component {
         const _this=this;
         const centres = [];
         const ref = firebase.app.firestore().collection("restaurant_collection");
-        ref.orderBy('count','asc').get().then(function(querySnapshot){
+        ref.where('active_status','==',1)
+       .orderBy('count','asc')
+        .get().then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
                 const content = doc.data();
                 

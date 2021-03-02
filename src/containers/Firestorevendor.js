@@ -47,7 +47,13 @@ class Firestorevendor extends Component {
       user:{},
       userCollectionId:null,
       restaurantID:"" ,
-      displayNewOrder:false
+      displayNewOrder:false,
+      restaurantTitle: '',
+      restaurantDescription: '',
+      menutTitle: '',
+      menuDescription: '',
+      menuCalories: 0,
+      menuPrice:0
     };
 
     //Bind function to this
@@ -68,8 +74,19 @@ class Firestorevendor extends Component {
     this.addItemToArray=this.addItemToArray.bind(this);
     this.newOrderAlert=this.newOrderAlert.bind(this);
     this.reloadPage=this.reloadPage.bind(this);
-
-
+    this.viewCreateRestaurantDialog = this.viewCreateRestaurantDialog.bind(this);
+    this.cancelCreateRestaurantDialog = this.cancelCreateRestaurantDialog.bind(this);
+    this.handleChangeTitle = this.handleChangeTitle.bind(this);
+    this.handleChangeDescription = this.handleChangeDescription.bind(this);
+    this.createRestaurant = this.createRestaurant.bind(this);
+    this.handleChangeMenuTitle = this.handleChangeMenuTitle.bind(this);
+    this.handleChangeMenuDescription = this.handleChangeMenuDescription.bind(this);
+    this.handleChangeMenuCalories = this.handleChangeMenuCalories.bind(this);
+    this.handleChangeMenuPrice = this.handleChangeMenuPrice.bind(this);
+    this.createMenuItem = this.createMenuItem.bind(this);
+    this.viewCreateMenuDialog = this.viewCreateMenuDialog.bind(this);
+    this.cancelCreateMenuDialog = this.cancelCreateMenuDialog.bind(this);
+    
 
   }
 
@@ -361,6 +378,8 @@ class Firestorevendor extends Component {
             }else if(collection==="orders" && currentDocument.restaurantID===_this.state.userCollectionId){
               
               currentDocument.orderID=doc.id;
+              documents.push(currentDocument)
+            }else if(collection==="dinein"  && currentDocument.restaturantOwner ===_this.state.user.email){
               documents.push(currentDocument)
             }
 
@@ -793,6 +812,108 @@ class Firestorevendor extends Component {
       }
   }
 
+  viewCreateRestaurantDialog(){
+    console.log("display modal")
+    this.refs.viewCreateRestaurantRequest.show();
+  }
+  
+  cancelCreateRestaurantDialog(){
+    this.refs.viewCreateRestaurantRequest.hide();
+  }
+
+  handleChangeTitle(event){
+    this.setState({ restaurantTitle: event.target.value }); 
+  }   
+  
+  handleChangeDescription(event) {
+    this.setState({ restaurantDescription: event.target.value });
+  }
+
+  createRestaurant(event){
+    console.log("create resturant");
+    var _this =this;
+  
+    const restaurantRef = firebase.app.firestore().collection('restaurant_collection').doc();
+    restaurantRef.set({
+      title:this.state.restaurantTitle,
+      description:this.state.restaurantDescription,
+      owner:this.state.user.email,
+      image:"https://i.imgur.com/80vu1wL.jpg",
+      active_status:0,
+      count:1
+    }).then(function(){
+      _this.cancelCreateRestaurantDialog();
+      _this.resetDataFunction();
+	  _this.setState({ 
+	      restaurantTitle: '', 
+	      restaurantDescription: '',
+	   }); 
+    }).catch(function(error){
+      console.log(error.message);
+    });
+  
+    event.preventDefault();
+  }
+
+  viewCreateMenuDialog(){
+    console.log("display menu modal")
+    this.refs.viewCreateMenuRequest.show();
+  }
+  
+  cancelCreateMenuDialog(){
+    this.refs.viewCreateMenuRequest.hide();
+  }
+
+  handleChangeMenuTitle(event){
+    this.setState({ menuTitle: event.target.value }); 
+  }   
+  
+  handleChangeMenuDescription(event) {
+    this.setState({ menuDescription: event.target.value });
+  }
+
+  handleChangeMenuCalories(event) {
+    this.setState({ menuCalories: event.target.value });
+  }
+
+  handleChangeMenuPrice(event) {
+    this.setState({ menuPrice: event.target.value });
+  }
+
+  createMenuItem(event){
+    console.log("create Menu item");
+    var _this =this;
+    const collectionRef = firebase.app.firestore().collection("restaurant_collection");
+    const collection = collectionRef.doc(this.state.userCollectionId);
+  
+    const restaurantRef = firebase.app.firestore().collection('restaurant').doc();
+    restaurantRef.set({
+      title:this.state.menuTitle,
+      description:this.state.menuDescription,
+      owner:this.state.user.email,
+      image:"https://i.imgur.com/80vu1wL.jpg",
+      status:false,
+      calories:this.state.menuCalories,
+			collection:collection,
+			price:this.state.menuPrice,
+			options:"",
+			shortDescription:"",
+    }).then(function(){
+      console.log("sucess saving");
+      _this.cancelCreateMenuDialog();
+      _this.resetDataFunction();
+	  _this.setState({ 
+	      menuTitle: '', 
+	      menuDescription: '',
+	   }); 
+    }).catch(function(error){
+      console.log(error.message);
+    })
+  
+    event.preventDefault();
+  }
+  
+
   /**
   * addDocumentToCollection  - used recursivly to add collection's document's collections
   * @param {String} name name of the collection
@@ -1199,6 +1320,7 @@ class Firestorevendor extends Component {
   makeCollectionTable(){
       var name=this.state.currentCollectionName;
       if(name==="restaurant"){
+        console.log("resutorant 1");
         return (
           <CardUI name={name} showAction={true} action={()=>{this.addDocumentToCollection(name)}} title={Common.capitalizeFirstLetter(name)}>
             <Table
@@ -1294,11 +1416,29 @@ class Firestorevendor extends Component {
   generateNavBar(){
       var subPath=this.props.params&&this.props.params.sub?this.props.params.sub:""
       var items=subPath.split(Config.adminConfig.urlSeparator);
+      var name=this.state.currentCollectionName;
+      console.log("colect name "+name);
       var path="/firestorevendor/"
-      return (<NavBar 
-        items={items} 
-        path={path} 
-        title={items.length>0?Common.capitalizeFirstLetter(items[items.length-1]):""} />
+      return (
+        <div>
+          <NavBar 
+            items={items} 
+            path={path} 
+            title={items.length>0?Common.capitalizeFirstLetter(items[items.length-1]):""} />
+            <div style={{ float: 'right', 'margin-top' : '-40px', 'margin-right' : '28px', 'padding-top' : '8px'}}>
+              {name === 'restaurant_collection' ?
+                <a className="btn btn-primary" onClick={()=>this.viewCreateRestaurantDialog()}>Add New Resturant</a>
+                :
+                ""
+              }
+              {name === 'restaurant' ?
+                <a className="btn btn-primary" onClick={()=>this.viewCreateMenuDialog()}>Add New Menu Item</a>
+                :
+                ""
+              }
+            </div>
+          
+        </div>
         ) 
   }
 
@@ -1548,6 +1688,99 @@ class Firestorevendor extends Component {
             <div className="col-sm-3 ">
             </div>
           </div>
+          </div>
+        </SkyLight>
+        <SkyLight dialogStyles={{height:'60%'}} hideOnOverlayClicked ref="viewCreateRestaurantRequest" title="">
+          <div className="col-md-12">
+            <form onSubmit={this.createRestaurant}>
+              <div className="card card-login">
+                  <div style={{background:'#211c54'}} className="card-header text-center" data-background-color="#0B3C5D">
+                      <h4 style={{marginTop:'0px',marginBottom:'0px'}} className="card-title">Add Restaurant</h4>
+                  </div>
+                  <div className="card-content">
+                      <h4>{this.props.error}</h4>
+                      <div className="input-group">
+                          <span className="input-group-addon">
+                              <i className="material-icons">how_to_reg</i>
+                          </span>
+                          <div className="form-group">
+                              <label className="control-label">Title</label>
+                              <input type="text" value={this.state.restaurantTitle} onChange={this.handleChangeTitle} className="form-control" />
+                          </div>
+                      </div>
+                      <div className="input-group">
+                          <span className="input-group-addon">
+                              <i className="material-icons">work</i>
+                          </span>
+                          <div className="form-group">
+                              <label className="control-label">Description</label>
+                              <input type="text" value={this.state.restaurantDescription} onChange={this.handleChangeDescription} className="form-control" />
+                          </div>
+                      </div>
+                  </div>
+                  <div className="footer text-center">
+                    <a onClick={this.cancelCreateRestaurantDialog} className="btn btn-info">Cancel</a>
+                    <input type="submit" className="btn btn-danger" />
+                      
+                  </div>
+              </div>
+          </form> 
+          </div>
+        </SkyLight>
+        <SkyLight dialogStyles={{height:'75%'}} hideOnOverlayClicked ref="viewCreateMenuRequest" title="">
+          <div className="col-md-12">
+            <form onSubmit={this.createMenuItem}>
+              <div className="card card-login">
+                  <div style={{background:'#211c54'}} className="card-header text-center" data-background-color="#0B3C5D">
+                      <h4 style={{marginTop:'0px',marginBottom:'0px'}} className="card-title">Add Menu Item</h4>
+                  </div>
+                  <div className="card-content">
+                      <h4>{this.props.error}</h4>
+                      <div className="input-group">
+                          <span className="input-group-addon">
+                              <i className="material-icons">how_to_reg</i>
+                          </span>
+                          <div className="form-group">
+                              <label className="control-label">Title</label>
+                              <input type="text" value={this.state.menuTitle} onChange={this.handleChangeMenuTitle} className="form-control" />
+                          </div>
+                      </div>
+                      <div className="input-group">
+                          <span className="input-group-addon">
+                              <i className="material-icons">work</i>
+                          </span>
+                          <div className="form-group">
+                              <label className="control-label">Description</label>
+                              <input type="text" value={this.state.menuDescription} 
+                              onChange={this.handleChangeMenuDescription} className="form-control" />
+                          </div>
+                      </div>
+                      <div className="input-group">
+                          <span className="input-group-addon">
+                              <i className="material-icons">money</i>
+                          </span>
+                          <div className="form-group">
+                              <label className="control-label">Price</label>
+                              <input type="text" value={this.state.menuPrice} onChange={this.handleChangeMenuPrice} className="form-control" />
+                          </div>
+                      </div>
+                      <div className="input-group">
+                          <span className="input-group-addon">
+                              <i className="material-icons">emoji_food_beverage</i>
+                          </span>
+                          <div className="form-group">
+                              <label className="control-label">Calories</label>
+                              <input type="text" value={this.state.menuCalories} onChange={this.handleChangeMenuCalories} className="form-control" />
+                          </div>
+                      </div>
+                  </div>
+                  <div className="footer text-center">
+                    <a onClick={this.cancelCreateRestaurantDialog} className="btn btn-info">Cancel</a>
+                    <input type="submit" className="btn btn-danger" />
+                      
+                  </div>
+              </div>
+          </form> 
           </div>
         </SkyLight>
       </div>
