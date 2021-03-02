@@ -3,6 +3,12 @@
 # dependencies
 /node_modules
 
+
+#vscode
+.history/
+.vscode/
+
+
 # testing
 /coverage
 

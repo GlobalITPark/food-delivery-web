@@ -70,6 +70,29 @@ var collectionMeta={
 		"fields":{},
 		"collections":[],
 	},
+	"restaurant_category_collection":{
+		"fields":{
+			"category_name":"category name",
+			"category_name_ja":"category name in japanese",
+			"description":"Your category description",
+			"description_ja":"Your category description in japanese",
+			"image":"https://i.imgur.com/80vu1wL.jpg",
+			"is_active":0,
+		},
+		"collections":[],
+	},
+	"restaurant_collection":{
+		"fields":{
+			"title":"Your restaurant title",
+			"description":"restaurant description",
+			"image":"https://i.imgur.com/80vu1wL.jpg",
+			"owner":"",
+			"categories":"",
+			"count":1,
+			"active_status":0
+		},
+		"collections":[],
+	},
 	"restaurant":{
 		"fields":{
 			"calories":100,
@@ -83,17 +106,6 @@ var collectionMeta={
 			"status":false,
 		},
 		"collections":["variants"],
-	},
-	"restaurant_collection":{
-		"fields":{
-			"title":"Your category title",
-			"description":"Category description",
-			"image":"https://i.imgur.com/80vu1wL.jpg",
-			"owner":"",
-			"count":1,
-			"active_status":0
-		},
-		"collections":[],
 	},
 	"variants":{
 		"fields":{

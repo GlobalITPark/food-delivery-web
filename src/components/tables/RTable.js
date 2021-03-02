@@ -148,6 +148,19 @@ export default class RTable extends Component {
                 Cell: row => (this.rowCreator(row, colIndex, row.index))
             })
         })
+
+        if(this.props.name === 'restaurant_collection'){
+            columns.push({
+                Header: "Approve",
+                filterable: false,
+                Cell: row => (
+                   <div className="disabled-sorting text-center">
+                       {this.createApproveButton(row)}
+                   </div> 
+                )
+            });
+        }
+
         columns.push({
             Header: "Actions",
             filterable: false,
@@ -179,6 +192,22 @@ export default class RTable extends Component {
             <span className="btn btn-simple btn-warning btn-icon edit"><i className="material-icons">edit</i></span>
           </Link>)
       }
+    }
+
+    createApproveButton(row){
+        if(!row.original.active_status) {
+            if(this.props.isAdmin) {
+                return (
+                    <button onClick={()=>this.props.approveAction(row)} type="button" className="btn btn-success btn-sm">
+                        Approve
+                    </button>
+                    );
+            }else {
+                return(<span>Approval_pending</span>);
+            }
+        }else {
+            return(<span>Already_approved</span>);
+        }
     }
 
     //Create Delete button
@@ -281,4 +310,6 @@ RTable.propTypes = {
     sub:PropTypes.string,
     fromObjectInArray:PropTypes.bool.isRequired,
     deleteFieldAction:PropTypes.func.isRequired,
+    approveAction:PropTypes.func,
+    isAdmin:PropTypes.bool
 };
