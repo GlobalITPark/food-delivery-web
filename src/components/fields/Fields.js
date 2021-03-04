@@ -197,6 +197,9 @@ class Fields extends Component {
                   break;
               case "maps":
                   Element = Input;
+                  
+                case "geopoint":
+                  Element = Input;
                   break;
               case "textarea":
                   Element = TextArea;

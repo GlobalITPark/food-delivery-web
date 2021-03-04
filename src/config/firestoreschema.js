@@ -89,6 +89,10 @@ var collectionMeta={
 			"categories":[],			
 			"description":"restaurant description",
 			"description_ja":"restaurant description in japanese",			
+			"restaurant_location":{
+				"Latitude": '',
+				"Longitude": '',
+			},		
 			"owner":"",			
 			"count":1,
 			"active_status":0

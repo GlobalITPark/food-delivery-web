@@ -50,6 +50,7 @@ exports.adminConfig={
   "date":["datefield","created"],
   "time":["time"],
   "map":["map","latlng","location","eventLocation"],
+  "geopoint":["restaurant_location"],
   "textarea":["description"],
   "html":["content"],
   "radio":["radio","radiotf","featured","isShopping","showPhotos","layout","coloring","outbound","rounded","sectionType","showNavButton"],
@@ -489,20 +490,20 @@ exports.vendorNavigation=[
   //     }
   //   ]
   // },
-  {
-    "link": "gift",
-    "path": "",
-    "name": "Gifts",
-    "icon":"card_giftcard",
-    "tableFields":[],
-  },
-  {
-    "link": "push",
-    "path": "",
-    "name": "Push notification",
-    "icon":"speaker_notes",
-    "tableFields":[],
-  }
+  // {
+  //   "link": "gift",
+  //   "path": "",
+  //   "name": "Gifts",
+  //   "icon":"card_giftcard",
+  //   "tableFields":[],
+  // },
+  // {
+  //   "link": "push",
+  //   "path": "",
+  //   "name": "Push notification",
+  //   "icon":"speaker_notes",
+  //   "tableFields":[],
+  // }
 ];
 
 exports.pushSettings={

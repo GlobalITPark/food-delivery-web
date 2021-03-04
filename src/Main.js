@@ -235,7 +235,7 @@ class Main extends Component{
                   <Summary
                     currentUser={this.state.currentUser}
                   />}
-                />
+                />               
                 <PrivateRoute path="/dinein/:id" isLoggedIn={this.state.isLoggedIn} component={(props)=>
                   <Dinein 
                     currentUser={this.state.currentUser}
