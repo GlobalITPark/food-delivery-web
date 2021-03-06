@@ -95,6 +95,7 @@ var collectionMeta={
 			},		
 			"owner":"",			
 			"count":1,
+			"delivery_charge":0,
 			"active_status":0
 		},
 		"collections":[],

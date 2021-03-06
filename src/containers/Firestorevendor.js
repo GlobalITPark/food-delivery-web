@@ -45,6 +45,7 @@ class Firestorevendor extends Component {
       isLoading:true,
       showAddCollection:"",
       user:{},
+      restaurantDetails:{},
       userCollectionId:null,
       restaurantID:"" ,
       displayNewOrder:false,
@@ -52,6 +53,8 @@ class Firestorevendor extends Component {
       restaurantDescription: '',
       menutTitle: '',
       menuDescription: '',
+      expected_time_of_delivery: '',
+      message_optional: '',
       menuCalories: 0,
       menuPrice:0
     };
@@ -86,6 +89,7 @@ class Firestorevendor extends Component {
     this.createMenuItem = this.createMenuItem.bind(this);
     this.viewCreateMenuDialog = this.viewCreateMenuDialog.bind(this);
     this.cancelCreateMenuDialog = this.cancelCreateMenuDialog.bind(this);
+    this.rejectThisOrder = this.rejectThisOrder.bind(this);
     
 
   }
@@ -325,7 +329,8 @@ class Firestorevendor extends Component {
             if(_this.state.user.email===doc.data().owner){
               //Increment counter
               _this.setState({
-                userCollectionId:doc.id
+                userCollectionId:doc.id,
+                restaurantDetails : doc.data()
               })
               // userCollectionId=doc.id;
 
@@ -342,7 +347,8 @@ class Firestorevendor extends Component {
               //Increment counter
               _this.setState({
                 userCollectionId:doc.id,
-                displayNewOrder:true
+                displayNewOrder:true,
+                restaurantDetails : doc.data()
               })
               // userCollectionId=doc.id;
 
@@ -1040,7 +1046,10 @@ class Firestorevendor extends Component {
     console.log("collection",collection);
 
     firebase.app.firestore().collection("orders").doc(collection).update({
-      status:"ready_to_pick"
+      status:"ready_to_pick",
+      expected_time_of_delivery: this.state.expected_time_of_delivery,
+      message_optional: this.state.message_optional,
+
     })
     .then(function() {
       // Send Notification
@@ -1090,8 +1099,44 @@ class Firestorevendor extends Component {
 
     
 
-    this.refs.confirmPickup.hide()
+    this.refs.confirmPickup.hide();
+    this.refs.rejectOderPickup.hide();
     this.refreshDataAndHideNotification();
+
+  }
+  
+  rejectThisOrder = ()=>{
+    console.log('confirmOrderAndSendNotification clicked');
+
+    var _this=this;
+    var restId = this.state.fieldsAsArray[0].value;
+    var collection = this.state.currentCollectionName;
+    firebase.app.firestore().collection("restaurant_collection").doc(restId).get()
+    .then(doc =>{
+      if (!doc.exists) {
+        console.log('No such restaurant!');
+      } else {
+        console.log('restaurant title data:', doc.data().title);
+      }
+    })
+    .catch(err => {
+      console.log('Error getting restaurant name', err);
+    });
+
+
+    firebase.app.firestore().collection("orders").doc(collection).update({
+      status:"rejected",
+      reason_for_reject: this.state.reason_for_reject
+    })
+    .then(function() {
+     
+    })
+    .catch(function(error) {
+        // The document probably doesn't exist.
+        console.error("Error updating document: ", error);
+    });
+
+    this.refs.rejectOderPickup.hide();
 
   }
 
@@ -1471,6 +1516,7 @@ class Firestorevendor extends Component {
 
   //MAIN RENDER FUNCTION 
   render() {
+    console.log('ddddddddddddddddd', this.state.restaurantDetails)
     return (
       <div className="content">
         {this.generateNavBar()}
@@ -1504,6 +1550,7 @@ class Firestorevendor extends Component {
               lastSub={this.state.lastSub} showAction={true} 
               action={()=>this.refs.simpleDialog.show()} 
               confirmOrderAction={this.state.lastSub==="orders+"+this.state.currentCollectionName?()=>this.refs.confirmPickup.show():""} 
+              rejectOrderAction={this.state.lastSub==="orders+"+this.state.currentCollectionName?()=>this.refs.rejectOderPickup.show():""} 
               title={Common.capitalizeFirstLetter(Config.adminConfig.fieldBoxName)}
               >
                      {this.state.fieldsAsArray?this.state.fieldsAsArray.map((item)=>{
@@ -1651,14 +1698,23 @@ class Firestorevendor extends Component {
         </SkyLight>
 
         <SkyLight hideOnOverlayClicked ref="confirmPickup" title="">
-          <span><h3  className="center-block">Confirm Pick up</h3></span>
-          <br />
+          <span><h3  className="center-block">Confirm Order</h3></span>
           <div  className="card-content">
             <div className="row">
              <h5>Are you sure the order is ready?</h5>
              <h5>Order ID : {this.state.currentCollectionName}</h5>
             </div>
-          </div><br /><br />
+            <div>
+              <label className="col-sm-3 label-on-left">Expected Time</label><br/>
+              <input type="text" onChange={(event)=>this.setState({expected_time_of_delivery: event.target.value})} value={this.state.expected_time_of_delivery} className="col-sm-6 form-control" name="expected_time_of_delivery" />
+              <br/>
+              <label className="col-sm-3 label-on-left" >Message (Optional)</label>
+              <textarea onChange={(event)=>this.setState({message_optional: event.target.value})} value={this.state.message_optional} className="form-control" cols={3} name="message_optional" >
+
+              </textarea>
+
+            </div>
+          </div>
         
           <div className="col-sm-12 ">
             <div className="col-sm-3 ">
@@ -1670,6 +1726,35 @@ class Firestorevendor extends Component {
             </div>
           </div>
         </SkyLight>
+        
+        <SkyLight hideOnOverlayClicked ref="rejectOderPickup" title="">
+          <span><h3  className="center-block">Reject Order</h3></span>
+          <div  className="card-content">
+            <div className="row">
+             <h5>Are you sure you want to reject the order?</h5>
+             <h5>Order ID : {this.state.currentCollectionName}</h5>
+            </div>
+            <div>
+              
+              <label className="col-sm-3 label-on-left" >Reason for reject</label>
+              <textarea onChange={(event)=>this.setState({reason_for_reject: event.target.value})} value={this.state.reason_for_reject} className="form-control" cols={3} name="message_optional" >
+
+              </textarea>
+
+            </div>
+          </div>
+        
+          <div className="col-sm-12 ">
+            <div className="col-sm-3 ">
+            </div>
+            <div className="col-sm-6 center-block">
+              <a onClick={this.rejectThisOrder} className="btn btn-rose btn-round center-block"><i className="fa fa-save"></i>Reject</a>
+            </div>
+            <div className="col-sm-3 ">
+            </div>
+          </div>
+        </SkyLight>        
+        
 
         <SkyLight hideOnOverlayClicked ref="newOrderAlert" title="">
           <span><h3  className="center-block">New Order Received</h3></span>

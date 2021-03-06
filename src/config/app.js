@@ -42,7 +42,7 @@ exports.adminConfig={
 "urlSeparator":"+",
 "urlSeparatorFirestoreSubArray":"~",
 "googleMapsAPIKey":"AIzaSyDc5wWlcOHydNkbCG1lWTExxliRPhNWR48",
-// "previewOnlyKeys":["owner"],
+"previewOnlyKeys":["deliveryType", "deliveryAddress", "deliveryInstructions", "delivery.name", "delivery.phone", "timeStamp"],
 
 "fieldsTypes":{
   "photo":["photo","image","category_image"],
@@ -68,9 +68,9 @@ exports.adminConfig={
 },
 "optionsForSelect":[
     {"key":"dropdowns","options":["new","processing","rejected","completed"]},
-    {"key":"checkbox","options":["Skopje","Belgrade","New York"]},
+    {"key":"checkbox","options":["Skopje","Belgrade","New York",]},
     {"key":"type","options":["Bug fix","Feature","Improuvment","deleted","added","updated"]},
-    {"key":"status","options":["order_received","order_confirmed","ready_to_pick","picked_up","order_canceled"]},
+    {"key":"status","options":["just_created", "order_confirmed", "rejected", "ready_to_pick", "picked_up", "order_canceled",  "out_for_delivery","order_delivered","cannot_deliver"]},
     {"key":"radio","options":["no","maybe","yes"]},
     {"key":"radiotf","options":["true","false"]},
     {"key":"featured","options":["true","false"]},
@@ -235,7 +235,7 @@ exports.navigation=[
     "path": "orders",
     "name": "Orders",
     "icon":"shopping_cart",
-    "tableFields":["status","total"],
+    "tableFields":["id","time","delivery.name","delivery.phone", "status"],
   }, 
   {
     "link": "firestoreadmin",
@@ -431,7 +431,7 @@ exports.vendorNavigation=[
     "path": "orders",
     "name": "Orders",
     "icon":"shopping_cart",
-    "tableFields":["orderID","userID","status","total"],
+    "tableFields":["orderID","timeStamp","delivery.name","delivery.phone", "status"],
   },
   {
     "link": "firestorevendor",
