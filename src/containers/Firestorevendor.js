@@ -1126,7 +1126,7 @@ class Firestorevendor extends Component {
 
     firebase.app.firestore().collection("orders").doc(collection).update({
       status:"rejected",
-      reason_for_reject: this.state.reason_for_reject
+      message_optional: this.state.reason_for_reject
     })
     .then(function() {
      

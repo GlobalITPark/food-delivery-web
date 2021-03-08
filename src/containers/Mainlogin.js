@@ -401,7 +401,7 @@ class Mainlogin extends Component {
       
       if(this.props.isLoggedIn === true && this.props.isRegisteredUser){
         return(
-          <Redirect to="/"/>
+          <Redirect to="/dashboard"/>
 
         )
       }
