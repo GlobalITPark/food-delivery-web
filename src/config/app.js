@@ -203,13 +203,13 @@ exports.navigation=[
     "icon": "perm_identity",
     "tableFields":["username","email","userRole"],
   },
-  {
-    "link": "firestoreadmin",
-    "path": "qrcode_collection",
-    "name": "Manage QR Code",
-    "icon": "perm_identity",
-    "tableFields":["qr_code","user","status"],
-  },
+  // {
+  //   "link": "firestoreadmin",
+  //   "path": "qrcode_collection",
+  //   "name": "Manage QR Code",
+  //   "icon": "perm_identity",
+  //   "tableFields":["qr_code","user","status"],
+  // },
   {
     "link": "firestoreadmin",
     "path": "conference_venue",
@@ -224,13 +224,13 @@ exports.navigation=[
     "icon":"list",
     "tableFields":["title","image",],
   },
-  {
-    "link": "firestoreadmin",
-    "path": "ticket_collection",
-    "name": "Tickets",
-    "icon":"list",
-    "tableFields":["tickNo","user"],
-  },
+  // {
+  //   "link": "firestoreadmin",
+  //   "path": "ticket_collection",
+  //   "name": "Tickets",
+  //   "icon":"list",
+  //   "tableFields":["tickNo","user"],
+  // },
   {
     "link": "firestoreadmin",
     "path": "orders",
@@ -266,20 +266,20 @@ exports.navigation=[
     "icon":"layers",
     "tableFields":["title","owner","count"],
   },
-  {
-    "link": "firestoreadmin",
-    "path": "eventsconference",
-    "name": "Ceylon one Events",
-    "icon":"list",
-    "tableFields":["title","image","price"],
-  },
-  {
-    "link": "firestoreadmin",
-    "path": "eventsconference_collection",
-    "name": "ev-days",
-    "icon":"layers",
-    "tableFields":[],
-  },
+  // {
+  //   "link": "firestoreadmin",
+  //   "path": "eventsconference",
+  //   "name": "Ceylon one Events",
+  //   "icon":"list",
+  //   "tableFields":["title","image","price"],
+  // },
+  // {
+  //   "link": "firestoreadmin",
+  //   "path": "eventsconference_collection",
+  //   "name": "ev-days",
+  //   "icon":"layers",
+  //   "tableFields":[],
+  // },
   {
     "link": "fireadmin",
     "path": "conference",
@@ -308,13 +308,14 @@ exports.navigation=[
         "tableFields":["name","description"],
       }
     ]
-  },{
-    "link": "push",
-    "path": "",
-    "name": "Push notification",
-    "icon":"speaker_notes",
-    "tableFields":[],
-  }
+  },
+  // {
+  //   "link": "push",
+  //   "path": "",
+  //   "name": "Push notification",
+  //   "icon":"speaker_notes",
+  //   "tableFields":[],
+  // }
 ];
 
 //Navigation
