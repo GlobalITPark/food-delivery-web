@@ -842,10 +842,18 @@ class Firestorevendor extends Component {
     const restaurantRef = firebase.app.firestore().collection('restaurant_collection').doc();
     restaurantRef.set({
       title:this.state.restaurantTitle,
+      title_ja:"",
+      categories:[],
       description:this.state.restaurantDescription,
+      description_ja:"",
+      restaurant_location:{
+        Latitude: 0,
+        Longitude: 0,
+      },
       owner:this.state.user.email,
       image:"https://i.imgur.com/80vu1wL.jpg",
       active_status:0,
+      delivery_charge:0,
       count:1
     }).then(function(){
       _this.cancelCreateRestaurantDialog();
@@ -895,7 +903,10 @@ class Firestorevendor extends Component {
     const restaurantRef = firebase.app.firestore().collection('restaurant').doc();
     restaurantRef.set({
       title:this.state.menuTitle,
+      title_ja:"",
       description:this.state.menuDescription,
+      description_ja:"",
+      food_categories:[],
       owner:this.state.user.email,
       image:"https://i.imgur.com/80vu1wL.jpg",
       status:false,
@@ -904,6 +915,7 @@ class Firestorevendor extends Component {
 			price:this.state.menuPrice,
 			options:"",
 			shortDescription:"",
+			shortDescription_ja:"",
     }).then(function(){
       console.log("sucess saving");
       _this.cancelCreateMenuDialog();
@@ -1046,7 +1058,7 @@ class Firestorevendor extends Component {
     console.log("collection",collection);
 
     firebase.app.firestore().collection("orders").doc(collection).update({
-      status:"ready_to_pick",
+      status:"order_confirmed",
       expected_time_of_delivery: this.state.expected_time_of_delivery,
       message_optional: this.state.message_optional,
 
