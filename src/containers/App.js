@@ -53,11 +53,16 @@ class App extends Component {
     .then(snapshot => {
       if(snapshot.empty){
         console.log('No matching documents.');
+        _this.setState({
+          userDetails:userDetails,
+          pageLength:userDetails.length
+        });
         return;
       }
 
       snapshot.forEach(doc => {
         var content = doc.data();
+        console.log("content "+JSON.stringify(content))
         userDetails.push({
           key:doc.id,
           content
@@ -67,7 +72,7 @@ class App extends Component {
         userDetails:userDetails,
         pageLength:userDetails.length
         
-      })
+      });
     })
     .catch(error =>{
       console.log('Error getting documents', error);
