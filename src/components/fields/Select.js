@@ -31,6 +31,7 @@ class Select extends Component {
             <div className={Config.designSettings.editElementDivClass}>
                 <label className="control-label"></label>
                 <select className={this.props.class+" form-control"} value={this.state.value} onChange={this.handleChange}>
+                  <option value="">select</option>
                   {this.props.options.map((val,index)=>{
                     return this.createOption(val,this.props.optionsLabels[index])
                   })}

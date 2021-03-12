@@ -21,6 +21,7 @@ class Relation extends Component {
    * Start getting data
    */
   componentDidMount(){
+    
     if(this.props.isFirestore){
       this.findFirestoreRelatedData();
     }else{
@@ -29,7 +30,18 @@ class Relation extends Component {
   }
 
   findFirestoreRelatedData(){
-    //alert(JSON.stringify(this.props.options));
+  const userRef = firebase.app.firestore().collection("users");
+  var user = {};
+  userRef.where('email','==',firebase.app.auth().currentUser.email).get()
+  .then(snapshot => {
+    if (snapshot) {
+      snapshot.forEach(doc => {
+        user = doc.data();
+      
+      })
+    }
+      return;
+    });
     var db = firebase.app.firestore();
     //COLLECTIONS - GET DOCUMENTS 
     var optionsFromFirebse=[];
@@ -46,7 +58,16 @@ class Relation extends Component {
                 name:currentDocument[_this.props.options.display],
               }
               //console.log(newOption);
-              optionsFromFirebse.push(newOption);
+              if (_this.props.options.path == '/restaurant_collection' && user && user.userRole == 'vendor') {
+                //alert(currentDocument.title)
+                if (user.email == currentDocument.owner) {
+                  optionsFromFirebse.push(newOption);
+                }
+              } else {
+                optionsFromFirebse.push(newOption);
+              }
+              
+              
 
           });
           _this.setState({options:optionsFromFirebse})
@@ -139,6 +160,7 @@ class Relation extends Component {
         <div className={Config.designSettings.editElementDivClass}>
             <label className="control-label"></label>
             <select className={this.props.class+" form-control"} value={this.props.isFirestore&&this.props.options.isValuePath?"/"+this.state.value.path:this.state.value} onChange={this.handleChange}>
+              <option value="">Select</option>
               {this.state.options.map((val)=>{
                 return this.createOption(val)
               })}

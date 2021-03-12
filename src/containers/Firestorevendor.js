@@ -35,6 +35,8 @@ class Firestorevendor extends Component {
     this.state={
       documents:[],
       collections:[],
+      restaurants:[],
+      selectedRest:"",
       currentCollectionName:"",
       isCollection:false,
       isDocument:false,
@@ -90,6 +92,7 @@ class Firestorevendor extends Component {
     this.viewCreateMenuDialog = this.viewCreateMenuDialog.bind(this);
     this.cancelCreateMenuDialog = this.cancelCreateMenuDialog.bind(this);
     this.rejectThisOrder = this.rejectThisOrder.bind(this);
+    this.getRestaurants = this.getRestaurants.bind(this);
     
 
   }
@@ -99,6 +102,7 @@ class Firestorevendor extends Component {
    * Start getting data
    */
   componentDidMount(){
+    this.getRestaurants();
       window.getDemo().reinitializeSideClose();
       this.findFirestorePath();
 
@@ -870,8 +874,39 @@ class Firestorevendor extends Component {
   }
 
   viewCreateMenuDialog(){
-    console.log("display menu modal")
+    console.log("display menu modal")    
+   // this.getRestaurants()
+
     this.refs.viewCreateMenuRequest.show();
+  }
+
+  getRestaurants = ()=> {
+    //if (this.state.currentCollectionName === 'restaurant') {
+      var restaurantRef = firebase.app.firestore().collection("restaurant_collection");
+      var restaurants = [];
+      restaurantRef = restaurantRef.where('owner', '==', firebase.app.auth().currentUser.email).get()
+      .then(snapshot => {
+        if (snapshot) {
+          snapshot.forEach(doc => {
+            var rest = doc.data();
+            rest.id = doc.id;
+            //rest.val = 'restaurant_collection/'+doc.id;
+            rest.val = doc.id;
+            restaurants.push(rest);
+          
+          })
+        }
+          return;
+        });
+        this.setState({restaurants: restaurants}, ()=>this.forceUpdate());
+        
+    //}
+    console.log('hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+    this.forceUpdate()
+  }
+
+  handleRestChange = (event)=> {
+    this.setState({selectedRest: event.target.value});
   }
   
   cancelCreateMenuDialog(){
@@ -899,6 +934,9 @@ class Firestorevendor extends Component {
     var _this =this;
     const collectionRef = firebase.app.firestore().collection("restaurant_collection");
     const collection = collectionRef.doc(this.state.userCollectionId);
+    if (this.state.selectedRest) {
+      const collection = collectionRef.doc(this.state.selectedRest);
+    }
   
     const restaurantRef = firebase.app.firestore().collection('restaurant').doc();
     restaurantRef.set({
@@ -1528,7 +1566,6 @@ class Firestorevendor extends Component {
 
   //MAIN RENDER FUNCTION 
   render() {
-    console.log('ddddddddddddddddd', this.state.restaurantDetails)
     return (
       <div className="content">
         {this.generateNavBar()}
@@ -1575,7 +1612,7 @@ class Firestorevendor extends Component {
                         deleteFieldAction={this.deleteFieldAction} 
                         updateAction={this.updateAction}  
                         theKey={item.theKey} 
-                        isDisabled={true}
+                        //isDisabled={true}
                         value={item.value} />)
                     
 
@@ -1842,6 +1879,15 @@ class Firestorevendor extends Component {
                               <input type="text" value={this.state.menuTitle} onChange={this.handleChangeMenuTitle} className="form-control" />
                           </div>
                       </div>
+                      {(this.state.restaurants) ?<div className="form-group">
+                <label className="control-label">Restaurant</label>
+                <select className="form-control" value={this.state.selectedRest} onChange={this.handleRestChange}>
+                  <option value="">select</option>
+                  {this.state.restaurants.map((rest,index)=>{
+                    return <option value={rest.val}>{rest.title}</option>
+                  })}
+                </select>
+            </div>:<div></div>}
                       <div className="input-group">
                           <span className="input-group-addon">
                               <i className="material-icons">work</i>
