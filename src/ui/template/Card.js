@@ -15,7 +15,7 @@ import React, { Component } from 'react'
  */
 export default class CardUI extends Component {
     actionView(){
-            if(this.props.showAction){
+            if(this.props.showAction && this.props.title !='Fields'){
                 return (
                 <a  onClick={()=>{this.props.action()}}><div id="addDiv" className="card-header card-header-icon" data-background-color="purple" style={{float:"right"}}>
                     <i className="material-icons">add</i>
