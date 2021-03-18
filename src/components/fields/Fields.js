@@ -100,7 +100,7 @@ class Fields extends Component {
   }
 
   displayFields(){
-    var ft=Config.adminConfig.fieldsTypes; //Our field types
+    var ft=Config.adminConfig.fieldsTypes; //Our field types    
     var currentElementName=this.props.theKey; //Current key, the current element name, example, name, desciption, created_at
     var options=this.getOptions(this.props.theKey) //Options for current key
     var optionsLabels=this.getOptionsLabels(this.props.theKey); //Options labels for current key
@@ -133,7 +133,6 @@ class Fields extends Component {
         if(doesThisFieldisOfTheCurrentType){
 
           //Get the field type by they key used
-          console.log(key);
           switch (key) {
             
               case "iconmd":

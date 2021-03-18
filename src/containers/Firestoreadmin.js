@@ -474,6 +474,13 @@ class Firestoreadmin extends Component {
           arrayNames.push(key)
       });
 
+      /// Sorting keys descending
+      fieldsAsArray.sort(function(a, b) {
+        var objA = a.theKey.toUpperCase();
+        var objB = b.theKey.toUpperCase();
+        return (objA > objB) ? -1 : (objA < objB) ? 1 : 0;
+    });
+
       var newState={};
       newState.fieldsAsArray=fieldsAsArray;
       newState.arrayNames=arrayNames;

@@ -383,7 +383,7 @@ class Firestorevendor extends Component {
             if(collection==="restaurant_collection" && currentDocument.owner===_this.state.user.email){
               //Save in the list of documents
               documents.push(currentDocument)
-            }else if(collection==="restaurant" && currentDocument.collection.id===_this.state.userCollectionId){
+            }else if(collection==="restaurant" && currentDocument.owner ===_this.state.user.email){
               documents.push(currentDocument)
             }else if(collection==="orders" && currentDocument.restaurantID===_this.state.userCollectionId){
               
@@ -549,6 +549,7 @@ class Firestorevendor extends Component {
                   if(currentElementClasss=="Array"){
                       //Add it in the arrays  list
                       arrays[key]=records[key];
+                      fields[key]=records[key];
                   }else if(currentElementClasss=="Object"){
                       //Add it in the elements list
                       var isElementMentForTheArray=false; //Do we have to put this object in the array
@@ -630,6 +631,13 @@ class Firestorevendor extends Component {
       Object.keys(arrays).forEach((key)=>{
           arrayNames.push(key)
       });
+
+      /// Sorting keys descending
+      fieldsAsArray.sort(function(a, b) {
+        var objA = a.theKey.toUpperCase();
+        var objB = b.theKey.toUpperCase();
+        return (objA > objB) ? -1 : (objA < objB) ? 1 : 0;
+    });
 
       var newState={};
       newState.fieldsAsArray=fieldsAsArray;
