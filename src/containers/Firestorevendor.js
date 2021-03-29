@@ -36,6 +36,7 @@ class Firestorevendor extends Component {
       documents:[],
       collections:[],
       restaurants:[],
+      restaurantIDs:[],
       selectedRest:"",
       currentCollectionName:"",
       isCollection:false,
@@ -378,18 +379,17 @@ class Firestorevendor extends Component {
 
             // console.log(doc.id, " => ", currentDocument);
             // console.log("user ", _this.state.user.email);
-            
 
             if(collection==="restaurant_collection" && currentDocument.owner===_this.state.user.email){
               //Save in the list of documents
               documents.push(currentDocument)
             }else if(collection==="restaurant" && currentDocument.owner ===_this.state.user.email){
               documents.push(currentDocument)
-            }else if(collection==="orders" && currentDocument.restaurantID===_this.state.userCollectionId){
+            }else if(collection==="orders" && _this.state.restaurantIDs.includes(currentDocument.restaurantID)){
               
               currentDocument.orderID=doc.id;
               documents.push(currentDocument)
-            }else if(collection==="dinein"  && currentDocument.restaturantOwner ===_this.state.user.email){
+            }else if(collection==="dinein"  && _this.state.restaurantIDs.includes(currentDocument.restaurantID)){
               documents.push(currentDocument)
             }
 
@@ -892,6 +892,7 @@ class Firestorevendor extends Component {
     //if (this.state.currentCollectionName === 'restaurant') {
       var restaurantRef = firebase.app.firestore().collection("restaurant_collection");
       var restaurants = [];
+      var restaurantIDs = [];
       restaurantRef = restaurantRef.where('owner', '==', firebase.app.auth().currentUser.email).get()
       .then(snapshot => {
         if (snapshot) {
@@ -901,12 +902,13 @@ class Firestorevendor extends Component {
             //rest.val = 'restaurant_collection/'+doc.id;
             rest.val = doc.id;
             restaurants.push(rest);
+            restaurantIDs.push(doc.id);
           
           })
         }
           return;
         });
-        this.setState({restaurants: restaurants}, ()=>this.forceUpdate());
+        this.setState({restaurants: restaurants, restaurantIDs: restaurantIDs}, ()=>this.forceUpdate());
         
     //}
     console.log('hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
