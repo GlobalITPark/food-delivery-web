@@ -1124,7 +1124,7 @@ class Firestorevendor extends Component {
         expoToken=doc.data().expoToken;
         notifications.push({
           to:expoToken,
-          body:  (doc.data().fullName != undefined) ? `Hi ${doc.data().fullName} Your order is ready to pick up.` : "Your order is ready to pick up.",
+          body:  (doc.data().fullName != undefined) ? `Hi ${doc.data().fullName} Your order is confirmed.` : "Your order is confirmed.",
           title: restName,
           
         })
