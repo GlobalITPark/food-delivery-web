@@ -1081,6 +1081,7 @@ class Firestorevendor extends Component {
     var userId;
     var restId=this.state.fieldsAsArray[0].value;
     var restName;
+    var expoToken;
     var currentToken;
     Object.keys(document).forEach(function(key) {
       
@@ -1113,27 +1114,17 @@ class Firestorevendor extends Component {
     })
     .then(function() {
       // Send Notification
-      firebase.app.database().ref(pathToTokens).once('value').then(function(snapshot){
-        var tokens=snapshot.val();
-  
-        Object.keys(tokens).forEach(function(key) {
-          console.log("tokens",tokens);
+      firebase.app.firestore().collection("users").doc(userId).get()
+    .then(doc =>{
+      if (!doc.exists) {
+        console.log('No such user!');
+      } else {
+        console.log('userIduserIduserIduserIduserIduserIduserIduserIduserIduserIduserIduserIduserId', doc.data().fullName)
 
-          console.log("token key",tokens[key]);
-
-          if(tokens[key].orderUserId && tokens[key].orderUserId===userId){
-            console.log("token key orderUserId",tokens[key].orderUserId);
-
-            currentToken=tokens[key].token;
-            console.log("currentToken",currentToken);
-
-          }
-          
-        });
-        console.log("current documents",document);
+        expoToken=doc.data().expoToken;
         notifications.push({
-          to:currentToken,
-          body: "Your order is ready to pick up.",
+          to:expoToken,
+          body:  (doc.data().fullName != undefined) ? `Hi ${doc.data().fullName} Your order is ready to pick up.` : "Your order is ready to pick up.",
           title: restName,
           
         })
@@ -1150,7 +1141,38 @@ class Firestorevendor extends Component {
         }else{
             alert("There are no subscribed tokens");
         }
-      })
+      }
+    })
+    .catch(err => {
+      console.log('Error getting user', err);
+    });
+
+
+      // firebase.app.database().ref(pathToTokens).once('value').then(function(snapshot){
+      //   var tokens=snapshot.val();
+      //   console.log(tokens);
+  
+      //   if (tokens) {
+      //      Object.keys(tokens).forEach(function(key) {
+      //     console.log("tokens",tokens);
+
+      //     console.log("token key",tokens[key]);
+
+      //     if(tokens[key].orderUserId && tokens[key].orderUserId===userId){
+      //       console.log("token key orderUserId",tokens[key].orderUserId);
+
+      //       currentToken=tokens[key].token;
+      //       console.log("currentToken",currentToken);
+
+      //     }
+          
+      //   });
+      //   }
+       
+      //   console.log("current documents",document);
+      //   console.log("to:currentToken",expoToken);
+        
+      // })
     })
     .catch(function(error) {
         // The document probably doesn't exist.
