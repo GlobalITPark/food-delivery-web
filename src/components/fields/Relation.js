@@ -58,9 +58,9 @@ class Relation extends Component {
                 name:currentDocument[_this.props.options.display],
               }
               //console.log(newOption);
-              if (_this.props.options.path == '/restaurant_collection' && user && user.userRole == 'vendor') {
+              if (_this.props.options.path === '/restaurant_collection' && user && user.userRole === 'vendor') {
                 //alert(currentDocument.title)
-                if (user.email == currentDocument.owner) {
+                if (user.email === currentDocument.owner) {
                   optionsFromFirebse.push(newOption);
                 }
               } else {

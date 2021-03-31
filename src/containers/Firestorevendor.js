@@ -58,6 +58,8 @@ class Firestorevendor extends Component {
       menuDescription: '',
       expected_time_of_delivery: '',
       message_optional: '',
+      orderStatus: '',
+      orderedRestaurant: '',
       menuCalories: 0,
       menuPrice:0
     };
@@ -426,6 +428,26 @@ class Firestorevendor extends Component {
         docRef.get().then(function(doc) {
             if (doc.exists) {
                 console.log("Document data:", doc.data());
+                console.log("Document data:", _this.state.restaurantDetails);
+                if (doc.data().order && doc.data().order.length> 0) {
+                   // This is an order detail so lets update order related details
+                   firebase.app
+                     .firestore()
+                     .collection("restaurant_collection")
+                     .doc(doc.data().restaurantID)
+                     .get()
+                     .then((rest) => {
+                       if (rest.exists) {
+                          _this.setState({
+                            expected_time_of_delivery: (doc.data().expected_time_of_delivery) ? doc.data().expected_time_of_delivery : '',
+                            message_optional: (doc.data().message_optional) ? doc.data().message_optional : '',
+                            orderStatus: (doc.data().status) ? doc.data().status : '',
+                            orderedRestaurant: rest.data(),
+                          })
+                       } 
+                     });                    
+                  
+                }
 
                 //Directly process the data
                 _this.processRecords(doc.data())  
@@ -1107,9 +1129,9 @@ class Firestorevendor extends Component {
     console.log("collection",collection);
 
     firebase.app.firestore().collection("orders").doc(collection).update({
-      status:"order_confirmed",
-      expected_time_of_delivery: this.state.expected_time_of_delivery,
-      message_optional: this.state.message_optional,
+      status: (_this.state.orderStatus) ? _this.state.orderStatus : 'confirmed',
+      expected_time_of_delivery: _this.state.expected_time_of_delivery,
+      message_optional: _this.state.message_optional,
 
     })
     .then(function() {
@@ -1119,13 +1141,13 @@ class Firestorevendor extends Component {
       if (!doc.exists) {
         console.log('No such user!');
       } else {
-        console.log('userIduserIduserIduserIduserIduserIduserIduserIduserIduserIduserIduserIduserId', doc.data().fullName)
-
+        var status = _this.state.orderStatus
+        status = status.replaceAll('_', ' ');
         expoToken=doc.data().expoToken;
         notifications.push({
           to:expoToken,
-          body:  (doc.data().fullName != undefined) ? `Hi ${doc.data().fullName} Your order is confirmed.` : "Your order is confirmed.",
-          title: restName,
+          body:  (doc.data().fullName != undefined) ? `Hi ${doc.data().fullName} Your order is ${status}.` : `Your order is ${status}.`,
+          title: (_this.state.orderedRestaurant.title) ? _this.state.orderedRestaurant.title : restName ,
           
         })
         if(notifications.length>0){
@@ -1137,7 +1159,18 @@ class Firestorevendor extends Component {
                 .set('Content-Type', 'application/json')
                 //.set('User-Agent', 'expo-server-sdk-node/2.3.3')
                 .send(json)
-                .end(_this.sendCallback)
+                .end(()=>{
+                  var d = new Date();
+                  var months = ['January', 'February', 'March', 'April', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                  var db = firebase.app.firestore();
+                  db.collection('notifications').doc(userId).set({
+                    userId: userId,
+                    type: "order_update",
+                    title: (_this.state.orderedRestaurant.title) ? _this.state.orderedRestaurant.title : restName ,
+                    message: (doc.data().fullName != undefined) ? `Hi ${doc.data().fullName} Your order is ${status}.` : `Your order is ${status}.`,
+                    longMessage: d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear()+ ' ' + d.getHours()+ ':'+ d.getMinutes(),
+                  });
+                })
         }else{
             alert("There are no subscribed tokens");
         }
@@ -1187,7 +1220,7 @@ class Firestorevendor extends Component {
 
   }
   
-  rejectThisOrder = ()=>{
+  rejectThisOrderBAK = ()=>{
     console.log('confirmOrderAndSendNotification clicked');
 
     var _this=this;
@@ -1208,7 +1241,7 @@ class Firestorevendor extends Component {
 
     firebase.app.firestore().collection("orders").doc(collection).update({
       status:"rejected",
-      message_optional: this.state.reason_for_reject
+      message_optional: this.state.message_optional
     })
     .then(function() {
      
@@ -1217,6 +1250,20 @@ class Firestorevendor extends Component {
         // The document probably doesn't exist.
         console.error("Error updating document: ", error);
     });
+
+    this.refs.rejectOderPickup.hide();
+
+  }
+  
+  rejectThisOrder = ()=>{
+    console.log('confirmOrderAndSendNotification clicked');
+
+    var _this=this;
+    _this.setState({
+      message_optional: _this.state.message_optional,
+      orderStatus: 'rejected'
+    },_this.confirmOrderAndSendNotification )
+    
 
     this.refs.rejectOderPickup.hide();
 
@@ -1603,363 +1650,606 @@ class Firestorevendor extends Component {
         {this.generateNavBar()}
 
         <div className="content" sub={this.state.lastSub}>
-
           <div className="container-fluid">
+            <div style={{ textAlign: "center" }}>
+              {/* LOADER */}
+              {this.state.isLoading ? (
+                <PulseLoader color="#8637AD" size="12px" margin="4px" />
+              ) : (
+                ""
+              )}
+            </div>
 
-          <div style={{textAlign: 'center'}}>
-            {/* LOADER */}
-            {this.state.isLoading?<PulseLoader color="#8637AD" size="12px" margin="4px"/>:""}
-          </div>
-
-           {/* NOTIFICATIONS */}
-              {this.state.notifications?this.state.notifications.map((notification)=>{
-                  return this.generateNotifications(notification)
-              }):""}
+            {/* NOTIFICATIONS */}
+            {this.state.notifications
+              ? this.state.notifications.map((notification) => {
+                  return this.generateNotifications(notification);
+                })
+              : ""}
 
             {/* Documents in collection */}
-            {this.state.isCollection&&this.state.documents.length>0?this.makeCollectionTable():""}
+            {this.state.isCollection && this.state.documents.length > 0
+              ? this.makeCollectionTable()
+              : ""}
 
             {/* DIRECT VALUE */}
-              {this.state.directValue&&this.state.directValue.length>0?this.makeValueCard(this.state.directValue):""}
-
+            {this.state.directValue && this.state.directValue.length > 0
+              ? this.makeValueCard(this.state.directValue)
+              : ""}
 
             {/* FIELDS */}
-              {this.state.fieldsAsArray&&this.state.fieldsAsArray.length>0?(
-              <CardUI 
-              name={"fields"} 
-              currentCollectionName={this.state.currentCollectionName} 
-              lastSub={this.state.lastSub} showAction={true} 
-              action={()=>this.refs.simpleDialog.show()} 
-              confirmOrderAction={this.state.lastSub==="orders+"+this.state.currentCollectionName?()=>this.refs.confirmPickup.show():""} 
-              rejectOrderAction={this.state.lastSub==="orders+"+this.state.currentCollectionName?()=>this.refs.rejectOderPickup.show():""} 
-              title={Common.capitalizeFirstLetter(Config.adminConfig.fieldBoxName)}
+            {this.state.fieldsAsArray && this.state.fieldsAsArray.length > 0 ? (
+              <CardUI
+                name={"fields"}
+                currentCollectionName={this.state.currentCollectionName}
+                lastSub={this.state.lastSub}
+                showAction={true}
+                action={() => this.refs.simpleDialog.show()}
+                confirmOrderAction={
+                  this.state.lastSub ===
+                  "orders+" + this.state.currentCollectionName
+                    ? () => this.refs.confirmPickup.show()
+                    : ""
+                }
+                rejectOrderAction={
+                  this.state.lastSub ===
+                  "orders+" + this.state.currentCollectionName
+                    ? () => this.refs.rejectOderPickup.show()
+                    : ""
+                }
+                title={Common.capitalizeFirstLetter(
+                  Config.adminConfig.fieldBoxName
+                )}
               >
-                     {this.state.fieldsAsArray?this.state.fieldsAsArray.map((item)=>{
-                      
+                {this.state.fieldsAsArray
+                  ? this.state.fieldsAsArray.map((item) => {
                       return (
-                      <Fields 
-                        isFirestore={true}
-                        parentKey={null}
-                        key={item.theKey+this.state.lastSub} 
-                        deleteFieldAction={this.deleteFieldAction} 
-                        updateAction={this.updateAction}  
-                        theKey={item.theKey} 
-                        //isDisabled={true}
-                        value={item.value} />)
-                    
-
-                  }):"" }
-                  
-                </CardUI>
-                ):""}
-
+                        <Fields
+                          isFirestore={true}
+                          parentKey={null}
+                          key={item.theKey + this.state.lastSub}
+                          deleteFieldAction={this.deleteFieldAction}
+                          updateAction={this.updateAction}
+                          theKey={item.theKey}
+                          //isDisabled={true}
+                          value={item.value}
+                        />
+                      );
+                    })
+                  : ""}
+              </CardUI>
+            ) : (
+              ""
+            )}
 
             {/* COLLECTIONS */}
-            {this.state.theSubLink==null&&this.state.isDocument&&this.state.collections&&this.state.collections.length>0?(
-                <CardUI name={"collections"} showAction={false} title={"Collections"}>
-                    {this.state.theSubLink==null&&this.state.collections?this.state.collections.map((item)=>{
-                              var theLink="/firestorevendor/"+this.state.completePath+Config.adminConfig.urlSeparator+item;
-                              return ( <Link to={theLink}><a className="btn">{item}<div className="ripple-container"></div></a></Link>)
-                          }):"" }
-                </CardUI>):""}
+            {this.state.theSubLink == null &&
+            this.state.isDocument &&
+            this.state.collections &&
+            this.state.collections.length > 0 ? (
+              <CardUI
+                name={"collections"}
+                showAction={false}
+                title={"Collections"}
+              >
+                {this.state.theSubLink == null && this.state.collections
+                  ? this.state.collections.map((item) => {
+                      var theLink =
+                        "/firestorevendor/" +
+                        this.state.completePath +
+                        Config.adminConfig.urlSeparator +
+                        item;
+                      return (
+                        <Link to={theLink}>
+                          <a className="btn">
+                            {item}
+                            <div className="ripple-container"></div>
+                          </a>
+                        </Link>
+                      );
+                    })
+                  : ""}
+              </CardUI>
+            ) : (
+              ""
+            )}
 
             {/* ARRAYS */}
-                {this.state.arrayNames?this.state.arrayNames.map((key)=>{
-                  return this.makeArrayCard(key)
-                }):""}
+            {this.state.arrayNames
+              ? this.state.arrayNames.map((key) => {
+                  return this.makeArrayCard(key);
+                })
+              : ""}
 
-                {/* ELEMENTS MERGED IN ARRAY */}
-                {this.state.elementsInArray&&this.state.elementsInArray.length>0?( this.makeTableCardForElementsInArray()):""}
+            {/* ELEMENTS MERGED IN ARRAY */}
+            {this.state.elementsInArray && this.state.elementsInArray.length > 0
+              ? this.makeTableCardForElementsInArray()
+              : ""}
 
-                {/* ELEMENTS */}
-                {this.state.elements&&this.state.elements.length>0?(
-                  <CardUI name={"elements"} showAction={false} title={this.state.lastPathItem+"' elements"}>
-                    {this.state.elements?this.state.elements.map((item)=>{
-                                    var theLink="/firevendor/"+this.state.completePath+Config.adminConfig.urlSeparatorFirestoreSubArray+item.uidOfFirebase;
-                                    if(this.state.theSubLink!=null){
-                                      theLink=this.state.theSubLink+Config.adminConfig.urlSeparatorFirestoreSubArray+item.uidOfFirebase;
-                                    }
-                                      
-                                    //alert(theLink);
-                                    return ( <Link onClick={()=>{this.showSubItems(theLink)}}><a className="btn">{item.uidOfFirebase}<div className="ripple-container"></div></a></Link>)
-                                }):"" }
-                  </CardUI>):""}
+            {/* ELEMENTS */}
+            {this.state.elements && this.state.elements.length > 0 ? (
+              <CardUI
+                name={"elements"}
+                showAction={false}
+                title={this.state.lastPathItem + "' elements"}
+              >
+                {this.state.elements
+                  ? this.state.elements.map((item) => {
+                      var theLink =
+                        "/firevendor/" +
+                        this.state.completePath +
+                        Config.adminConfig.urlSeparatorFirestoreSubArray +
+                        item.uidOfFirebase;
+                      if (this.state.theSubLink != null) {
+                        theLink =
+                          this.state.theSubLink +
+                          Config.adminConfig.urlSeparatorFirestoreSubArray +
+                          item.uidOfFirebase;
+                      }
 
-
-
-
+                      //alert(theLink);
+                      return (
+                        <Link
+                          onClick={() => {
+                            this.showSubItems(theLink);
+                          }}
+                        >
+                          <a className="btn">
+                            {item.uidOfFirebase}
+                            <div className="ripple-container"></div>
+                          </a>
+                        </Link>
+                      );
+                    })
+                  : ""}
+              </CardUI>
+            ) : (
+              ""
+            )}
           </div>
         </div>
         <SkyLight hideOnOverlayClicked ref="deleteDialog" title="">
-          <span><h3  className="center-block">Delete data</h3></span>
+          <span>
+            <h3 className="center-block">Delete data</h3>
+          </span>
           <div className="col-md-12">
-              <Notification type="danger" >All data at this location, but not nested collections, will be deleted! To delete any collection's data go in each collection and detele the documents</Notification>
+            <Notification type="danger">
+              All data at this location, but not nested collections, will be
+              deleted! To delete any collection's data go in each collection and
+              detele the documents
+            </Notification>
           </div>
+          <div className="col-md-12">Data Location</div>
           <div className="col-md-12">
-              Data Location
-          </div>
-          <div className="col-md-12">
-              <b>{this.state.pathToDelete+"/"+this.state.keyToDelete}</b>
+            <b>{this.state.pathToDelete + "/" + this.state.keyToDelete}</b>
           </div>
 
-          <div className="col-sm-12" style={{marginTop:80}}>
-            <div className="col-sm-6">
+          <div className="col-sm-12" style={{ marginTop: 80 }}>
+            <div className="col-sm-6"></div>
+            <div className="col-sm-3 center-block">
+              <a
+                onClick={this.cancelDelete}
+                className="btn btn-info center-block"
+              >
+                Cancel
+              </a>
             </div>
             <div className="col-sm-3 center-block">
-              <a onClick={this.cancelDelete} className="btn btn-info center-block">Cancel</a>
+              <a
+                onClick={this.doDelete}
+                className="btn btn-danger center-block"
+              >
+                Delete
+              </a>
             </div>
-            <div className="col-sm-3 center-block">
-              <a onClick={this.doDelete} className="btn btn-danger center-block">Delete</a>
-            </div>
-
           </div>
-
         </SkyLight>
 
         <SkyLight hideOnOverlayClicked ref="addCollectionDialog" title="">
-          <span><h3  className="center-block">Add first document in collection</h3></span>
+          <span>
+            <h3 className="center-block">Add first document in collection</h3>
+          </span>
           <div className="col-md-12">
-              <Notification type="success" >Looks like there are no documents in this collection. Add your first document in this collection</Notification>
+            <Notification type="success">
+              Looks like there are no documents in this collection. Add your
+              first document in this collection
+            </Notification>
           </div>
 
+          <div className="col-md-12">Data Location</div>
           <div className="col-md-12">
-              Data Location
+            <b>{this.state.showAddCollection}</b>
           </div>
-          <div className="col-md-12">
-              <b>{this.state.showAddCollection}</b>
-          </div>
-          
 
-          <div className="col-sm-12" style={{marginTop:80}}>
-            <div className="col-sm-6">
+          <div className="col-sm-12" style={{ marginTop: 80 }}>
+            <div className="col-sm-6"></div>
+            <div className="col-sm-3 center-block">
+              <a
+                onClick={this.cancelAddFirstItem}
+                className={
+                  Config.designSettings.buttonInfoClass + " center-block"
+                }
+              >
+                Cancel
+              </a>
             </div>
             <div className="col-sm-3 center-block">
-              <a onClick={this.cancelAddFirstItem} className={Config.designSettings.buttonInfoClass+" center-block"}>Cancel</a>
+              <a
+                onClick={() => {
+                  this.addDocumentToCollection(
+                    this.state.currentCollectionName
+                  );
+                }}
+                className={
+                  Config.designSettings.buttonSuccessClass + " center-block"
+                }
+              >
+                ADD
+              </a>
             </div>
-            <div className="col-sm-3 center-block">
-              <a onClick={()=>{this.addDocumentToCollection(this.state.currentCollectionName)}} className={Config.designSettings.buttonSuccessClass+" center-block"}>ADD</a>
-            </div>
-
           </div>
-
         </SkyLight>
 
         <SkyLight hideOnOverlayClicked ref="simpleDialog" title="">
-          <span><h3  className="center-block">Add new key</h3></span>
+          <span>
+            <h3 className="center-block">Add new key</h3>
+          </span>
           <br />
-          <div  className="card-content">
+          <div className="card-content">
             <div className="row">
               <label className="col-sm-3 label-on-left">Name of they key</label>
               <div className="col-sm-12">
-                <Input updateAction={this.updateAction} class="" theKey="NAME_OF_THE_NEW_KEY" value={"name"} />
+                <Input
+                  updateAction={this.updateAction}
+                  class=""
+                  theKey="NAME_OF_THE_NEW_KEY"
+                  value={"name"}
+                />
               </div>
-              <div className="col-sm-1">
-              </div>
+              <div className="col-sm-1"></div>
             </div>
-          </div><br /><br />
-          <div  className="card-content">
+          </div>
+          <br />
+          <br />
+          <div className="card-content">
             <div className="row">
               <label className="col-sm-3 label-on-left">Value</label>
               <div className="col-sm-12">
-                <Input updateAction={this.updateAction} class="" theKey="VALUE_OF_THE_NEW_KEY" value={"value"} />
+                <Input
+                  updateAction={this.updateAction}
+                  class=""
+                  theKey="VALUE_OF_THE_NEW_KEY"
+                  value={"value"}
+                />
               </div>
-              <div className="col-sm-1">
-              </div>
+              <div className="col-sm-1"></div>
             </div>
           </div>
           <div className="col-sm-12 ">
-            <div className="col-sm-3 ">
-            </div>
+            <div className="col-sm-3 "></div>
             <div className="col-sm-6 center-block">
-              <a onClick={this.addKey} className="btn btn-rose btn-round center-block"><i className="fa fa-save"></i>   Add key</a>
+              <a
+                onClick={this.addKey}
+                className="btn btn-rose btn-round center-block"
+              >
+                <i className="fa fa-save"></i> Add key
+              </a>
             </div>
-            <div className="col-sm-3 ">
-            </div>
+            <div className="col-sm-3 "></div>
           </div>
         </SkyLight>
 
         <SkyLight hideOnOverlayClicked ref="confirmPickup" title="">
-          <span><h3  className="center-block">Confirm Order</h3></span>
-          <div  className="card-content">
+          <span>
+            <h3 className="center-block">Change Order status</h3>
+          </span>
+          <div className="card-content">
             <div className="row">
-             <h5>Are you sure the order is ready?</h5>
-             <h5>Order ID : {this.state.currentCollectionName}</h5>
+              {/* <h5>Change the order status</h5> */}
+              <h5>Order ID : {this.state.currentCollectionName}</h5>
             </div>
             <div>
-              <label className="col-sm-3 label-on-left">Expected Time</label><br/>
-              <input type="text" onChange={(event)=>this.setState({expected_time_of_delivery: event.target.value})} value={this.state.expected_time_of_delivery} className="col-sm-6 form-control" name="expected_time_of_delivery" />
-              <br/>
-              <label className="col-sm-3 label-on-left" >Message (Optional)</label>
-              <textarea onChange={(event)=>this.setState({message_optional: event.target.value})} value={this.state.message_optional} className="form-control" cols={3} name="message_optional" >
-
-              </textarea>
-
+              <row>
+              <label className="col-sm-3 label-on-left">Order Status</label>
+              <select className="col-sm-9 form-control form-control-sm" value={this.state.orderStatus} onChange={(e)=>this.setState({orderStatus: e.target.value})}>
+                <option value="">select</option>                
+                <option value="confirmed">Order Confirmed</option>                
+                <option value="ready_to_pick">Ready To Pick</option>
+                <option value="picked_up">Picked Up</option>
+                <option value="canceled">Order Canceled</option>
+                <option value="out_for_delivery">Out For Delivery</option>
+                <option value="delivered">Order Delivered</option>
+                <option value="cannot_deliver">Cannot Deliver</option>
+              </select>
+              </row>
+            </div>
+            <br />
+            <div>
+              <label className="col-sm-3 label-on-left">Expected Time</label>
+              <br />
+              <input
+                type="text"
+                onChange={(event) =>
+                  this.setState({
+                    expected_time_of_delivery: event.target.value,
+                  })
+                }
+                value={this.state.expected_time_of_delivery}
+                className="col-sm-6 form-control"
+                name="expected_time_of_delivery"
+              />
+              <br />
+              <label className="col-sm-3 label-on-left">
+                Message (Optional)
+              </label>
+              <textarea
+                onChange={(event) =>
+                  this.setState({ message_optional: event.target.value })
+                }
+                value={this.state.message_optional}
+                className="form-control"
+                cols={3}
+                name="message_optional"
+              ></textarea>
             </div>
           </div>
-        
+
           <div className="col-sm-12 ">
-            <div className="col-sm-3 ">
-            </div>
+            <div className="col-sm-3 "></div>
             <div className="col-sm-6 center-block">
-              <a onClick={this.confirmOrderAndSendNotification} className="btn btn-rose btn-round center-block"><i className="fa fa-save"></i>Order Ready</a>
+              <a
+                onClick={this.confirmOrderAndSendNotification}
+                className="btn btn-rose btn-round center-block"
+              >
+                <i className="fa fa-save"></i>Change status
+              </a>
             </div>
-            <div className="col-sm-3 ">
-            </div>
+            <div className="col-sm-3 "></div>
           </div>
         </SkyLight>
-        
+
         <SkyLight hideOnOverlayClicked ref="rejectOderPickup" title="">
-          <span><h3  className="center-block">Reject Order</h3></span>
-          <div  className="card-content">
+          <span>
+            <h3 className="center-block">Reject Order</h3>
+          </span>
+          <div className="card-content">
             <div className="row">
-             <h5>Are you sure you want to reject the order?</h5>
-             <h5>Order ID : {this.state.currentCollectionName}</h5>
+              <h5>Are you sure you want to reject the order?</h5>
+              <h5>Order ID : {this.state.currentCollectionName}</h5>
             </div>
             <div>
-              
-              <label className="col-sm-3 label-on-left" >Reason for reject</label>
-              <textarea onChange={(event)=>this.setState({reason_for_reject: event.target.value})} value={this.state.reason_for_reject} className="form-control" cols={3} name="message_optional" >
-
-              </textarea>
-
+              <label className="col-sm-3 label-on-left">
+                Reason for reject
+              </label>
+              <textarea
+                onChange={(event) =>
+                  this.setState({ message_optional: event.target.value })
+                }
+                value={this.state.message_optional}
+                className="form-control"
+                cols={3}
+                name="message_optional"
+              ></textarea>
             </div>
           </div>
-        
+
           <div className="col-sm-12 ">
-            <div className="col-sm-3 ">
-            </div>
+            <div className="col-sm-3 "></div>
             <div className="col-sm-6 center-block">
-              <a onClick={this.rejectThisOrder} className="btn btn-rose btn-round center-block"><i className="fa fa-save"></i>Reject</a>
+              <a
+                onClick={this.rejectThisOrder}
+                className="btn btn-rose btn-round center-block"
+              >
+                <i className="fa fa-save"></i>Reject
+              </a>
             </div>
-            <div className="col-sm-3 ">
-            </div>
+            <div className="col-sm-3 "></div>
           </div>
-        </SkyLight>        
-        
+        </SkyLight>
 
         <SkyLight hideOnOverlayClicked ref="newOrderAlert" title="">
-          <span><h3  className="center-block">New Order Received</h3></span>
+          <span>
+            <h3 className="center-block">New Order Received</h3>
+          </span>
           <br />
-          <div  className="card-content">
+          <div className="card-content">
             <div className="row">
-             <h5>You got a new order</h5>
-          </div><br /><br />
-        
-          <div className="col-sm-12 ">
-            <div className="col-sm-3 ">
+              <h5>You got a new order</h5>
             </div>
-            <div className="col-sm-6 center-block">
-              <a onClick={this.reloadPage} className="btn btn-rose btn-round center-block"><i className="fa fa-save"></i>Check it</a>
+            <br />
+            <br />
+
+            <div className="col-sm-12 ">
+              <div className="col-sm-3 "></div>
+              <div className="col-sm-6 center-block">
+                <a
+                  onClick={this.reloadPage}
+                  className="btn btn-rose btn-round center-block"
+                >
+                  <i className="fa fa-save"></i>Check it
+                </a>
+              </div>
+              <div className="col-sm-3 "></div>
             </div>
-            <div className="col-sm-3 ">
-            </div>
-          </div>
           </div>
         </SkyLight>
-        <SkyLight dialogStyles={{height:'60%'}} hideOnOverlayClicked ref="viewCreateRestaurantRequest" title="">
+        <SkyLight
+          dialogStyles={{ height: "60%" }}
+          hideOnOverlayClicked
+          ref="viewCreateRestaurantRequest"
+          title=""
+        >
           <div className="col-md-12">
             <form onSubmit={this.createRestaurant}>
               <div className="card card-login">
-                  <div style={{background:'#211c54'}} className="card-header text-center" data-background-color="#0B3C5D">
-                      <h4 style={{marginTop:'0px',marginBottom:'0px'}} className="card-title">Add Restaurant</h4>
+                <div
+                  style={{ background: "#211c54" }}
+                  className="card-header text-center"
+                  data-background-color="#0B3C5D"
+                >
+                  <h4
+                    style={{ marginTop: "0px", marginBottom: "0px" }}
+                    className="card-title"
+                  >
+                    Add Restaurant
+                  </h4>
+                </div>
+                <div className="card-content">
+                  <h4>{this.props.error}</h4>
+                  <div className="input-group">
+                    <span className="input-group-addon">
+                      <i className="material-icons">how_to_reg</i>
+                    </span>
+                    <div className="form-group">
+                      <label className="control-label">Title</label>
+                      <input
+                        type="text"
+                        value={this.state.restaurantTitle}
+                        onChange={this.handleChangeTitle}
+                        className="form-control"
+                      />
+                    </div>
                   </div>
-                  <div className="card-content">
-                      <h4>{this.props.error}</h4>
-                      <div className="input-group">
-                          <span className="input-group-addon">
-                              <i className="material-icons">how_to_reg</i>
-                          </span>
-                          <div className="form-group">
-                              <label className="control-label">Title</label>
-                              <input type="text" value={this.state.restaurantTitle} onChange={this.handleChangeTitle} className="form-control" />
-                          </div>
-                      </div>
-                      <div className="input-group">
-                          <span className="input-group-addon">
-                              <i className="material-icons">work</i>
-                          </span>
-                          <div className="form-group">
-                              <label className="control-label">Description</label>
-                              <input type="text" value={this.state.restaurantDescription} onChange={this.handleChangeDescription} className="form-control" />
-                          </div>
-                      </div>
+                  <div className="input-group">
+                    <span className="input-group-addon">
+                      <i className="material-icons">work</i>
+                    </span>
+                    <div className="form-group">
+                      <label className="control-label">Description</label>
+                      <input
+                        type="text"
+                        value={this.state.restaurantDescription}
+                        onChange={this.handleChangeDescription}
+                        className="form-control"
+                      />
+                    </div>
                   </div>
-                  <div className="footer text-center">
-                    <a onClick={this.cancelCreateRestaurantDialog} className="btn btn-info">Cancel</a>
-                    <input type="submit" className="btn btn-danger" />
-                      
-                  </div>
+                </div>
+                <div className="footer text-center">
+                  <a
+                    onClick={this.cancelCreateRestaurantDialog}
+                    className="btn btn-info"
+                  >
+                    Cancel
+                  </a>
+                  <input type="submit" className="btn btn-danger" />
+                </div>
               </div>
-          </form> 
+            </form>
           </div>
         </SkyLight>
-        <SkyLight dialogStyles={{height:'75%'}} hideOnOverlayClicked ref="viewCreateMenuRequest" title="">
+        <SkyLight
+          dialogStyles={{ height: "75%" }}
+          hideOnOverlayClicked
+          ref="viewCreateMenuRequest"
+          title=""
+        >
           <div className="col-md-12">
             <form onSubmit={this.createMenuItem}>
               <div className="card card-login">
-                  <div style={{background:'#211c54'}} className="card-header text-center" data-background-color="#0B3C5D">
-                      <h4 style={{marginTop:'0px',marginBottom:'0px'}} className="card-title">Add Menu Item</h4>
+                <div
+                  style={{ background: "#211c54" }}
+                  className="card-header text-center"
+                  data-background-color="#0B3C5D"
+                >
+                  <h4
+                    style={{ marginTop: "0px", marginBottom: "0px" }}
+                    className="card-title"
+                  >
+                    Add Menu Item
+                  </h4>
+                </div>
+                <div className="card-content">
+                  <h4>{this.props.error}</h4>
+                  <div className="input-group">
+                    <span className="input-group-addon">
+                      <i className="material-icons">how_to_reg</i>
+                    </span>
+                    <div className="form-group">
+                      <label className="control-label">Title</label>
+                      <input
+                        type="text"
+                        value={this.state.menuTitle}
+                        onChange={this.handleChangeMenuTitle}
+                        className="form-control"
+                      />
+                    </div>
                   </div>
-                  <div className="card-content">
-                      <h4>{this.props.error}</h4>
-                      <div className="input-group">
-                          <span className="input-group-addon">
-                              <i className="material-icons">how_to_reg</i>
-                          </span>
-                          <div className="form-group">
-                              <label className="control-label">Title</label>
-                              <input type="text" value={this.state.menuTitle} onChange={this.handleChangeMenuTitle} className="form-control" />
-                          </div>
-                      </div>
-                      {(this.state.restaurants) ?<div className="form-group">
-                <label className="control-label">Restaurant</label>
-                <select className="form-control" value={this.state.selectedRest} onChange={this.handleRestChange}>
-                  <option value="">select</option>
-                  {this.state.restaurants.map((rest,index)=>{
-                    return <option value={rest.val}>{rest.title}</option>
-                  })}
-                </select>
-            </div>:<div></div>}
-                      <div className="input-group">
-                          <span className="input-group-addon">
-                              <i className="material-icons">work</i>
-                          </span>
-                          <div className="form-group">
-                              <label className="control-label">Description</label>
-                              <input type="text" value={this.state.menuDescription} 
-                              onChange={this.handleChangeMenuDescription} className="form-control" />
-                          </div>
-                      </div>
-                      <div className="input-group">
-                          <span className="input-group-addon">
-                              <i className="material-icons">money</i>
-                          </span>
-                          <div className="form-group">
-                              <label className="control-label">Price</label>
-                              <input type="text" value={this.state.menuPrice} onChange={this.handleChangeMenuPrice} className="form-control" />
-                          </div>
-                      </div>
-                      <div className="input-group">
-                          <span className="input-group-addon">
-                              <i className="material-icons">emoji_food_beverage</i>
-                          </span>
-                          <div className="form-group">
-                              <label className="control-label">Calories</label>
-                              <input type="text" value={this.state.menuCalories} onChange={this.handleChangeMenuCalories} className="form-control" />
-                          </div>
-                      </div>
+                  {this.state.restaurants ? (
+                    <div className="form-group">
+                      <label className="control-label">Restaurant</label>
+                      <select
+                        className="form-control"
+                        value={this.state.selectedRest}
+                        onChange={this.handleRestChange}
+                      >
+                        <option value="">select</option>
+                        {this.state.restaurants.map((rest, index) => {
+                          return <option value={rest.val}>{rest.title}</option>;
+                        })}
+                      </select>
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                  <div className="input-group">
+                    <span className="input-group-addon">
+                      <i className="material-icons">work</i>
+                    </span>
+                    <div className="form-group">
+                      <label className="control-label">Description</label>
+                      <input
+                        type="text"
+                        value={this.state.menuDescription}
+                        onChange={this.handleChangeMenuDescription}
+                        className="form-control"
+                      />
+                    </div>
                   </div>
-                  <div className="footer text-center">
-                    <a onClick={this.cancelCreateRestaurantDialog} className="btn btn-info">Cancel</a>
-                    <input type="submit" className="btn btn-danger" />
-                      
+                  <div className="input-group">
+                    <span className="input-group-addon">
+                      <i className="material-icons">money</i>
+                    </span>
+                    <div className="form-group">
+                      <label className="control-label">Price</label>
+                      <input
+                        type="text"
+                        value={this.state.menuPrice}
+                        onChange={this.handleChangeMenuPrice}
+                        className="form-control"
+                      />
+                    </div>
                   </div>
+                  <div className="input-group">
+                    <span className="input-group-addon">
+                      <i className="material-icons">emoji_food_beverage</i>
+                    </span>
+                    <div className="form-group">
+                      <label className="control-label">Calories</label>
+                      <input
+                        type="text"
+                        value={this.state.menuCalories}
+                        onChange={this.handleChangeMenuCalories}
+                        className="form-control"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="footer text-center">
+                  <a
+                    onClick={this.cancelCreateRestaurantDialog}
+                    className="btn btn-info"
+                  >
+                    Cancel
+                  </a>
+                  <input type="submit" className="btn btn-danger" />
+                </div>
               </div>
-          </form> 
+            </form>
           </div>
         </SkyLight>
       </div>
-    )
+    );
   }
 }
 export default Firestorevendor;
