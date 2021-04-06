@@ -65,10 +65,10 @@ class HeaderUI extends Component {
             
             <ul className="dropdown-menu userDropdownMenu" role="menu">
             <li><a>{this.state.user.email}</a></li>
-            <li><Link to="/account">Account</Link></li>
+            <li><Link to="/account">Account/ユーザー名</Link></li>
             {(this.props.isLoggedIn && (this.props.currentUser!=="visitor")) ?                            
             <li>
-                <Link to="/dashboard">Dashboard</Link> 
+                <Link to="/dashboard">Dashboard/レストランのトップページ</Link> 
             </li>
             :""
             }
@@ -84,7 +84,7 @@ class HeaderUI extends Component {
             :""
             }
             <li className="divider" />
-            <li role="button"><a onClick={this.handleLogout}>Logout</a></li>
+            <li role="button"><a onClick={this.handleLogout}>Logout/ログアウト</a></li>
             </ul>
         </li>
     );

@@ -13,7 +13,7 @@ class Appvendor extends Component {
       <div className="content">
         <NavBar/>
 
-        <div>Vendor DASHBOARD</div>
+        <div>Vendor DASHBOARD/レストランのトップページ</div>
        
       </div>
 
