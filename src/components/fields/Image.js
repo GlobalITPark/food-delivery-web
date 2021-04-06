@@ -81,7 +81,7 @@ class Image extends Component {
         <div className="fileinput-preview fileinput-exists thumbnail"></div>
         <div>
             <span className="btn btn-rose btn-round btn-file">
-                <span className="fileinput-new">Select image</span>
+                <span className="fileinput-new">Select image<br/>画像を選択</span>
                 <span className="fileinput-exists">Change</span>
                 <input type="file" style={{width:'2000px'}} id={this.props.theKey} name={this.props.theKey}  onChange={this.handleChange} />
             </span>
