@@ -6,7 +6,8 @@ import React, { Component } from 'react'
 import {BrowserRouter as Router, Link,NavLink } from 'react-router-dom'
 // import { Link } from 'react-router'
 import firebase from '../config/database'
-import {connect} from 'react-redux'
+import {connect} from 'react-redux';
+import { getLocale, setChosenLocale, translate } from '../translations';
 var md5 = require('md5');
 
 class HeaderUI extends Component {
@@ -15,6 +16,7 @@ class HeaderUI extends Component {
         super(props);
         this.state = {
             user: {},
+            chosenLocale :getLocale(),
           }
 
           this.createUserView = this.createUserView.bind(this);
@@ -23,7 +25,7 @@ class HeaderUI extends Component {
     }
 
     componentDidMount(){
-        this.authListener();
+        this.authListener();       
     }
       
     authListener(){
@@ -65,10 +67,10 @@ class HeaderUI extends Component {
             
             <ul className="dropdown-menu userDropdownMenu" role="menu">
             <li><a>{this.state.user.email}</a></li>
-            <li><Link to="/account">Account/ユーザー名</Link></li>
+            <li><Link to="/account">{translate('account')}</Link></li>
             {(this.props.isLoggedIn && (this.props.currentUser!=="visitor")) ?                            
             <li>
-                <Link to="/dashboard">Dashboard/レストランのトップページ</Link> 
+                <Link to="/dashboard">{translate('dashboard')}</Link> 
             </li>
             :""
             }
@@ -84,7 +86,7 @@ class HeaderUI extends Component {
             :""
             }
             <li className="divider" />
-            <li role="button"><a onClick={this.handleLogout}>Logout/ログアウト</a></li>
+            <li role="button"><a onClick={this.handleLogout}>{translate('logout')}</a></li>
             </ul>
         </li>
     );
@@ -94,6 +96,7 @@ class HeaderUI extends Component {
 
        console.log("HEADER : isLoggedin - "+this.props.isLoggedIn)
        console.log("HEADER : Props Current user - "+this.props.currentUser)
+       console.log("HEADER : Props Current chosenLocale - "+this.state.chosenLocale)
        
         return (
 
@@ -158,6 +161,28 @@ class HeaderUI extends Component {
                             {(this.props.isLoggedIn && (this.props.currentUser==="visitor")) ?
                             <li>
                                 <NavLink exact activeStyle={{backgroundColor:'#fffcff1a'}} to="/cart"><i className="material-icons">shopping_cart</i>{this.props.cartItems.length}</NavLink> 
+                            </li>
+                            :""
+                            }
+                            {(this.props.isLoggedIn && (this.props.currentUser==="vendor")) ?
+                            <li>
+                               <div style={{flexDirection: 'row', alignContent: 'center', paddingTop: 20}}>
+                               <input type="radio" name="locale" 
+                                   value={"result.SITE_NAME"} 
+                                   checked={this.state.chosenLocale === "en"} 
+                                   onChange={()=> {
+                                    setChosenLocale('en');
+                                    this.setState({chosenLocale: 'en'}, ()=>location.reload())
+                                   }} /> English  
+                               
+                               <input type="radio" name="locale" 
+                                   value={"result.SITE_NAME"} 
+                                   checked={this.state.chosenLocale === "jp"} 
+                                   onChange={()=> {
+                                    setChosenLocale('jp');
+                                    this.setState({chosenLocale: 'jp'}, ()=>location.reload())
+                                   }} />Japanese  
+                               </div>
                             </li>
                             :""
                             }

@@ -1,5 +1,6 @@
 import React, {Component,PropTypes} from 'react'
 import firebase from '../../config/database'
+import { translate } from '../../translations';
 import Indicator from '../Indicator'
 
 class Image extends Component {
@@ -81,7 +82,7 @@ class Image extends Component {
         <div className="fileinput-preview fileinput-exists thumbnail"></div>
         <div>
             <span className="btn btn-rose btn-round btn-file">
-                <span className="fileinput-new">Select image<br/>画像を選択</span>
+                <span className="fileinput-new">{translate('selectImage')}</span>
                 <span className="fileinput-exists">Change</span>
                 <input type="file" style={{width:'2000px'}} id={this.props.theKey} name={this.props.theKey}  onChange={this.handleChange} />
             </span>

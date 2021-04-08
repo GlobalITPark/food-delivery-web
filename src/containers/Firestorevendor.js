@@ -25,6 +25,7 @@ require("firebase/firestore");
 
 const ROUTER_PATH="/firestorevendor/";
 import { PulseLoader } from 'halogenium';
+import { translate } from '../translations';
 
 class Firestorevendor extends Component {
   
@@ -1601,12 +1602,12 @@ class Firestorevendor extends Component {
             title={items.length>0?Common.capitalizeFirstLetter(items[items.length-1]):""} />
             <div style={{ float: 'right', 'margin-top' : '-40px', 'margin-right' : '28px', 'padding-top' : '8px'}}>
               {name === 'restaurant_collection' ?
-                <a className="btn btn-primary" onClick={()=>this.viewCreateRestaurantDialog()}>Add New Restaurant<br/>新しいレストランの追加</a>
+                <a className="btn btn-primary" onClick={()=>this.viewCreateRestaurantDialog()}>{translate('addNewRestaurant')}</a>
                 :
                 ""
               }
               {name === 'restaurant' ?
-                <a className="btn btn-primary" onClick={()=>this.viewCreateMenuDialog()}>Add New Menu Item<br/>メニューの追加</a>
+                <a className="btn btn-primary" onClick={()=>this.viewCreateMenuDialog()}>{translate('addNewMenuItem')}</a>
                 :
                 ""
               }

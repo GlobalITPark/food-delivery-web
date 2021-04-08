@@ -2,6 +2,7 @@
 import React, {Component} from 'react'
 import NavItem from '../components/NavItem'
 import Config from   '../config/app';
+import  { translate } from '../translations';
 import firebase from './../config/database'
 import MasterVendorUI from './../ui/template/MasterVendor'
 var md5 = require('md5');
@@ -96,7 +97,7 @@ class MasterVendor extends Component {
                     condition={Config.designSettings.sideMenuTextWrappedInParagraph}
                     wrap={children => <p>{children}</p>}
                     >
-                    <span>{menu.name}
+                    <span>{translate(menu.name)}
                     <b className="caret"></b></span></ConditionalWrap>
 
             </a>
@@ -115,7 +116,7 @@ class MasterVendor extends Component {
            condition={Config.designSettings.sideMenuTextWrappedInParagraph}
            wrap={children => <p>{children}</p>}
           >
-          <span>{menu.name}</span></ConditionalWrap>
+          <span>{translate(menu.name)  }</span></ConditionalWrap>
         </NavItem>)
     }
 

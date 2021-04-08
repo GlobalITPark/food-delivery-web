@@ -8,6 +8,7 @@ var pjson = require('../../../package.json');
 import NavItem from '../../components/NavItem'
 import { Link } from 'react-router'
 import firebase from '../../config/database'
+import { translate } from '../../translations';
 
 const ConditionalDisplay = ({condition, children}) => condition ? children : <div></div>;
 
@@ -30,7 +31,7 @@ export default class MasterVendorUI extends Component {
     constructor(props) {
 
         super(props);
-        this.state = {};
+        this.state = {};        
 
         this.checkIsSuperAdmin = this.checkIsSuperAdmin.bind(this);
     }
@@ -62,13 +63,13 @@ export default class MasterVendorUI extends Component {
                             <a data-toggle="collapse" href="#collapseExample" className="collapsed">{this.props.user.displayName}<b className="caret"></b></a>
                             <div className="collapse" id="collapseExample">
                                 <ul className="nav">
-                                <li><Link to="/account">Account</Link></li>
+                                <li><Link to="/account">{translate('account')}</Link></li>
                                 <ConditionalDisplay condition={Config.isSaaS}>
                                     <li><Link to="/billing">Billing</Link></li>
                                 </ConditionalDisplay>
                                 {this.checkIsSuperAdmin()}
                                 <li>
-                                    <a role="button" onClick={this.props.logout} >Logout</a>
+                                    <a role="button" onClick={this.props.logout} >{translate('logout')}</a>
                                 </li>
                                 </ul>
                             </div>

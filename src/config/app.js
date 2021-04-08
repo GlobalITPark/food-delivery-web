@@ -322,7 +322,7 @@ exports.navigation=[
 exports.vendorNavigation=[
   {
     "link": "/",
-    "name": "Dashboard",
+    "name": "dashboard",
     "schema":null,
     "icon":"home",
     "path": "",
@@ -417,28 +417,28 @@ exports.vendorNavigation=[
   {
     "link": "firestorevendor",
     "path": "restaurant_collection",
-    "name": "My Restaurant/マイレストラン",
+    "name": "myRestaurant",
     "icon":"layers",
     "tableFields":["title","owner","count"],
   },
   {
     "link": "firestorevendor",
     "path": "restaurant",
-    "name": "Menu items/メニュー",
+    "name": "menuItems",
     "icon":"local_dining",
     "tableFields":["title","image","price"],
   }, 
   {
     "link": "firestorevendor",
     "path": "orders",
-    "name": "Orders/注文",
+    "name": "orders",
     "icon":"shopping_cart",
     "tableFields":["orderID","timeStamp","delivery.name","delivery.phone", "status"],
   },
   {
     "link": "firestorevendor",
     "path": "dinein",
-    "name": "Reservations/予約",
+    "name": "reservations",
     "icon":"fastfood_outlined",
     "tableFields":["userName","restaurantName","phone","noOfSeats","dineInDate","dineInTime"],
   },

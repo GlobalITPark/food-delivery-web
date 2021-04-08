@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { translate } from '../../translations'
 
 /**
  * Creates a card
@@ -32,7 +33,7 @@ export default class CardUI extends Component {
                   {this.actionView()}
                   <form className="form-horizontal">
                     <div className="card-header card-header-text" data-background-color="rose">
-                      <h5 className="card-title">{this.props.title}</h5>
+                      <h5 className="card-title">{translate(this.props.title)}</h5>
                     </div>
                     <br />
                     <div className="col-md-12">
@@ -44,8 +45,8 @@ export default class CardUI extends Component {
                 {this.props.lastSub==="orders+"+this.props.currentCollectionName?
                 (
                   <div>
-                <a style={{float:"right"}} className="btn btn-success"  onClick={()=>{this.props.confirmOrderAction()}}>Change Order Status & Notify User<br />注文ステータスの変更とユーザーへの通知</a>
-                <div><a style={{float:"right"}} className="btn btn-danger"  onClick={()=>{this.props.rejectOrderAction()}}>Reject<br/>リジェクト</a></div>
+                <a style={{float:"right"}} className="btn btn-success"  onClick={()=>{this.props.confirmOrderAction()}}>{translate('changeOrderStatusNotifyUser')}</a>
+                <div><a style={{float:"right"}} className="btn btn-danger"  onClick={()=>{this.props.rejectOrderAction()}}>{translate('reject')}</a></div>
                 </div>
                 )
                 :""}

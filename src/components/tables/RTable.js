@@ -9,6 +9,7 @@ import { Link } from 'react-router'
 import ReactTable from "react-table"
 import "react-table/react-table.css"
 import matchSorter from 'match-sorter'
+import { translate } from '../../translations'
 export default class RTable extends Component {
 
     constructor(props){
@@ -138,7 +139,7 @@ export default class RTable extends Component {
         var headers = this.state.headers;
         headers.map((header, colIndex)=>{
             columns.push({  
-                Header: Common.capitalizeFirstLetter(header),
+                Header: Common.capitalizeFirstLetter(translate(header)),
                 accessor: header,
                 //not filterable for photo and object
                 filterable: Config.adminConfig.fieldsTypes.photo.indexOf(header)>-1?false:(header.indexOf(".")>0?false:true),
@@ -151,7 +152,7 @@ export default class RTable extends Component {
 
         if(this.props.name === 'restaurant_collection'){
             columns.push({
-                Header: "Approve",
+                Header: translate('approve'),
                 filterable: false,
                 Cell: row => (
                    <div className="disabled-sorting text-center">
@@ -162,7 +163,7 @@ export default class RTable extends Component {
         }
 
         columns.push({
-            Header: "Actions",
+            Header: translate('actions'),
             filterable: false,
             Cell: row => (
                <div className="disabled-sorting text-center">

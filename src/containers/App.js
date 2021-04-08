@@ -6,11 +6,13 @@ import ReactTable from "react-table";
 import firebase from '../config/database';
 import SkyLight from 'react-skylight';
 import Notification from '../components/Notification';
+import { setDefaultLocale } from '../translations';
 // import NavBarDefault from './../ui/template/NavBarDefault'
 
 class App extends Component {
   constructor(props){
     super(props);
+    setDefaultLocale() ;
 
     this.state={
       userDetails:[],
@@ -38,6 +40,7 @@ class App extends Component {
     //Uncomment if you want to do a edirect
     //this.props.router.push('/fireadmin/clubs+skopje+items') //Path where you want user to be redirected initialy
     this.getUserDataFromDatabase();
+    
   }
 
   getUserDataFromDatabase(){
