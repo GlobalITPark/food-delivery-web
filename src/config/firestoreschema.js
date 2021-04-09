@@ -146,8 +146,10 @@ var collectionMeta={
 		"fields":{
 			"collection_news":"",
 			"description":"Your event description",
+			"description_ja":"Your event description in japanese",
 			"image":"https://i.imgur.com/svaHD6d.jpg",
 			"title":"Your event title",
+			"title_ja":"Your event title in japanese",
 			"date":"2018-01-01 18:00",
 			"isNews":"no"
 		},

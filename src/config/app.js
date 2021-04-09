@@ -55,7 +55,7 @@ exports.adminConfig={
   "html":["content"],
   "radio":["radio","radiotf","featured","isShopping","showPhotos","layout","coloring","outbound","rounded","sectionType","showNavButton"],
   "checkbox":["checkbox"],
-  "dropdowns":["type",'foodStatus',"status","dropdowns","navButtonAction"],
+  "dropdowns":["type",'foodStatus',"status","dropdowns","navButtonAction", "isNews"],
   "file":["videoField"],
   "rgbaColor":['rgba'],
   "hexColor":['*Color',"buttonText"],
@@ -68,6 +68,7 @@ exports.adminConfig={
 },
 "optionsForSelect":[
     {"key":"dropdowns","options":["new","processing","rejected","completed"]},
+    {"key":"isNews","options":["yes","no"]},
     {"key":"checkbox","options":["Skopje","Belgrade","New York",]},
     {"key":"type","options":["Bug fix","Feature","Improuvment","deleted","added","updated"]},
     {"key":"status","options":["just_created", "confirmed", "rejected", "ready_to_pick", "picked_up", "canceled",  "out_for_delivery","delivered","cannot_deliver"]},
@@ -222,7 +223,7 @@ exports.navigation=[
     "path": "news",
     "name": "News",
     "icon":"list",
-    "tableFields":["title","image",],
+    "tableFields":["title","isNews", "image",],
   },
   // {
   //   "link": "firestoreadmin",
