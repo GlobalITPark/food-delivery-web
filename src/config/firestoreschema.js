@@ -62,7 +62,8 @@ var collectionMeta={
 			"option2":"",
 			"option3":"",
 			"price":10,
-			"title":"VIP"
+			"title":"VIP",
+			"title_ja":"title in japanese"
 		},
 		"collections":[],
     },
@@ -134,7 +135,8 @@ var collectionMeta={
 			"option2":"",
 			"option3":"",
 			"price":10,
-			"title":"Big portion"
+			"title":"Big portion",
+			"title_ja":"title in japanese"
 		},
 		"collections":[],
 	},
@@ -176,7 +178,8 @@ var collectionMeta={
 			"option2":"",
 			"option3":"",
 			"price":10,
-			"title":"VIP"
+			"title":"VIP",
+			"title_ja":"title in japanese"
 		},
 		"collections":[],
     },
@@ -249,7 +252,8 @@ var collectionMeta={
 			"option2":"",
 			"option3":"",
 			"price":10,
-			"title":"VIP"
+			"title":"VIP",
+			"title_ja":"title in japanese"
 		},
 		"collections":[],
     },
