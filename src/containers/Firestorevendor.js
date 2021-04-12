@@ -394,8 +394,9 @@ class Firestorevendor extends Component {
               documents.push(currentDocument)
             }else if(collection==="dinein"  && _this.state.restaurantIDs.includes(currentDocument.restaurantID)){
               documents.push(currentDocument)
+            } else if(_this.state.currentCollectionName ==="variants"){
+              documents.push(currentDocument)
             }
-
             
           });
           console.log("DOCS----");
@@ -444,6 +445,7 @@ class Firestorevendor extends Component {
                             message_optional: (doc.data().message_optional) ? doc.data().message_optional : '',
                             orderStatus: (doc.data().status) ? doc.data().status : '',
                             orderedRestaurant: rest.data(),
+                            // Itha ivde anu modify cheyendathu
                           })
                        } 
                      });                    
@@ -1216,6 +1218,7 @@ class Firestorevendor extends Component {
     
 
     this.refs.confirmPickup.hide();
+    this.refs.completeOrder.hide();
     this.refs.rejectOderPickup.hide();
     this.refreshDataAndHideNotification();
 
@@ -1692,6 +1695,12 @@ class Firestorevendor extends Component {
                     ? () => this.refs.confirmPickup.show()
                     : ""
                 }
+                completeOrder={
+                  this.state.lastSub ===
+                  "orders+" + this.state.currentCollectionName
+                    ? () => this.refs.completeOrder.show()
+                    : ""
+                }
                 rejectOrderAction={
                   this.state.lastSub ===
                   "orders+" + this.state.currentCollectionName
@@ -1941,6 +1950,75 @@ class Firestorevendor extends Component {
         </SkyLight>
 
         <SkyLight hideOnOverlayClicked ref="confirmPickup" title="">
+          <span>
+            <h3 className="center-block">Change Order status</h3>
+          </span>
+          <div className="card-content">
+            <div className="row">
+              {/* <h5>Change the order status</h5> */}
+              <h5>Order ID : {this.state.currentCollectionName}</h5>
+            </div>
+            <div>
+              <row>
+              <label className="col-sm-3 label-on-left">Order Status</label>
+              <select className="col-sm-9 form-control form-control-sm" value={this.state.orderStatus} onChange={(e)=>this.setState({orderStatus: e.target.value})}>
+                <option value="">select</option>                
+                <option value="confirmed">Order Confirmed</option>                
+                <option value="ready_to_pick">Ready To Pick</option>
+                <option value="picked_up">Picked Up</option>
+                <option value="canceled">Order Canceled</option>
+                <option value="out_for_delivery">Out For Delivery</option>
+                <option value="delivered">Order Delivered</option>
+                <option value="cannot_deliver">Cannot Deliver</option>
+              </select>
+              </row>
+            </div>
+            <br />
+            <div>
+              <label className="col-sm-3 label-on-left">Expected Time</label>
+              <br />
+              <input
+                type="text"
+                onChange={(event) =>
+                  this.setState({
+                    expected_time_of_delivery: event.target.value,
+                  })
+                }
+                value={this.state.expected_time_of_delivery}
+                className="col-sm-6 form-control"
+                name="expected_time_of_delivery"
+              />
+              <br />
+              <label className="col-sm-3 label-on-left">
+                Message (Optional)
+              </label>
+              <textarea
+                onChange={(event) =>
+                  this.setState({ message_optional: event.target.value })
+                }
+                value={this.state.message_optional}
+                className="form-control"
+                cols={3}
+                name="message_optional"
+              ></textarea>
+            </div>
+          </div>
+
+          <div className="col-sm-12 ">
+            <div className="col-sm-3 "></div>
+            <div className="col-sm-6 center-block">
+              <a
+                onClick={this.confirmOrderAndSendNotification}
+                className="btn btn-rose btn-round center-block"
+              >
+                <i className="fa fa-save"></i>Change status
+              </a>
+            </div>
+            <div className="col-sm-3 "></div>
+          </div>
+        </SkyLight>
+        
+        <SkyLight hideOnOverlayClicked ref="completeOrder" title="">
           <span>
             <h3 className="center-block">Change Order status</h3>
           </span>

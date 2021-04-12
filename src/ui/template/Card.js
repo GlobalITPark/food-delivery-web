@@ -46,6 +46,7 @@ export default class CardUI extends Component {
                 (
                   <div>
                 <a style={{float:"right"}} className="btn btn-success"  onClick={()=>{this.props.confirmOrderAction()}}>{translate('changeOrderStatusNotifyUser')}</a>
+                <a style={{float:"right"}} className="btn btn-info"  onClick={()=>{this.props.completeOrder()}}>{translate('completeOrder')}</a>
                 <div><a style={{float:"right"}} className="btn btn-danger"  onClick={()=>{this.props.rejectOrderAction()}}>{translate('reject')}</a></div>
                 </div>
                 )

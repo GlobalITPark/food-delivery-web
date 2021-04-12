@@ -31,6 +31,7 @@ const availableLangs = {
     dineInDate:"Dine In Date",
     dineInTime:"Dine In Time",
     changeOrderStatusNotifyUser:"Change Order Status & Notify User",
+    completeOrder:"Complete Order",
 },
   'jp' : {
     dashboard:"レストランのトップページ",
@@ -65,6 +66,7 @@ const availableLangs = {
     dineInDate:"デートで食事",
     dineInTime:"時間内に食事",
     changeOrderStatusNotifyUser:"注文ステータスの変更とユーザーへの通知",
+    completeOrder:"完全な注文",
     
 }
 };
@@ -98,7 +100,6 @@ const availableLangs = {
      } else if (currentLocale == 'jp' && availableLangs.jp[word] != undefined) {
       translatedWord = availableLangs.jp[word]
     }
-    console.log('ddddddddddddddddddddddddddd', translatedWord)
     return translatedWord;
    }
    
