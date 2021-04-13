@@ -42,7 +42,7 @@ exports.adminConfig={
 "urlSeparator":"+",
 "urlSeparatorFirestoreSubArray":"~",
 "googleMapsAPIKey":"AIzaSyDc5wWlcOHydNkbCG1lWTExxliRPhNWR48",
-"previewOnlyKeys":["deliveryType", "deliveryAddress", "deliveryInstructions", "delivery.name", "delivery.phone", "timeStamp"],
+"previewOnlyKeys":["deliveryType", "deliveryAddress", "deliveryInstructions", "delivery.name", "delivery.phone", "timeStamp", "amountPayable", "pointsRedeemed"],
 
 "fieldsTypes":{
   "photo":["photo","image","category_image"],
