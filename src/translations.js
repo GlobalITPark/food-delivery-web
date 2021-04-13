@@ -19,6 +19,7 @@ const availableLangs = {
     price:"Price",
     addNewMenuItem:"Add new menu item",
     orderID:"OrderID",
+    orderValue:"Order Value",
     "timeStamp":"Time",
     "delivery.name":"Customer Name",
     "delivery.phone":"Phone Number",
@@ -32,6 +33,11 @@ const availableLangs = {
     dineInTime:"Dine In Time",
     changeOrderStatusNotifyUser:"Change Order Status & Notify User",
     completeOrder:"Complete Order",
+    deliveryCharges:"Delivery Charges",
+    total:"Total",
+    pointsAvailable:"Points Available",
+    pointsRedeem:"Points Redeem",
+    amountPayable:"Amount Payable",
 },
   'jp' : {
     dashboard:"レストランのトップページ",
@@ -67,6 +73,12 @@ const availableLangs = {
     dineInTime:"時間内に食事",
     changeOrderStatusNotifyUser:"注文ステータスの変更とユーザーへの通知",
     completeOrder:"完全な注文",
+    orderValue:"Order Value_ja",
+    deliveryCharges:"Delivery Charges_ja",
+    total:"Total_ja",
+    pointsAvailable:"Points Available_ja",
+    pointsRedeem:"Points Redeem_ja",
+    amountPayable:"Amount Payable_ja",
     
 }
 };

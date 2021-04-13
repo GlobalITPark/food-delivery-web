@@ -3,93 +3,108 @@
 /*eslint no-use-before-define: "off"*/
 /*eslint radix: "off"*/
 /*eslint no-redeclare: "off"*/
-import React, {Component} from 'react'
-import {Link} from 'react-router'
-import firebase from '../config/database'
-import Fields from '../components/fields/Fields.js'
-import Input from '../components/fields/Input.js';
-import Table from  '../components/tables/RTable.js'
-import Config from   '../config/app';
-import Common from '../common.js';
-import Notification from '../components/Notification';
-import SkyLight from 'react-skylight';
-import NavBar from './../ui/template/NavBar'
-import moment from 'moment';
-import CardUI from './../ui/template/Card'
-import INSERT_STRUCTURE from "../config/firestoreschema.js"
-import * as firebaseREF from 'firebase';
-var request = require('superagent');
+import React, { Component } from "react";
+import { Link } from "react-router";
+import firebase from "../config/database";
+import Fields from "../components/fields/Fields.js";
+import Input from "../components/fields/Input.js";
+import Table from "../components/tables/RTable.js";
+import Config from "../config/app";
+import Common from "../common.js";
+import Notification from "../components/Notification";
+import SkyLight from "react-skylight";
+import NavBar from "./../ui/template/NavBar";
+import moment from "moment";
+import CardUI from "./../ui/template/Card";
+import INSERT_STRUCTURE from "../config/firestoreschema.js";
+import * as firebaseREF from "firebase";
+var request = require("superagent");
 require("firebase/firestore");
 
-
-
-const ROUTER_PATH="/firestorevendor/";
-import { PulseLoader } from 'halogenium';
-import { translate } from '../translations';
+const ROUTER_PATH = "/firestorevendor/";
+import { PulseLoader } from "halogenium";
+import { translate } from "../translations";
 
 class Firestorevendor extends Component {
-  
-  constructor(props){
+  constructor(props) {
     super(props);
-    
+
     //Create initial step
-    this.state={
-      documents:[],
-      collections:[],
-      restaurants:[],
-      restaurantIDs:[],
-      selectedRest:"",
-      currentCollectionName:"",
-      isCollection:false,
-      isDocument:false,
-      keyToDelete:null,
-      pathToDelete:null,
-      theSubLink:null,
-      fieldsOfOnsert:null,
-      isLoading:true,
-      showAddCollection:"",
-      user:{},
-      restaurantDetails:{},
-      userCollectionId:null,
-      restaurantID:"" ,
-      displayNewOrder:false,
-      restaurantTitle: '',
-      restaurantDescription: '',
-      menutTitle: '',
-      menuDescription: '',
-      expected_time_of_delivery: '',
-      message_optional: '',
-      orderStatus: '',
-      orderedRestaurant: '',
+    this.state = {
+      documents: [],
+      collections: [],
+      restaurants: [],
+      restaurantIDs: [],
+      selectedRest: "",
+      currentCollectionName: "",
+      isCollection: false,
+      isDocument: false,
+      keyToDelete: null,
+      pathToDelete: null,
+      theSubLink: null,
+      fieldsOfOnsert: null,
+      isLoading: true,
+      showAddCollection: "",
+      user: {},
+      restaurantDetails: {},
+      userCollectionId: null,
+      restaurantID: "",
+      displayNewOrder: false,
+      restaurantTitle: "",
+      restaurantDescription: "",
+      menutTitle: "",
+      menuDescription: "",
+      expected_time_of_delivery: "",
+      message_optional: "",
+      orderStatus: "",
+      orderedRestaurant: "",
+      orderDetails: null,
+      orderOwner: null,
       menuCalories: 0,
-      menuPrice:0
+      redeemedPoints: 0,
+      menuPrice: 0,
     };
 
     //Bind function to this
-    this.getCollecitonDataFromFireStore=this.getCollecitonDataFromFireStore.bind(this);
-    this.resetDataFunction=this.resetDataFunction.bind(this);
-    this.processRecords=this.processRecords.bind(this);
-    this.updateAction=this.updateAction.bind(this);
-    this.cancelDelete=this.cancelDelete.bind(this);
-    this.cancelAddFirstItem=this.cancelAddFirstItem.bind(this);
-    this.doDelete=this.doDelete.bind(this);
-    this.deleteFieldAction=this.deleteFieldAction.bind(this);
-    this.refreshDataAndHideNotification=this.refreshDataAndHideNotification.bind(this);
-    this.addKey=this.addKey.bind(this);
-    this.confirmOrderAndSendNotification=this.confirmOrderAndSendNotification.bind(this);
-    this.showSubItems=this.showSubItems.bind(this);
-    this.updatePartOfObject=this.updatePartOfObject.bind(this);
-    this.addDocumentToCollection=this.addDocumentToCollection.bind(this);
-    this.addItemToArray=this.addItemToArray.bind(this);
-    this.newOrderAlert=this.newOrderAlert.bind(this);
-    this.reloadPage=this.reloadPage.bind(this);
-    this.viewCreateRestaurantDialog = this.viewCreateRestaurantDialog.bind(this);
-    this.cancelCreateRestaurantDialog = this.cancelCreateRestaurantDialog.bind(this);
+    this.getCollecitonDataFromFireStore = this.getCollecitonDataFromFireStore.bind(
+      this
+    );
+    this.resetDataFunction = this.resetDataFunction.bind(this);
+    this.processRecords = this.processRecords.bind(this);
+    this.updateAction = this.updateAction.bind(this);
+    this.cancelDelete = this.cancelDelete.bind(this);
+    this.cancelAddFirstItem = this.cancelAddFirstItem.bind(this);
+    this.doDelete = this.doDelete.bind(this);
+    this.deleteFieldAction = this.deleteFieldAction.bind(this);
+    this.refreshDataAndHideNotification = this.refreshDataAndHideNotification.bind(
+      this
+    );
+    this.addKey = this.addKey.bind(this);
+    this.confirmOrderAndSendNotification = this.confirmOrderAndSendNotification.bind(
+      this
+    );
+    this.completeOrderAndSendNotification = this.completeOrderAndSendNotification.bind(
+      this
+    );
+    this.showSubItems = this.showSubItems.bind(this);
+    this.updatePartOfObject = this.updatePartOfObject.bind(this);
+    this.addDocumentToCollection = this.addDocumentToCollection.bind(this);
+    this.addItemToArray = this.addItemToArray.bind(this);
+    this.newOrderAlert = this.newOrderAlert.bind(this);
+    this.reloadPage = this.reloadPage.bind(this);
+    this.viewCreateRestaurantDialog = this.viewCreateRestaurantDialog.bind(
+      this
+    );
+    this.cancelCreateRestaurantDialog = this.cancelCreateRestaurantDialog.bind(
+      this
+    );
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleChangeDescription = this.handleChangeDescription.bind(this);
     this.createRestaurant = this.createRestaurant.bind(this);
     this.handleChangeMenuTitle = this.handleChangeMenuTitle.bind(this);
-    this.handleChangeMenuDescription = this.handleChangeMenuDescription.bind(this);
+    this.handleChangeMenuDescription = this.handleChangeMenuDescription.bind(
+      this
+    );
     this.handleChangeMenuCalories = this.handleChangeMenuCalories.bind(this);
     this.handleChangeMenuPrice = this.handleChangeMenuPrice.bind(this);
     this.createMenuItem = this.createMenuItem.bind(this);
@@ -97,68 +112,57 @@ class Firestorevendor extends Component {
     this.cancelCreateMenuDialog = this.cancelCreateMenuDialog.bind(this);
     this.rejectThisOrder = this.rejectThisOrder.bind(this);
     this.getRestaurants = this.getRestaurants.bind(this);
-    
-
   }
 
   /**
    * Step 0a
    * Start getting data
    */
-  componentDidMount(){
+  componentDidMount() {
     this.getRestaurants();
-      window.getDemo().reinitializeSideClose();
-      this.findFirestorePath();
+    window.getDemo().reinitializeSideClose();
+    this.findFirestorePath();
 
-      const _this = this;
+    const _this = this;
 
-      const setUser=(user)=>{
-        
+    const setUser = (user) => {
+      this.setState({
+        user: user,
+      });
+    };
 
-        this.setState({
-          user:user,
-        })
-
+    firebase.app.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        setUser(user);
+      } else {
+        // No user is signed in.
+        console.log("User has logged out Master");
       }
-    
-        firebase.app.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            setUser(user);
-        } else {
-            // No user is signed in.
-            console.log("User has logged out Master");
-        }
-        });
+    });
 
+    // firebase.app.firestore().collection('restaurant_collection').where('owner', '==', user.email).get()
+    // .then(snapshot => {
+    //   if (snapshot.empty) {
+    //     console.log('No matching documents.');
+    //     return;
+    //   }
+    //   snapshot.forEach(doc => {
+    //     console.log(doc.id, '=>', doc.data());
+    //     _this.setState({
+    //       user:user,
+    //       restaurantID:doc.id
+    //     })
 
-        // firebase.app.firestore().collection('restaurant_collection').where('owner', '==', user.email).get()
-        // .then(snapshot => {
-        //   if (snapshot.empty) {
-        //     console.log('No matching documents.');
-        //     return;
-        //   }
-        //   snapshot.forEach(doc => {
-        //     console.log(doc.id, '=>', doc.data());
-        //     _this.setState({
-        //       user:user,
-        //       restaurantID:doc.id
-        //     })
-            
-        //   });  
-        // })
-        // .catch(err => {
-        //   console.log('Error getting restaurant id documents', err);
-        // });
-        
-        console.log("Restaurant Id",_this.state.restaurantID)
-        
-       
+    //   });
+    // })
+    // .catch(err => {
+    //   console.log('Error getting restaurant id documents', err);
+    // });
+
+    console.log("Restaurant Id", _this.state.restaurantID);
   }
 
-  componentWillMount(){
-    
-    
-  }
+  componentWillMount() {}
 
   /**
    * Convert field starting with REFERENCE: to native reference
@@ -168,68 +172,74 @@ class Firestorevendor extends Component {
     },
    * @param {Object} fields 
    */
-  convertSchemaReferencesToNativeReferences(fields){
-
-    Object.keys(fields).forEach((key)=>{
-        if (fields.hasOwnProperty(key)) {
-          if((fields[key]+"").indexOf("REFERENCE:")==0){
-            var refrencePath=(fields[key]+"").replace("REFERENCE:","");
-            console.log("refrencePath -->"+refrencePath)
-            fields[key]=firebase.app.firestore().doc(refrencePath);
-          }
-        
+  convertSchemaReferencesToNativeReferences(fields) {
+    Object.keys(fields).forEach((key) => {
+      if (fields.hasOwnProperty(key)) {
+        if ((fields[key] + "").indexOf("REFERENCE:") == 0) {
+          var refrencePath = (fields[key] + "").replace("REFERENCE:", "");
+          console.log("refrencePath -->" + refrencePath);
+          fields[key] = firebase.app.firestore().doc(refrencePath);
         }
-      });
+      }
+    });
 
-      console.log(fields);
+    console.log(fields);
 
-      return fields;
+    return fields;
   }
 
   /**
-  * Step 0b
-  * Resets data function
-  */
-  resetDataFunction(){
-    var newState={};
-        newState.documents=[];
-        newState.collections=[];
-        newState.currentCollectionName="";
-        newState.fieldsAsArray=[];
-        newState.arrayNames=[];
-        newState.fields=[];
-        newState.arrays=[];
-        newState.elements=[];
-        newState.elementsInArray=[];
-        newState.theSubLink=null;
+   * Step 0b
+   * Resets data function
+   */
+  resetDataFunction() {
+    var newState = {};
+    newState.documents = [];
+    newState.collections = [];
+    newState.currentCollectionName = "";
+    newState.fieldsAsArray = [];
+    newState.arrayNames = [];
+    newState.fields = [];
+    newState.arrays = [];
+    newState.elements = [];
+    newState.elementsInArray = [];
+    newState.theSubLink = null;
 
     this.setState(newState);
     this.findFirestorePath();
   }
 
-  newOrderAlert(){
-    const _this=this;
-    firebase.app.firestore().collection('orders').where('restaurantID', '==', 'nqM8wudP47GJVzRXjuD6').where('status', '==', 'Just created').onSnapshot(querySnapshot => {
-      console.log(`Received doc snapshot: ${querySnapshot}`);
-      // querySnapshot.docChanges().forEach(change =>{
-      //   // console.log(`Received query snapshot of size ${JSON.stringify(doc.data())}`);
-      //   if (change.type === 'added') {
-      //     console.log('New city: ', change.doc.data());
-          
-      //   }
-      //   if (change.type === 'modified') {
-      //     console.log('Modified city: ', change.doc.data());
-      //   }
-      //   if (change.type === 'removed') {
-      //     console.log('Removed city: ', change.doc.data());
-      //   }
-      // })
-      // _this.setState({notifications:[{type:"success",content:"New Orders"}]});
-      this.refs.newOrderAlert.show()
-      // alert("new order");
-    },err =>{
-      console.log(`Encountered error: ${err}`);
-    })
+  newOrderAlert() {
+    const _this = this;
+    firebase.app
+      .firestore()
+      .collection("orders")
+      .where("restaurantID", "==", "nqM8wudP47GJVzRXjuD6")
+      .where("status", "==", "Just created")
+      .onSnapshot(
+        (querySnapshot) => {
+          console.log(`Received doc snapshot: ${querySnapshot}`);
+          // querySnapshot.docChanges().forEach(change =>{
+          //   // console.log(`Received query snapshot of size ${JSON.stringify(doc.data())}`);
+          //   if (change.type === 'added') {
+          //     console.log('New city: ', change.doc.data());
+
+          //   }
+          //   if (change.type === 'modified') {
+          //     console.log('Modified city: ', change.doc.data());
+          //   }
+          //   if (change.type === 'removed') {
+          //     console.log('Removed city: ', change.doc.data());
+          //   }
+          // })
+          // _this.setState({notifications:[{type:"success",content:"New Orders"}]});
+          this.refs.newOrderAlert.show();
+          // alert("new order");
+        },
+        (err) => {
+          console.log(`Encountered error: ${err}`);
+        }
+      );
   }
 
   /**
@@ -238,21 +248,21 @@ class Firestorevendor extends Component {
    * Start connection to firebase
    */
   componentWillReceiveProps(nextProps, nextState) {
-      console.log("Next SUB: "+nextProps.params.sub);
-      console.log("Prev SUB : "+this.props.params.sub);
-      if(nextProps.params.sub==this.props.params.sub){
-          console.log("update now");
-          this.setState({isLoading:true})
-          this.resetDataFunction();
-      }
+    console.log("Next SUB: " + nextProps.params.sub);
+    console.log("Prev SUB : " + this.props.params.sub);
+    if (nextProps.params.sub == this.props.params.sub) {
+      console.log("update now");
+      this.setState({ isLoading: true });
+      this.resetDataFunction();
+    }
   }
 
-  getAppBuilderAppName(){
-    if(Config.appEditPath!= undefined){
-      var items=Config.appEditPath.split("/");
-      var lastPathItem=items[items.length-1];
-      return lastPathItem+"_";
-    }else{
+  getAppBuilderAppName() {
+    if (Config.appEditPath != undefined) {
+      var items = Config.appEditPath.split("/");
+      var lastPathItem = items[items.length - 1];
+      return lastPathItem + "_";
+    } else {
       return "";
     }
   }
@@ -261,8 +271,15 @@ class Firestorevendor extends Component {
    * Step 0d
    * getMeTheFirestorePath created firestore path based on the router parh
    */
-  getMeTheFirestorePath(){
-    var thePath=/*this.getAppBuilderAppName()+*/(this.props.route.path.replace(ROUTER_PATH,"").replace(":sub",""))+(this.props.params&&this.props.params.sub?this.props.params.sub:"").replace(/\+/g,"/");;
+  getMeTheFirestorePath() {
+    var thePath =
+      /*this.getAppBuilderAppName()+*/ this.props.route.path
+        .replace(ROUTER_PATH, "")
+        .replace(":sub", "") +
+      (this.props.params && this.props.params.sub
+        ? this.props.params.sub
+        : ""
+      ).replace(/\+/g, "/");
     return thePath;
   }
 
@@ -271,247 +288,296 @@ class Firestorevendor extends Component {
    * Finds out the Firestore path
    * Also creates the path that will be used to access the insert
    */
-  findFirestorePath(){
-      var pathData={}
-      if(this.props.params&&this.props.params.sub){
-          pathData.lastSub=this.props.params.sub;
-      }
+  findFirestorePath() {
+    var pathData = {};
+    if (this.props.params && this.props.params.sub) {
+      pathData.lastSub = this.props.params.sub;
+    }
 
-      //Find the firestore path
-      var firebasePath=this.getMeTheFirestorePath();
-      pathData.firebasePath=firebasePath;
+    //Find the firestore path
+    var firebasePath = this.getMeTheFirestorePath();
+    pathData.firebasePath = firebasePath;
 
-      
+    //Find last path - the last item
+    var subPath =
+      this.props.params && this.props.params.sub ? this.props.params.sub : "";
+    var items = subPath.split(Config.adminConfig.urlSeparator);
+    pathData.lastPathItem = Common.capitalizeFirstLetter(
+      items[items.length - 1]
+    );
+    pathData.completePath = subPath;
 
-      //Find last path - the last item
-      var subPath=this.props.params&&this.props.params.sub?this.props.params.sub:""
-      var items=subPath.split(Config.adminConfig.urlSeparator);
-      pathData.lastPathItem=Common.capitalizeFirstLetter(items[items.length-1]);
-      pathData.completePath=subPath;
+    //Save this in state
+    this.setState(pathData);
 
-      //Save this in state
-      this.setState(pathData);
-
-      //Go to next step of finding the collection data
-      this.getCollecitonDataFromFireStore(firebasePath);
+    //Go to next step of finding the collection data
+    this.getCollecitonDataFromFireStore(firebasePath);
   }
 
   /**
-  * Step 2
-  * Connect to firestore to get the current item we need
-  * @param {String} collection - this infact can be collection or document
-  */
-  getCollecitonDataFromFireStore(collection){
-    
+   * Step 2
+   * Connect to firestore to get the current item we need
+   * @param {String} collection - this infact can be collection or document
+   */
+  getCollecitonDataFromFireStore(collection) {
     //Create the segmments based on the path / collection we have
     var segments = collection.split("/");
-    var lastSegment=segments[segments.length-1];
+    var lastSegment = segments[segments.length - 1];
 
     //Is this a call to a collections data
-    var isCollection=segments.length%2;
+    var isCollection = segments.length % 2;
 
     //Reference to this
-    var _this=this;
+    var _this = this;
 
     //Save know info for now
     this.setState({
-      currentCollectionName:segments[segments.length-1],
-      isCollection:isCollection,
-      isDocument:!isCollection,
-    })
+      currentCollectionName: segments[segments.length - 1],
+      isCollection: isCollection,
+      isDocument: !isCollection,
+    });
 
     //Get reference to firestore
     var db = firebase.app.firestore();
 
     //Here, we will save the documents from collection
-    var documents=[];
+    var documents = [];
 
-    if(isCollection){
-      
-
-      if(collection==="restaurant"){
-        db.collection("restaurant_collection").get().then(function(querySnapshot) {
-          var datacCount=0;
-          querySnapshot.forEach(function(doc) {
-            datacCount++;
-            if(_this.state.user.email===doc.data().owner){
-              //Increment counter
-              _this.setState({
-                userCollectionId:doc.id,
-                restaurantDetails : doc.data()
-              })
-              // userCollectionId=doc.id;
-
-            }
-          })
-        })
-      }else if(collection==="orders"){
+    if (isCollection) {
+      if (collection === "restaurant") {
+        db.collection("restaurant_collection")
+          .get()
+          .then(function (querySnapshot) {
+            var datacCount = 0;
+            querySnapshot.forEach(function (doc) {
+              datacCount++;
+              if (_this.state.user.email === doc.data().owner) {
+                //Increment counter
+                _this.setState({
+                  userCollectionId: doc.id,
+                  restaurantDetails: doc.data(),
+                });
+                // userCollectionId=doc.id;
+              }
+            });
+          });
+      } else if (collection === "orders") {
         // this.newOrderAlert()
-        db.collection("restaurant_collection").get().then(function(querySnapshot) {
-          var datacCount=0;
-          querySnapshot.forEach(function(doc) {
-            datacCount++;
-            if(_this.state.user.email===doc.data().owner){
-              //Increment counter
-              _this.setState({
-                userCollectionId:doc.id,
-                displayNewOrder:true,
-                restaurantDetails : doc.data()
-              })
-              // userCollectionId=doc.id;
-
-            }
-          })
-        })
+        db.collection("restaurant_collection")
+          .get()
+          .then(function (querySnapshot) {
+            var datacCount = 0;
+            querySnapshot.forEach(function (doc) {
+              datacCount++;
+              if (_this.state.user.email === doc.data().owner) {
+                //Increment counter
+                _this.setState({
+                  userCollectionId: doc.id,
+                  displayNewOrder: true,
+                  restaurantDetails: doc.data(),
+                });
+                // userCollectionId=doc.id;
+              }
+            });
+          });
       }
 
-        //COLLECTIONS - GET DOCUMENTS 
-       
-        db.collection(collection).get().then(function(querySnapshot) {
-          var datacCount=0;
-          querySnapshot.forEach(function(doc) {
+      //COLLECTIONS - GET DOCUMENTS
 
+      db.collection(collection)
+        .get()
+        .then(function (querySnapshot) {
+          var datacCount = 0;
+          querySnapshot.forEach(function (doc) {
             //Increment counter
             datacCount++;
 
             //Get the object
-            var currentDocument=doc.data();
+            var currentDocument = doc.data();
 
             //Sace uidOfFirebase inside him
-            currentDocument.uidOfFirebase=doc.id;
+            currentDocument.uidOfFirebase = doc.id;
 
             // console.log(doc.id, " => ", currentDocument);
             // console.log("user ", _this.state.user.email);
 
-            if(collection==="restaurant_collection" && currentDocument.owner===_this.state.user.email){
+            if (
+              collection === "restaurant_collection" &&
+              currentDocument.owner === _this.state.user.email
+            ) {
               //Save in the list of documents
-              documents.push(currentDocument)
-            }else if(collection==="restaurant" && currentDocument.owner ===_this.state.user.email){
-              documents.push(currentDocument)
-            }else if(collection==="orders" && _this.state.restaurantIDs.includes(currentDocument.restaurantID)){
-              
-              currentDocument.orderID=doc.id;
-              documents.push(currentDocument)
-            }else if(collection==="dinein"  && _this.state.restaurantIDs.includes(currentDocument.restaurantID)){
-              documents.push(currentDocument)
-            } else if(_this.state.currentCollectionName ==="variants"){
-              documents.push(currentDocument)
+              documents.push(currentDocument);
+            } else if (
+              collection === "restaurant" &&
+              currentDocument.owner === _this.state.user.email
+            ) {
+              documents.push(currentDocument);
+            } else if (
+              collection === "orders" &&
+              _this.state.restaurantIDs.includes(currentDocument.restaurantID)
+            ) {
+              currentDocument.orderID = doc.id;
+              documents.push(currentDocument);
+            } else if (
+              collection === "dinein" &&
+              _this.state.restaurantIDs.includes(currentDocument.restaurantID)
+            ) {
+              documents.push(currentDocument);
+            } else if (_this.state.currentCollectionName === "variants") {
+              documents.push(currentDocument);
             }
-            
           });
           console.log("DOCS----");
           console.log(documents);
 
           //Save the douments in the sate
           _this.setState({
-            isLoading:false,
-            documents:documents,
-            showAddCollection:datacCount==0?collection:""
-          })
-          if(datacCount==0){
+            isLoading: false,
+            documents: documents,
+            showAddCollection: datacCount == 0 ? collection : "",
+          });
+          if (datacCount == 0) {
             _this.refs.addCollectionDialog.show();
           }
           console.log(_this.state.documents);
-      });
-      }else{
-        //DOCUMENT - GET FIELDS && COLLECTIONS
-        var referenceToCollection=collection.replace("/"+lastSegment,"");
+        });
+    } else {
+      //DOCUMENT - GET FIELDS && COLLECTIONS
+      var referenceToCollection = collection.replace("/" + lastSegment, "");
 
-        //Create reference to the document itseld
-        var docRef = db.collection(referenceToCollection).doc(lastSegment);
+      //Create reference to the document itseld
+      var docRef = db.collection(referenceToCollection).doc(lastSegment);
 
-        //Get the starting collectoin
-        var parrentCollection=segments;
-        parrentCollection.splice(-1,1);
+      //Get the starting collectoin
+      var parrentCollection = segments;
+      parrentCollection.splice(-1, 1);
 
-        //Find the collections of this document
-        this.findDocumentCollections(parrentCollection);
-        
-        docRef.get().then(function(doc) {
-            if (doc.exists) {
-                console.log("Document data:", doc.data());
-                console.log("Document data:", _this.state.restaurantDetails);
-                if (doc.data().order && doc.data().order.length> 0) {
-                   // This is an order detail so lets update order related details
-                   firebase.app
-                     .firestore()
-                     .collection("restaurant_collection")
-                     .doc(doc.data().restaurantID)
-                     .get()
-                     .then((rest) => {
-                       if (rest.exists) {
-                          _this.setState({
-                            expected_time_of_delivery: (doc.data().expected_time_of_delivery) ? doc.data().expected_time_of_delivery : '',
-                            message_optional: (doc.data().message_optional) ? doc.data().message_optional : '',
-                            orderStatus: (doc.data().status) ? doc.data().status : '',
-                            orderedRestaurant: rest.data(),
-                            // Itha ivde anu modify cheyendathu
-                          })
-                       } 
-                     });                    
-                  
-                }
+      //Find the collections of this document
+      this.findDocumentCollections(parrentCollection);
 
-                //Directly process the data
-                _this.processRecords(doc.data())  
-            } else {
-                console.log("No such document!");
+      docRef
+        .get()
+        .then(function (doc) {
+          if (doc.exists) {
+            console.log("Document data:", doc.data());
+            console.log("Document data:", _this.state.restaurantDetails);
+            if (doc.data().order && doc.data().order.length > 0) {
+              // This is an order detail so lets update order related details
+              firebase.app
+                .firestore()
+                .collection("restaurant_collection")
+                .doc(doc.data().restaurantID)
+                .get()
+                .then((rest) => {
+                  var userId = "";
+                  if (rest.exists) {
+                    userId = doc.data().userID;
+                    _this.setState(
+                      {
+                        expected_time_of_delivery: doc.data()
+                          .expected_time_of_delivery
+                          ? doc.data().expected_time_of_delivery
+                          : "",
+                        message_optional: doc.data().message_optional
+                          ? doc.data().message_optional
+                          : "",
+                        orderStatus: doc.data().status ? doc.data().status : "",
+                        orderDetails: doc.data(),
+                        orderedRestaurant: rest.data(),
+                        // Itha ivde anu modify cheyendathu
+                      },
+                      () => {
+                        if (userId) {
+                          firebase.app
+                            .firestore()
+                            .collection("users")
+                            .doc(userId)
+                            .get()
+                            .then((doc) => {
+                              if (doc.exists) {
+                                _this.setState({
+                                  orderOwner: doc.data(),
+                                });
+                              }
+                            });
+                        }
+                      }
+                    );
+                  }
+                });
             }
-        }).catch(function(error) {
-            console.log("2nd Error getting document:", error);
-        }); 
-      }
-   }
+
+            //Directly process the data
+            _this.processRecords(doc.data());
+          } else {
+            console.log("No such document!");
+          }
+        })
+        .catch(function (error) {
+          console.log("2nd Error getting document:", error);
+        });
+    }
+  }
 
   /**
    * Step 3
    * findDocumentCollections - what collections should we display / currently there is no way to get collection form docuemnt
    * @param {Array} chunks - the collection / documents
    */
-  findDocumentCollections(chunks){
-      console.log("Search for the schema now of "+chunks);
+  findDocumentCollections(chunks) {
+    console.log("Search for the schema now of " + chunks);
 
-      //In firestore, use the last chunk only
-      chunks=[chunks[chunks.length-1]];
-      console.log("Modified chunk "+chunks);
-      
+    //In firestore, use the last chunk only
+    chunks = [chunks[chunks.length - 1]];
+    console.log("Modified chunk " + chunks);
 
-      //At start is the complete schema
-      var theInsertSchemaObject=INSERT_STRUCTURE;
-      var cuurrentFields=null;
-      console.log("CHUNKS");
-      console.log(chunks);
-      
-      //Foreach chunks, find the collections / fields
-      chunks.map((item,index)=>{
-          console.log("current chunk:"+item);
+    //At start is the complete schema
+    var theInsertSchemaObject = INSERT_STRUCTURE;
+    var cuurrentFields = null;
+    console.log("CHUNKS");
+    console.log(chunks);
 
-          //Also make the last object any
-          //In the process, check if we have each element in our schema
-          if(theInsertSchemaObject!=null&&theInsertSchemaObject&&theInsertSchemaObject[item]&&theInsertSchemaObject[item]['collections']){
-              var isLastObject=(index==(chunks.length-1));
-              
-              if(isLastObject&&theInsertSchemaObject!=null&&theInsertSchemaObject[item]&&theInsertSchemaObject[item]['fields']){
-                cuurrentFields=theInsertSchemaObject[item]['fields'];  
-              }
+    //Foreach chunks, find the collections / fields
+    chunks.map((item, index) => {
+      console.log("current chunk:" + item);
 
-              if(isLastObject&&theInsertSchemaObject!=null){
-                //It is last
-                theInsertSchemaObject=theInsertSchemaObject[item]['collections'];
-              }else{
-                theInsertSchemaObject=theInsertSchemaObject[item]['collections'];
-              }
-          }else{
-            theInsertSchemaObject=[];
-          }
-          console.log("Current schema");
-          console.log(theInsertSchemaObject);
+      //Also make the last object any
+      //In the process, check if we have each element in our schema
+      if (
+        theInsertSchemaObject != null &&
+        theInsertSchemaObject &&
+        theInsertSchemaObject[item] &&
+        theInsertSchemaObject[item]["collections"]
+      ) {
+        var isLastObject = index == chunks.length - 1;
 
+        if (
+          isLastObject &&
+          theInsertSchemaObject != null &&
+          theInsertSchemaObject[item] &&
+          theInsertSchemaObject[item]["fields"]
+        ) {
+          cuurrentFields = theInsertSchemaObject[item]["fields"];
+        }
 
-      })
-      
-      //Save the collection to be shown as button and fieldsOfOnsert that will be used on inserting object
-      this.setState({collections:theInsertSchemaObject,fieldsOfOnsert:cuurrentFields})
+        if (isLastObject && theInsertSchemaObject != null) {
+          //It is last
+          theInsertSchemaObject = theInsertSchemaObject[item]["collections"];
+        } else {
+          theInsertSchemaObject = theInsertSchemaObject[item]["collections"];
+        }
+      } else {
+        theInsertSchemaObject = [];
+      }
+      console.log("Current schema");
+      console.log(theInsertSchemaObject);
+    });
+
+    //Save the collection to be shown as button and fieldsOfOnsert that will be used on inserting object
+    this.setState({
+      collections: theInsertSchemaObject,
+      fieldsOfOnsert: cuurrentFields,
+    });
   }
 
   /**
@@ -519,171 +585,171 @@ class Firestorevendor extends Component {
    * Processes received records from firebase
    * @param {Object} records
    */
-  processRecords(records){
-      console.log(records);
+  processRecords(records) {
+    console.log(records);
 
-      var fields={};
-      var arrays={};
-      var elements=[];
-      var elementsInArray=[];
-      var newState={};
-      var directValue="";
-      newState.fieldsAsArray=fieldsAsArray;
-      newState.arrayNames=arrayNames;
-      newState.fields=fields;
-      newState.arrays=arrays;
-      newState.elements=elements;
-      newState.directValue=directValue;
-      newState.elementsInArray=elementsInArray;
-      newState.records=null;
+    var fields = {};
+    var arrays = {};
+    var elements = [];
+    var elementsInArray = [];
+    var newState = {};
+    var directValue = "";
+    newState.fieldsAsArray = fieldsAsArray;
+    newState.arrayNames = arrayNames;
+    newState.fields = fields;
+    newState.arrays = arrays;
+    newState.elements = elements;
+    newState.directValue = directValue;
+    newState.elementsInArray = elementsInArray;
+    newState.records = null;
 
-      this.setState(newState);
+    this.setState(newState);
 
-      //Each display is consisted of
-      //Fields   - This are string, numbers, photos, dates etc...
-      //Arrays   - Arrays of data, ex items:[0:{},1:{},2:{}...]
-      //         - Or object with prefixes that match in array
-      //Elements - Object that don't match in any prefix for Join - They are represented as buttons.
+    //Each display is consisted of
+    //Fields   - This are string, numbers, photos, dates etc...
+    //Arrays   - Arrays of data, ex items:[0:{},1:{},2:{}...]
+    //         - Or object with prefixes that match in array
+    //Elements - Object that don't match in any prefix for Join - They are represented as buttons.
 
-      //In FireStore
-      //GeoPoint
-      //DocumentReference
+    //In FireStore
+    //GeoPoint
+    //DocumentReference
 
-      //If record is of type array , then there is no need for parsing, just directly add the record in the arrays list
-      if(Common.getClass(records)=="Array"){
-          //Get the last name
-          console.log("This is array");
-          var subPath=this.props.params&&this.props.params.sub?this.props.params.sub:""
-          var allPathItems=subPath.split("+");
-          console.log(allPathItems)
-          if(allPathItems.length>0){
-              var lastItem=allPathItems[allPathItems.length-1];
-              console.log(lastItem);
-              arrays[lastItem]=records;
-
-          }
-          //this.setState({"arrays":this.state.arrays.push(records)})
-      }else if(Common.getClass(records)=="Object"){
-          //Parse the Object record
-          for (var key in records){
-              if (records.hasOwnProperty(key)) {
-                  var currentElementClasss=Common.getClass(records[key]);
-                  console.log(key + "'s class is: " + currentElementClasss);
-
-                  //Add the items by their type
-                  if(currentElementClasss=="Array"){
-                      //Add it in the arrays  list
-                      arrays[key]=records[key];
-                      fields[key]=records[key];
-                  }else if(currentElementClasss=="Object"){
-                      //Add it in the elements list
-                      var isElementMentForTheArray=false; //Do we have to put this object in the array
-                      for (var i=0;i<Config.adminConfig.prefixForJoin.length;i++){
-                          if(key.indexOf(Config.adminConfig.prefixForJoin[i])>-1){
-                              isElementMentForTheArray=true;
-                              break;
-                          }
-                      }
-
-                      var objToInsert=records[key];
-                      objToInsert.uidOfFirebase=key;
-
-                      if(isElementMentForTheArray){
-                          //Add this to the merged elements
-                          elementsInArray.push(objToInsert);
-                      }else{
-                          //Add just to elements
-                          elements.push(objToInsert);
-                      }
-
-                  }else if(currentElementClasss!="undefined"&&currentElementClasss!="null"){
-                      //This is string, number, or Boolean
-                      //Add it to the fields list
-                      fields[key]=records[key];
-                  }else if(currentElementClasss=="GeoPoint"){
-                      //This is GeoPOint
-                      //Add it to the fields list
-                      fields[key]=records[key];
-                  }else if(currentElementClasss=="DocumentReference"){
-                      //This is DocumentReference
-                      //Add it to the fields list
-                      fields[key]=records[key];
-                  }
-                  
-              }
-          }
-      }if(Common.getClass(records)=="String"){
-        console.log("We have direct value of string");
-        directValue=records;
+    //If record is of type array , then there is no need for parsing, just directly add the record in the arrays list
+    if (Common.getClass(records) == "Array") {
+      //Get the last name
+      console.log("This is array");
+      var subPath =
+        this.props.params && this.props.params.sub ? this.props.params.sub : "";
+      var allPathItems = subPath.split("+");
+      console.log(allPathItems);
+      if (allPathItems.length > 0) {
+        var lastItem = allPathItems[allPathItems.length - 1];
+        console.log(lastItem);
+        arrays[lastItem] = records;
       }
+      //this.setState({"arrays":this.state.arrays.push(records)})
+    } else if (Common.getClass(records) == "Object") {
+      //Parse the Object record
+      for (var key in records) {
+        if (records.hasOwnProperty(key)) {
+          var currentElementClasss = Common.getClass(records[key]);
+          console.log(key + "'s class is: " + currentElementClasss);
 
-      //Convert fields from object to array
-      var fieldsAsArray=[];
-      console.log("Add the items now inside fieldsAsArray");
-      console.log("Current schema");
-      console.log(this.state.currentInsertStructure)
-      //currentInsertStructure
-      var keysFromFirebase=Object.keys(fields);
-      console.log("keysFromFirebase")
-      console.log(keysFromFirebase)
-      var keysFromSchema=Object.keys(this.state.currentInsertStructure||{});
-      console.log("keysFromSchema")
-      console.log(keysFromSchema)
+          //Add the items by their type
+          if (currentElementClasss == "Array") {
+            //Add it in the arrays  list
+            arrays[key] = records[key];
+            fields[key] = records[key];
+          } else if (currentElementClasss == "Object") {
+            //Add it in the elements list
+            var isElementMentForTheArray = false; //Do we have to put this object in the array
+            for (var i = 0; i < Config.adminConfig.prefixForJoin.length; i++) {
+              if (key.indexOf(Config.adminConfig.prefixForJoin[i]) > -1) {
+                isElementMentForTheArray = true;
+                break;
+              }
+            }
 
-      keysFromSchema.forEach((key)=>{
-        if (fields.hasOwnProperty(key)) {
-          fieldsAsArray.push({"theKey":key,"value":fields[key]})
-          var indexOfElementInFirebaseObject = keysFromFirebase.indexOf(key);
-          if (indexOfElementInFirebaseObject > -1) {
-              keysFromFirebase.splice(indexOfElementInFirebaseObject, 1);
+            var objToInsert = records[key];
+            objToInsert.uidOfFirebase = key;
+
+            if (isElementMentForTheArray) {
+              //Add this to the merged elements
+              elementsInArray.push(objToInsert);
+            } else {
+              //Add just to elements
+              elements.push(objToInsert);
+            }
+          } else if (
+            currentElementClasss != "undefined" &&
+            currentElementClasss != "null"
+          ) {
+            //This is string, number, or Boolean
+            //Add it to the fields list
+            fields[key] = records[key];
+          } else if (currentElementClasss == "GeoPoint") {
+            //This is GeoPOint
+            //Add it to the fields list
+            fields[key] = records[key];
+          } else if (currentElementClasss == "DocumentReference") {
+            //This is DocumentReference
+            //Add it to the fields list
+            fields[key] = records[key];
           }
         }
-      });
+      }
+    }
+    if (Common.getClass(records) == "String") {
+      console.log("We have direct value of string");
+      directValue = records;
+    }
 
-      console.log("keysFromFirebase")
-      console.log(keysFromFirebase)
+    //Convert fields from object to array
+    var fieldsAsArray = [];
+    console.log("Add the items now inside fieldsAsArray");
+    console.log("Current schema");
+    console.log(this.state.currentInsertStructure);
+    //currentInsertStructure
+    var keysFromFirebase = Object.keys(fields);
+    console.log("keysFromFirebase");
+    console.log(keysFromFirebase);
+    var keysFromSchema = Object.keys(this.state.currentInsertStructure || {});
+    console.log("keysFromSchema");
+    console.log(keysFromSchema);
 
-      keysFromFirebase.forEach((key)=>{
-        if (fields.hasOwnProperty(key)) {
-          fieldsAsArray.push({"theKey":key,"value":fields[key]})
+    keysFromSchema.forEach((key) => {
+      if (fields.hasOwnProperty(key)) {
+        fieldsAsArray.push({ theKey: key, value: fields[key] });
+        var indexOfElementInFirebaseObject = keysFromFirebase.indexOf(key);
+        if (indexOfElementInFirebaseObject > -1) {
+          keysFromFirebase.splice(indexOfElementInFirebaseObject, 1);
         }
-      });
-
-
-
-      //Get all array names
-      var arrayNames=[];
-      Object.keys(arrays).forEach((key)=>{
-          arrayNames.push(key)
-      });
-
-      /// Sorting keys descending
-      fieldsAsArray.sort(function(a, b) {
-        var objA = a.theKey.toUpperCase();
-        var objB = b.theKey.toUpperCase();
-        return (objA > objB) ? -1 : (objA < objB) ? 1 : 0;
+      }
     });
 
-      var newState={};
-      newState.fieldsAsArray=fieldsAsArray;
-      newState.arrayNames=arrayNames;
-      newState.fields=fields;
-      newState.arrays=arrays;
-      newState.isJustArray=Common.getClass(records)=="Array";
-      newState.elements=elements;
-      newState.elementsInArray=elementsInArray;
-      newState.directValue=directValue;
-      newState.records=records;
-      newState.isLoading=false;
+    console.log("keysFromFirebase");
+    console.log(keysFromFirebase);
 
-      console.log("THE elements")
-      console.log(elements);
+    keysFromFirebase.forEach((key) => {
+      if (fields.hasOwnProperty(key)) {
+        fieldsAsArray.push({ theKey: key, value: fields[key] });
+      }
+    });
 
-      //Set the new state
-      this.setState(newState);
+    //Get all array names
+    var arrayNames = [];
+    Object.keys(arrays).forEach((key) => {
+      arrayNames.push(key);
+    });
 
-      //Additional init, set the DataTime, check format if something goes wrong
-      window.additionalInit();
+    /// Sorting keys descending
+    fieldsAsArray.sort(function (a, b) {
+      var objA = a.theKey.toUpperCase();
+      var objB = b.theKey.toUpperCase();
+      return objA > objB ? -1 : objA < objB ? 1 : 0;
+    });
+
+    var newState = {};
+    newState.fieldsAsArray = fieldsAsArray;
+    newState.arrayNames = arrayNames;
+    newState.fields = fields;
+    newState.arrays = arrays;
+    newState.isJustArray = Common.getClass(records) == "Array";
+    newState.elements = elements;
+    newState.elementsInArray = elementsInArray;
+    newState.directValue = directValue;
+    newState.records = records;
+    newState.isLoading = false;
+
+    console.log("THE elements");
+    console.log(elements);
+
+    //Set the new state
+    this.setState(newState);
+
+    //Additional init, set the DataTime, check format if something goes wrong
+    window.additionalInit();
   }
 
   /**
@@ -693,265 +759,307 @@ class Firestorevendor extends Component {
    */
 
   /**
-  * processValueToSave  - helper for saving in Firestore , converts value to correct format
-  * @param {value} value
-  * @param {type} type of field
-  */
-  processValueToSave(value,type){
-      //To handle number values
-      if(!isNaN(value)){
-        value=Number(value);
+   * processValueToSave  - helper for saving in Firestore , converts value to correct format
+   * @param {value} value
+   * @param {type} type of field
+   */
+  processValueToSave(value, type) {
+    //To handle number values
+    if (!isNaN(value)) {
+      value = Number(value);
+    }
+
+    //To handle boolean values
+    value = value === "true" ? true : value === "false" ? false : value;
+
+    if (type == "date") {
+      //To handle date values
+      if (moment(value).isValid()) {
+        value = moment(value).toDate();
+        //futureStartAtDate = new Date(moment().locale("en").add(1, 'd').format("MMM DD, YYYY HH:MM"))
       }
+    }
 
-      //To handle boolean values
-      value=value==="true"?true:(value==="false"?false:value);
-
-    
-      if(type=="date"){
-        //To handle date values
-        if(moment(value).isValid()){
-          value=moment(value).toDate();
-          //futureStartAtDate = new Date(moment().locale("en").add(1, 'd').format("MMM DD, YYYY HH:MM"))
-        }
-      }
-
-      return value;
+    return value;
   }
 
   /**
-  * updatePartOfObject  - updates sub data from document in firestore, this also does Delete
-  * @param {String} key to be updated
-  * @param {String} value
-  * @param {Boolean} refresh after action
-  * @param {String} type of file
-  * @param {String} firebasePath current firestore path
-  * @param {String} byGivvenSubLink force link to field
-  * @param {Function} callback function after action
-  */
-  updatePartOfObject(key,value,dorefresh=false,type=null,firebasePath,byGivvenSubLink=null,callback=null){
-    var subLink=this.state.theSubLink;
-    if(byGivvenSubLink!=null){
-      subLink=byGivvenSubLink;
+   * updatePartOfObject  - updates sub data from document in firestore, this also does Delete
+   * @param {String} key to be updated
+   * @param {String} value
+   * @param {Boolean} refresh after action
+   * @param {String} type of file
+   * @param {String} firebasePath current firestore path
+   * @param {String} byGivvenSubLink force link to field
+   * @param {Function} callback function after action
+   */
+  updatePartOfObject(
+    key,
+    value,
+    dorefresh = false,
+    type = null,
+    firebasePath,
+    byGivvenSubLink = null,
+    callback = null
+  ) {
+    var subLink = this.state.theSubLink;
+    if (byGivvenSubLink != null) {
+      subLink = byGivvenSubLink;
     }
-    console.log("Sub save "+key+" to "+value+" and the path is "+firebasePath+" and theSubLink is "+subLink);
-    var chunks=subLink.split(Config.adminConfig.urlSeparatorFirestoreSubArray);
+    console.log(
+      "Sub save " +
+        key +
+        " to " +
+        value +
+        " and the path is " +
+        firebasePath +
+        " and theSubLink is " +
+        subLink
+    );
+    var chunks = subLink.split(
+      Config.adminConfig.urlSeparatorFirestoreSubArray
+    );
     console.log(chunks);
-    var _this=this;
+    var _this = this;
     //First get the document
     //DOCUMENT - GET FIELDS && COLLECTIONS
-        var docRef = firebase.app.firestore().doc(firebasePath);
-        docRef.get().then(function(doc) {
-            if (doc.exists) {
-              var numChunks=chunks.length-1;
-              var doc=doc.data();
-              console.log(doc);
-              if(value=="DELETE_VALUE"){
-                if(numChunks==2){
-                   doc[chunks[1]].splice(chunks[2], 1);
-                }
-                if(numChunks==1){
-                   doc[chunks[1]]=null;
-                }
-              }else{
-                //Normal update, or insert
-                if(key=="DIRECT_VALUE_OF_CURRENT_PATH"){
-                  if(numChunks==3){
-                    doc[chunks[1]][chunks[2]][chunks[3]]=value
-                  }
-                  if(numChunks==2){
-                    doc[chunks[1]][chunks[2]]=value
-                  }
-                  if(numChunks==1){
-                    doc[chunks[1]]=value
-                  }
-                }else{
-                  if(numChunks==3){
-                    doc[chunks[1]][chunks[2]][chunks[3]][key]=value
-                  }
-                  if(numChunks==2){
-                    doc[chunks[1]][chunks[2]][key]=value
-                  }
-                  if(numChunks==1){
-                    doc[chunks[1]][key]=value
-                  }
-                }
-               
-              }
-
-              if(key=="NAME_OF_THE_NEW_KEY"||key=="VALUE_OF_THE_NEW_KEY"){
-                var ob={};
-                ob[key]=value;
-                _this.setState(ob);
-              }else{
-                console.log("Document data:", doc);
-                _this.updateAction(chunks[1],doc[chunks[1]],dorefresh,null,true)
-                if(callback){
-                  callback();
-                }
-              }
-              
-                
-
-                //alert(chunks.length-1);
-                //_this.processRecords(doc.data())
-                //console.log(doc);
-                
-            } else {
-                console.log("No such document!");
+    var docRef = firebase.app.firestore().doc(firebasePath);
+    docRef
+      .get()
+      .then(function (doc) {
+        if (doc.exists) {
+          var numChunks = chunks.length - 1;
+          var doc = doc.data();
+          console.log(doc);
+          if (value == "DELETE_VALUE") {
+            if (numChunks == 2) {
+              doc[chunks[1]].splice(chunks[2], 1);
             }
-        }).catch(function(error) {
-            console.log("Error getting document:", error);
-        });
+            if (numChunks == 1) {
+              doc[chunks[1]] = null;
+            }
+          } else {
+            //Normal update, or insert
+            if (key == "DIRECT_VALUE_OF_CURRENT_PATH") {
+              if (numChunks == 3) {
+                doc[chunks[1]][chunks[2]][chunks[3]] = value;
+              }
+              if (numChunks == 2) {
+                doc[chunks[1]][chunks[2]] = value;
+              }
+              if (numChunks == 1) {
+                doc[chunks[1]] = value;
+              }
+            } else {
+              if (numChunks == 3) {
+                doc[chunks[1]][chunks[2]][chunks[3]][key] = value;
+              }
+              if (numChunks == 2) {
+                doc[chunks[1]][chunks[2]][key] = value;
+              }
+              if (numChunks == 1) {
+                doc[chunks[1]][key] = value;
+              }
+            }
+          }
 
-   }
+          if (key == "NAME_OF_THE_NEW_KEY" || key == "VALUE_OF_THE_NEW_KEY") {
+            var ob = {};
+            ob[key] = value;
+            _this.setState(ob);
+          } else {
+            console.log("Document data:", doc);
+            _this.updateAction(
+              chunks[1],
+              doc[chunks[1]],
+              dorefresh,
+              null,
+              true
+            );
+            if (callback) {
+              callback();
+            }
+          }
 
+          //alert(chunks.length-1);
+          //_this.processRecords(doc.data())
+          //console.log(doc);
+        } else {
+          console.log("No such document!");
+        }
+      })
+      .catch(function (error) {
+        console.log("Error getting document:", error);
+      });
+  }
 
-
-   /**
+  /**
    * Firebase update based on key / value,
    * This function also sets derect name and value
    * @param {String} key
    * @param {String} value
    */
-  
+
   /**
-  * updateAction  - updates sub data from document in firestore, this also does Delete
-  * @param {String} key to be updated
-  * @param {String} value
-  * @param {Boolean} refresh after action
-  * @param {String} type of file
-  * @param {Boolean} forceObjectSave force saving sub object
-  */
-  updateAction(key,value,dorefresh=false,type=null,forceObjectSave=false){
-    value=this.processValueToSave(value,type);
-    var firebasePath=(this.props.route.path.replace("/firestorevendor/","").replace(":sub",""))+(this.props.params&&this.props.params.sub?this.props.params.sub:"").replace(/\+/g,"/");
-    if(this.state.theSubLink!=null&&!forceObjectSave){
-     // alert(key+"<-mk->"+value+"<-->"+dorefresh+"<-->"+type+"<-->"+firebasePath)
-      this.updatePartOfObject(key,value,dorefresh,type,firebasePath)
-    }else{
-    
+   * updateAction  - updates sub data from document in firestore, this also does Delete
+   * @param {String} key to be updated
+   * @param {String} value
+   * @param {Boolean} refresh after action
+   * @param {String} type of file
+   * @param {Boolean} forceObjectSave force saving sub object
+   */
+  updateAction(
+    key,
+    value,
+    dorefresh = false,
+    type = null,
+    forceObjectSave = false
+  ) {
+    value = this.processValueToSave(value, type);
+    var firebasePath =
+      this.props.route.path
+        .replace("/firestorevendor/", "")
+        .replace(":sub", "") +
+      (this.props.params && this.props.params.sub
+        ? this.props.params.sub
+        : ""
+      ).replace(/\+/g, "/");
+    if (this.state.theSubLink != null && !forceObjectSave) {
+      // alert(key+"<-mk->"+value+"<-->"+dorefresh+"<-->"+type+"<-->"+firebasePath)
+      this.updatePartOfObject(key, value, dorefresh, type, firebasePath);
+    } else {
       //value=firebase.firestore().doc("/users/A2sWwzDop0EAMdfxfJ56");
       //key="creator";
-      
-       console.log("firebasePath from update:"+firebasePath)
-      console.log('Update '+key+" into "+value);
 
-      if(key=="NAME_OF_THE_NEW_KEY"||key=="VALUE_OF_THE_NEW_KEY"){
-        console.log("THE_NEW_KEY")
-        var updateObj={};
-        updateObj[key]=value;
+      console.log("firebasePath from update:" + firebasePath);
+      console.log("Update " + key + " into " + value);
+
+      if (key == "NAME_OF_THE_NEW_KEY" || key == "VALUE_OF_THE_NEW_KEY") {
+        console.log("THE_NEW_KEY");
+        var updateObj = {};
+        updateObj[key] = value;
         this.setState(updateObj);
-        console.log("-- OBJ update --")
+        console.log("-- OBJ update --");
         console.log(updateObj);
-      }else{
+      } else {
         var db = firebase.app.firestore();
 
         var databaseRef = db.doc(firebasePath);
-        var updateObj={};
-        updateObj[key]=value;
+        var updateObj = {};
+        updateObj[key] = value;
         databaseRef.set(updateObj, { merge: true });
       }
-
-      }
+    }
   }
 
-  viewCreateRestaurantDialog(){
-    console.log("display modal")
+  viewCreateRestaurantDialog() {
+    console.log("display modal");
     this.refs.viewCreateRestaurantRequest.show();
   }
-  
-  cancelCreateRestaurantDialog(){
+
+  cancelCreateRestaurantDialog() {
     this.refs.viewCreateRestaurantRequest.hide();
   }
 
-  handleChangeTitle(event){
-    this.setState({ restaurantTitle: event.target.value }); 
-  }   
-  
+  handleChangeTitle(event) {
+    this.setState({ restaurantTitle: event.target.value });
+  }
+
   handleChangeDescription(event) {
     this.setState({ restaurantDescription: event.target.value });
   }
 
-  createRestaurant(event){
+  createRestaurant(event) {
     console.log("create resturant");
-    var _this =this;
-  
-    const restaurantRef = firebase.app.firestore().collection('restaurant_collection').doc();
-    restaurantRef.set({
-      title:this.state.restaurantTitle,
-      title_ja:"",
-      categories:[],
-      description:this.state.restaurantDescription,
-      description_ja:"",
-      restaurant_location:{
-        Latitude: 0,
-        Longitude: 0,
-      },
-      owner:this.state.user.email,
-      image:"https://i.imgur.com/80vu1wL.jpg",
-      active_status:0,
-      delivery_charge:0,
-      count:1
-    }).then(function(){
-      _this.cancelCreateRestaurantDialog();
-      _this.resetDataFunction();
-	  _this.setState({ 
-	      restaurantTitle: '', 
-	      restaurantDescription: '',
-	   }); 
-    }).catch(function(error){
-      console.log(error.message);
-    });
-  
+    var _this = this;
+
+    const restaurantRef = firebase.app
+      .firestore()
+      .collection("restaurant_collection")
+      .doc();
+    restaurantRef
+      .set({
+        title: this.state.restaurantTitle,
+        title_ja: "",
+        categories: [],
+        description: this.state.restaurantDescription,
+        description_ja: "",
+        restaurant_location: {
+          Latitude: 0,
+          Longitude: 0,
+        },
+        owner: this.state.user.email,
+        image: "https://i.imgur.com/80vu1wL.jpg",
+        active_status: 0,
+        delivery_charge: 0,
+        count: 1,
+      })
+      .then(function () {
+        _this.cancelCreateRestaurantDialog();
+        _this.resetDataFunction();
+        _this.setState({
+          restaurantTitle: "",
+          restaurantDescription: "",
+        });
+      })
+      .catch(function (error) {
+        console.log(error.message);
+      });
+
     event.preventDefault();
   }
 
-  viewCreateMenuDialog(){
-    console.log("display menu modal")    
-   // this.getRestaurants()
+  viewCreateMenuDialog() {
+    console.log("display menu modal");
+    // this.getRestaurants()
 
     this.refs.viewCreateMenuRequest.show();
   }
 
-  getRestaurants = ()=> {
+  getRestaurants = () => {
     //if (this.state.currentCollectionName === 'restaurant') {
-      var restaurantRef = firebase.app.firestore().collection("restaurant_collection");
-      var restaurants = [];
-      var restaurantIDs = [];
-      restaurantRef = restaurantRef.where('owner', '==', firebase.app.auth().currentUser.email).get()
-      .then(snapshot => {
+    var restaurantRef = firebase.app
+      .firestore()
+      .collection("restaurant_collection");
+    var restaurants = [];
+    var restaurantIDs = [];
+    restaurantRef = restaurantRef
+      .where("owner", "==", firebase.app.auth().currentUser.email)
+      .get()
+      .then((snapshot) => {
         if (snapshot) {
-          snapshot.forEach(doc => {
+          snapshot.forEach((doc) => {
             var rest = doc.data();
             rest.id = doc.id;
             //rest.val = 'restaurant_collection/'+doc.id;
             rest.val = doc.id;
             restaurants.push(rest);
             restaurantIDs.push(doc.id);
-          
-          })
+          });
         }
-          return;
-        });
-        this.setState({restaurants: restaurants, restaurantIDs: restaurantIDs}, ()=>this.forceUpdate());
-        
-    //}
-    console.log('hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
-    this.forceUpdate()
-  }
+        return;
+      });
+    this.setState(
+      { restaurants: restaurants, restaurantIDs: restaurantIDs },
+      () => this.forceUpdate()
+    );
 
-  handleRestChange = (event)=> {
-    this.setState({selectedRest: event.target.value});
-  }
-  
-  cancelCreateMenuDialog(){
+    //}
+    this.forceUpdate();
+  };
+
+  handleRestChange = (event) => {
+    this.setState({ selectedRest: event.target.value });
+  };
+
+  cancelCreateMenuDialog() {
     this.refs.viewCreateMenuRequest.hide();
   }
 
-  handleChangeMenuTitle(event){
-    this.setState({ menuTitle: event.target.value }); 
-  }   
-  
+  handleChangeMenuTitle(event) {
+    this.setState({ menuTitle: event.target.value });
+  }
+
   handleChangeMenuDescription(event) {
     this.setState({ menuDescription: event.target.value });
   }
@@ -964,474 +1072,776 @@ class Firestorevendor extends Component {
     this.setState({ menuPrice: event.target.value });
   }
 
-  createMenuItem(event){
+  createMenuItem(event) {
     console.log("create Menu item");
-    var _this =this;
-    const collectionRef = firebase.app.firestore().collection("restaurant_collection");
+    var _this = this;
+    const collectionRef = firebase.app
+      .firestore()
+      .collection("restaurant_collection");
     const collection = collectionRef.doc(this.state.userCollectionId);
     if (this.state.selectedRest) {
       const collection = collectionRef.doc(this.state.selectedRest);
     }
-  
-    const restaurantRef = firebase.app.firestore().collection('restaurant').doc();
-    restaurantRef.set({
-      title:this.state.menuTitle,
-      title_ja:"",
-      description:this.state.menuDescription,
-      description_ja:"",
-      food_categories:[],
-      owner:this.state.user.email,
-      image:"https://i.imgur.com/80vu1wL.jpg",
-      status:false,
-      calories:this.state.menuCalories,
-			collection:collection,
-			price:this.state.menuPrice,
-			options:"",
-			shortDescription:"",
-			shortDescription_ja:"",
-    }).then(function(){
-      console.log("sucess saving");
-      _this.cancelCreateMenuDialog();
-      _this.resetDataFunction();
-	  _this.setState({ 
-	      menuTitle: '', 
-	      menuDescription: '',
-	   }); 
-    }).catch(function(error){
-      console.log(error.message);
-    })
-  
+
+    const restaurantRef = firebase.app
+      .firestore()
+      .collection("restaurant")
+      .doc();
+    restaurantRef
+      .set({
+        title: this.state.menuTitle,
+        title_ja: "",
+        description: this.state.menuDescription,
+        description_ja: "",
+        food_categories: [],
+        owner: this.state.user.email,
+        image: "https://i.imgur.com/80vu1wL.jpg",
+        status: false,
+        calories: this.state.menuCalories,
+        collection: collection,
+        price: this.state.menuPrice,
+        options: "",
+        shortDescription: "",
+        shortDescription_ja: "",
+      })
+      .then(function () {
+        console.log("sucess saving");
+        _this.cancelCreateMenuDialog();
+        _this.resetDataFunction();
+        _this.setState({
+          menuTitle: "",
+          menuDescription: "",
+        });
+      })
+      .catch(function (error) {
+        console.log(error.message);
+      });
+
     event.preventDefault();
   }
-  
 
   /**
-  * addDocumentToCollection  - used recursivly to add collection's document's collections
-  * @param {String} name name of the collection
-  * @param {FirestoreReference} reference
-  */
-  addDocumentToCollection(name,reference=null){
-    
-    var pathChunks=this.state.firebasePath.split("/");
+   * addDocumentToCollection  - used recursivly to add collection's document's collections
+   * @param {String} name name of the collection
+   * @param {FirestoreReference} reference
+   */
+  addDocumentToCollection(name, reference = null) {
+    var pathChunks = this.state.firebasePath.split("/");
     pathChunks.pop();
     var withoutLast = pathChunks.join("/");
-    console.log(name+" vs "+withoutLast);
+    console.log(name + " vs " + withoutLast);
     //Find the fields to be inserted
     console.log("INSERT_STRUCTURE");
-    var theInsertSchemaObject=INSERT_STRUCTURE[name.replace(this.getAppBuilderAppName(),"")].fields;
+    var theInsertSchemaObject =
+      INSERT_STRUCTURE[name.replace(this.getAppBuilderAppName(), "")].fields;
 
     //New in version 9.1.0
-    theInsertSchemaObject=this.convertSchemaReferencesToNativeReferences(theInsertSchemaObject);
+    theInsertSchemaObject = this.convertSchemaReferencesToNativeReferences(
+      theInsertSchemaObject
+    );
 
     //DON'T PRINT THE FIELD SINCE THE ARE CIRCULAR STRUCTURES NOW
     //console.log(JSON.stringify(theInsertSchemaObject));
 
     //Find the collections to be inserted
-    var theInsertSchemaCollections=INSERT_STRUCTURE[name.replace(this.getAppBuilderAppName(),"")].collections;
+    var theInsertSchemaCollections =
+      INSERT_STRUCTURE[name.replace(this.getAppBuilderAppName(), "")]
+        .collections;
     console.log(JSON.stringify(theInsertSchemaCollections));
 
     //Reference to root firestore or existing document reference
-    var db = reference==null?(pathChunks.length>1?firebase.app.firestore().doc(withoutLast):firebase.app.firestore()):reference;
-    
+    var db =
+      reference == null
+        ? pathChunks.length > 1
+          ? firebase.app.firestore().doc(withoutLast)
+          : firebase.app.firestore()
+        : reference;
+
     //Check type of insert
-    var isTimestamp=Config.adminConfig.methodOfInsertingNewObjects=="timestamp"
+    var isTimestamp =
+      Config.adminConfig.methodOfInsertingNewObjects == "timestamp";
 
     //Create new element
-    var newElementRef=isTimestamp?db.collection(name).doc(Date.now()):db.collection(name).doc()
+    var newElementRef = isTimestamp
+      ? db.collection(name).doc(Date.now())
+      : db.collection(name).doc();
 
-    if(name==="restaurant"){
-      const collectionRef = firebase.app.firestore().collection("restaurant_collection");
+    if (name === "restaurant") {
+      const collectionRef = firebase.app
+        .firestore()
+        .collection("restaurant_collection");
       const collection = collectionRef.doc(this.state.userCollectionId);
-      theInsertSchemaObject["collection"]=collection;
+      theInsertSchemaObject["collection"] = collection;
     }
     //Add data to the new element
-    newElementRef.set(theInsertSchemaObject)
+    newElementRef.set(theInsertSchemaObject);
 
     //Go over sub collection and insert them
     for (var i = 0; i < theInsertSchemaCollections.length; i++) {
-      this.addDocumentToCollection(theInsertSchemaCollections[i],newElementRef)
+      this.addDocumentToCollection(
+        theInsertSchemaCollections[i],
+        newElementRef
+      );
     }
 
-
     //Show the notification on root element
-    if(reference==null){
+    if (reference == null) {
       this.cancelAddFirstItem();
-      var message="Element added. You can find it in the table bellow.";
-      if(Config.adminConfig.goDirectlyInTheInsertedNode){
-        this.props.router.push(this.props.route.path.replace(":sub","")+(this.props.params&&this.props.params.sub?this.props.params.sub:"")+Config.adminConfig.urlSeparator+newElementRef.id);
-        message="Element added. You can now edit it";
-       }
-      this.setState({notifications:[{type:"success",content:message}]});
+      var message = "Element added. You can find it in the table bellow.";
+      if (Config.adminConfig.goDirectlyInTheInsertedNode) {
+        this.props.router.push(
+          this.props.route.path.replace(":sub", "") +
+            (this.props.params && this.props.params.sub
+              ? this.props.params.sub
+              : "") +
+            Config.adminConfig.urlSeparator +
+            newElementRef.id
+        );
+        message = "Element added. You can now edit it";
+      }
+      this.setState({ notifications: [{ type: "success", content: message }] });
       this.refreshDataAndHideNotification();
 
-      if(Config.adminConfig.goDirectlyInTheInsertedNode){
-        this.props.router.push(this.props.route.path.replace(":sub","")+(this.props.params&&this.props.params.sub?this.props.params.sub:"")+Config.adminConfig.urlSeparator+newElementRef.id);
-       }
-
-    }   
-   }
+      if (Config.adminConfig.goDirectlyInTheInsertedNode) {
+        this.props.router.push(
+          this.props.route.path.replace(":sub", "") +
+            (this.props.params && this.props.params.sub
+              ? this.props.params.sub
+              : "") +
+            Config.adminConfig.urlSeparator +
+            newElementRef.id
+        );
+      }
+    }
+  }
 
   /**
-  * addKey
-  * Adds key in our list of fields in firestore
-  */
-  addKey(){
-    if(this.state.NAME_OF_THE_NEW_KEY&&this.state.NAME_OF_THE_NEW_KEY.length>0){
-     
-      if(this.state.VALUE_OF_THE_NEW_KEY&&this.state.VALUE_OF_THE_NEW_KEY.length>0){
-        
-        this.setState({notifications:[{type:"success",content:"New key added."}]});
-        this.updateAction(this.state.NAME_OF_THE_NEW_KEY,this.state.VALUE_OF_THE_NEW_KEY);
-        this.refs.simpleDialog.hide()
+   * addKey
+   * Adds key in our list of fields in firestore
+   */
+  addKey() {
+    if (
+      this.state.NAME_OF_THE_NEW_KEY &&
+      this.state.NAME_OF_THE_NEW_KEY.length > 0
+    ) {
+      if (
+        this.state.VALUE_OF_THE_NEW_KEY &&
+        this.state.VALUE_OF_THE_NEW_KEY.length > 0
+      ) {
+        this.setState({
+          notifications: [{ type: "success", content: "New key added." }],
+        });
+        this.updateAction(
+          this.state.NAME_OF_THE_NEW_KEY,
+          this.state.VALUE_OF_THE_NEW_KEY
+        );
+        this.refs.simpleDialog.hide();
         this.refreshDataAndHideNotification();
       }
     }
   }
 
-  reloadPage(){
+  reloadPage() {
     // window.location.reload();
-    this.refs.newOrderAlert.hide()
-
-    
+    this.refs.newOrderAlert.hide();
   }
 
-  confirmOrderAndSendNotification(){
-    console.log('confirmOrderAndSendNotification clicked');
+  confirmOrderAndSendNotification() {
+    console.log("confirmOrderAndSendNotification clicked");
 
-    var _this=this;
-    var notifications=[];
+    var _this = this;
+    var notifications = [];
     var pathToTokens = "/expoPushTokens";
-    var document=this.state.fieldsAsArray;
-    var collection=this.state.currentCollectionName;
+    var document = this.state.fieldsAsArray;
+    var collection = this.state.currentCollectionName;
     var userId;
-    var restId=this.state.fieldsAsArray[0].value;
+    var restId = this.state.fieldsAsArray[0].value;
     var restName;
     var expoToken;
     var currentToken;
-    Object.keys(document).forEach(function(key) {
-      
-      if(document[key].theKey==="userID"){
+    Object.keys(document).forEach(function (key) {
+      if (document[key].theKey === "userID") {
         userId = document[key].value;
       }
     });
 
-    firebase.app.firestore().collection("restaurant_collection").doc(restId).get()
-    .then(doc =>{
-      if (!doc.exists) {
-        console.log('No such restaurant!');
-      } else {
-        restName=doc.data().title;
-        console.log('restaurant title data:', doc.data().title);
-      }
-    })
-    .catch(err => {
-      console.log('Error getting restaurant name', err);
-    });
-
-    console.log("document",userId);
-    console.log("collection",collection);
-
-    firebase.app.firestore().collection("orders").doc(collection).update({
-      status: (_this.state.orderStatus) ? _this.state.orderStatus : 'confirmed',
-      expected_time_of_delivery: _this.state.expected_time_of_delivery,
-      message_optional: _this.state.message_optional,
-
-    })
-    .then(function() {
-      // Send Notification
-      firebase.app.firestore().collection("users").doc(userId).get()
-    .then(doc =>{
-      if (!doc.exists) {
-        console.log('No such user!');
-      } else {
-        var status = _this.state.orderStatus
-        status = status.replaceAll('_', ' ');
-        expoToken=doc.data().expoToken;
-        notifications.push({
-          to:expoToken,
-          body:  (doc.data().fullName != undefined) ? `Hi ${doc.data().fullName} Your order is ${status}.` : `Your order is ${status}.`,
-          title: (_this.state.orderedRestaurant.title) ? _this.state.orderedRestaurant.title : restName ,
-          
-        })
-        if(notifications.length>0){
-            var url='https://cors-anywhere.herokuapp.com/https://exp.host/--/api/v2/push/send';
-            var json = JSON.stringify(notifications);
-            request.post(url)
-                //.set('Accept-Encoding', 'gzip, deflate')
-                .set('Accept', 'application/json')
-                .set('Content-Type', 'application/json')
-                //.set('User-Agent', 'expo-server-sdk-node/2.3.3')
-                .send(json)
-                .end(()=>{
-                  var d = new Date();
-                  var months = ['January', 'February', 'March', 'April', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                  var db = firebase.app.firestore();
-                  db.collection('notifications').doc(userId).set({
-                    userId: userId,
-                    type: "order_update",
-                    title: (_this.state.orderedRestaurant.title) ? _this.state.orderedRestaurant.title : restName ,
-                    message: (doc.data().fullName != undefined) ? `Hi ${doc.data().fullName} Your order is ${status}.` : `Your order is ${status}.`,
-                    longMessage: d.getDate() + '-' + months[d.getMonth()] + '-' + d.getFullYear()+ ' ' + d.getHours()+ ':'+ d.getMinutes(),
-                  });
-                })
-        }else{
-            alert("There are no subscribed tokens");
+    firebase.app
+      .firestore()
+      .collection("restaurant_collection")
+      .doc(restId)
+      .get()
+      .then((doc) => {
+        if (!doc.exists) {
+          console.log("No such restaurant!");
+        } else {
+          restName = doc.data().title;
+          console.log("restaurant title data:", doc.data().title);
         }
-      }
-    })
-    .catch(err => {
-      console.log('Error getting user', err);
-    });
+      })
+      .catch((err) => {
+        console.log("Error getting restaurant name", err);
+      });
 
+    console.log("document", userId);
+    console.log("collection", collection);
 
-      // firebase.app.database().ref(pathToTokens).once('value').then(function(snapshot){
-      //   var tokens=snapshot.val();
-      //   console.log(tokens);
-  
-      //   if (tokens) {
-      //      Object.keys(tokens).forEach(function(key) {
-      //     console.log("tokens",tokens);
+    firebase.app
+      .firestore()
+      .collection("orders")
+      .doc(collection)
+      .update({
+        status: _this.state.orderStatus ? _this.state.orderStatus : "confirmed",
+        expected_time_of_delivery: _this.state.expected_time_of_delivery,
+        message_optional: _this.state.message_optional,
+      })
+      .then(function () {
+        // Send Notification
+        firebase.app
+          .firestore()
+          .collection("users")
+          .doc(userId)
+          .get()
+          .then((doc) => {
+            if (!doc.exists) {
+              console.log("No such user!");
+            } else {
+              var status = _this.state.orderStatus;
+              status = status.replaceAll("_", " ");
+              expoToken = doc.data().expoToken;
+              notifications.push({
+                to: expoToken,
+                body:
+                  doc.data().fullName != undefined
+                    ? `Hi ${doc.data().fullName} Your order is ${status}.`
+                    : `Your order is ${status}.`,
+                title: _this.state.orderedRestaurant.title
+                  ? _this.state.orderedRestaurant.title
+                  : restName,
+              });
+              if (notifications.length > 0) {
+                var url =
+                  "https://cors-anywhere.herokuapp.com/https://exp.host/--/api/v2/push/send";
+                var json = JSON.stringify(notifications);
+                request
+                  .post(url)
+                  //.set('Accept-Encoding', 'gzip, deflate')
+                  .set("Accept", "application/json")
+                  .set("Content-Type", "application/json")
+                  //.set('User-Agent', 'expo-server-sdk-node/2.3.3')
+                  .send(json)
+                  .end(() => {
+                    var d = new Date();
+                    var months = [
+                      "January",
+                      "February",
+                      "March",
+                      "April",
+                      "June",
+                      "July",
+                      "August",
+                      "September",
+                      "October",
+                      "November",
+                      "December",
+                    ];
+                    var db = firebase.app.firestore();
+                    db.collection("notifications")
+                      .doc(userId)
+                      .set({
+                        userId: userId,
+                        type: "order_update",
+                        title: _this.state.orderedRestaurant.title
+                          ? _this.state.orderedRestaurant.title
+                          : restName,
+                        message:
+                          doc.data().fullName != undefined
+                            ? `Hi ${
+                                doc.data().fullName
+                              } Your order is ${status}.`
+                            : `Your order is ${status}.`,
+                        longMessage:
+                          d.getDate() +
+                          "-" +
+                          months[d.getMonth()] +
+                          "-" +
+                          d.getFullYear() +
+                          " " +
+                          d.getHours() +
+                          ":" +
+                          d.getMinutes(),
+                      });
+                  });
+              } else {
+                alert("There are no subscribed tokens");
+              }
+            }
+          })
+          .catch((err) => {
+            console.log("Error getting user", err);
+          });
 
-      //     console.log("token key",tokens[key]);
+        // firebase.app.database().ref(pathToTokens).once('value').then(function(snapshot){
+        //   var tokens=snapshot.val();
+        //   console.log(tokens);
 
-      //     if(tokens[key].orderUserId && tokens[key].orderUserId===userId){
-      //       console.log("token key orderUserId",tokens[key].orderUserId);
+        //   if (tokens) {
+        //      Object.keys(tokens).forEach(function(key) {
+        //     console.log("tokens",tokens);
 
-      //       currentToken=tokens[key].token;
-      //       console.log("currentToken",currentToken);
+        //     console.log("token key",tokens[key]);
 
-      //     }
-          
-      //   });
-      //   }
-       
-      //   console.log("current documents",document);
-      //   console.log("to:currentToken",expoToken);
-        
-      // })
-    })
-    .catch(function(error) {
+        //     if(tokens[key].orderUserId && tokens[key].orderUserId===userId){
+        //       console.log("token key orderUserId",tokens[key].orderUserId);
+
+        //       currentToken=tokens[key].token;
+        //       console.log("currentToken",currentToken);
+
+        //     }
+
+        //   });
+        //   }
+
+        //   console.log("current documents",document);
+        //   console.log("to:currentToken",expoToken);
+
+        // })
+      })
+      .catch(function (error) {
         // The document probably doesn't exist.
         console.error("Error updating document: ", error);
-    });
-
-    
+      });
 
     this.refs.confirmPickup.hide();
     this.refs.completeOrder.hide();
     this.refs.rejectOderPickup.hide();
     this.refreshDataAndHideNotification();
-
   }
   
-  rejectThisOrderBAK = ()=>{
-    console.log('confirmOrderAndSendNotification clicked');
-
-    var _this=this;
-    var restId = this.state.fieldsAsArray[0].value;
+  completeOrderAndSendNotification() {
+    var _this = this;
+    var notifications = [];
+    var document = this.state.fieldsAsArray;
     var collection = this.state.currentCollectionName;
-    firebase.app.firestore().collection("restaurant_collection").doc(restId).get()
-    .then(doc =>{
-      if (!doc.exists) {
-        console.log('No such restaurant!');
-      } else {
-        console.log('restaurant title data:', doc.data().title);
+    var userId;
+    var restId = this.state.fieldsAsArray[0].value;
+    var restName;
+    var expoToken;
+    Object.keys(document).forEach(function (key) {
+      if (document[key].theKey === "userID") {
+        userId = document[key].value;
       }
-    })
-    .catch(err => {
-      console.log('Error getting restaurant name', err);
     });
 
+    var amountPayable =  _this.state.orderDetails.total > 2000
+      ? _this.state.orderDetails.total -
+      _this.state.redeemedPoints
+      : _this.state.orderDetails.total +
+      _this.state.orderDetails.deliveryCharge -
+      _this.state.redeemedPoints
 
-    firebase.app.firestore().collection("orders").doc(collection).update({
-      status:"rejected",
-      message_optional: this.state.message_optional
-    })
-    .then(function() {
-     
-    })
-    .catch(function(error) {
+    firebase.app
+      .firestore()
+      .collection("restaurant_collection")
+      .doc(restId)
+      .get()
+      .then((doc) => {
+        if (!doc.exists) {
+          console.log("No such restaurant!");
+        } else {
+          restName = doc.data().title;
+          console.log("restaurant title data:", doc.data().title);
+        }
+      })
+      .catch((err) => {
+        console.log("Error getting restaurant name", err);
+      });
+
+    firebase.app
+      .firestore()
+      .collection("orders")
+      .doc(collection)
+      .update({
+        status: "picked_up",
+        amountPayable: amountPayable,
+        pointsRedeemed: _this.state.redeemedPoints,
+      })
+      .then(function () {
+        // Send Notification  
+        firebase.app
+          .firestore()
+          .collection("users")
+          .doc(userId)
+          .get()
+          .then((doc) => {
+            if (!doc.exists) {
+              console.log("No such user!");
+            } else {
+              firebase.app
+      .firestore()
+      .collection("users")
+      .doc(userId)
+      .update({
+        points: doc.data().points - _this.state.redeemedPoints,
+      })
+              
+              expoToken = doc.data().expoToken;
+              notifications.push({
+                to: expoToken,
+                body:
+                  doc.data().fullName != undefined
+                    ? `Hi ${doc.data().fullName} Your order is picked up.`
+                    : `Your order is picked up.`,
+                title: _this.state.orderedRestaurant.title
+                  ? _this.state.orderedRestaurant.title
+                  : restName,
+              });
+              if (expoToken && notifications.length > 0) {
+                var url =
+                  "https://cors-anywhere.herokuapp.com/https://exp.host/--/api/v2/push/send";
+                var json = JSON.stringify(notifications);
+                request
+                  .post(url)
+                  //.set('Accept-Encoding', 'gzip, deflate')
+                  .set("Accept", "application/json")
+                  .set("Content-Type", "application/json")
+                  //.set('User-Agent', 'expo-server-sdk-node/2.3.3')
+                  .send(json)
+                  .end(() => {
+                    var d = new Date();
+                    var months = [
+                      "January",
+                      "February",
+                      "March",
+                      "April",
+                      "June",
+                      "July",
+                      "August",
+                      "September",
+                      "October",
+                      "November",
+                      "December",
+                    ];
+                    var db = firebase.app.firestore();
+                    db.collection("notifications")
+                      .doc(userId)
+                      .set({
+                        userId: userId,
+                        type: "order_update",
+                        title: _this.state.orderedRestaurant.title
+                          ? _this.state.orderedRestaurant.title
+                          : restName,
+                        message:
+                          doc.data().fullName != undefined
+                            ? `Hi ${
+                                doc.data().fullName
+                              } Your order is picked up.`
+                            : `Your order is picked up.`,
+                        longMessage:
+                          d.getDate() +
+                          "-" +
+                          months[d.getMonth()] +
+                          "-" +
+                          d.getFullYear() +
+                          " " +
+                          d.getHours() +
+                          ":" +
+                          d.getMinutes(),
+                      }).then(()=> {
+                        location.reload()
+                      });
+                  });
+              } else {
+                location.reload()
+              }
+            }
+          })
+          .catch((err) => {
+            console.log("Error getting user", err);
+          });
+
+        
+      })
+      .catch(function (error) {
         // The document probably doesn't exist.
         console.error("Error updating document: ", error);
-    });
+      });
+
+    //this.refs.confirmPickup.hide();
+    //this.refs.completeOrder.hide();
+    //this.refs.rejectOderPickup.hide();
+    //this.refreshDataAndHideNotification();
+  }
+
+  rejectThisOrderBAK = () => {
+    console.log("confirmOrderAndSendNotification clicked");
+
+    var _this = this;
+    var restId = this.state.fieldsAsArray[0].value;
+    var collection = this.state.currentCollectionName;
+    firebase.app
+      .firestore()
+      .collection("restaurant_collection")
+      .doc(restId)
+      .get()
+      .then((doc) => {
+        if (!doc.exists) {
+          console.log("No such restaurant!");
+        } else {
+          console.log("restaurant title data:", doc.data().title);
+        }
+      })
+      .catch((err) => {
+        console.log("Error getting restaurant name", err);
+      });
+
+    firebase.app
+      .firestore()
+      .collection("orders")
+      .doc(collection)
+      .update({
+        status: "rejected",
+        message_optional: this.state.message_optional,
+      })
+      .then(function () {})
+      .catch(function (error) {
+        // The document probably doesn't exist.
+        console.error("Error updating document: ", error);
+      });
 
     this.refs.rejectOderPickup.hide();
+  };
 
-  }
-  
-  rejectThisOrder = ()=>{
-    console.log('confirmOrderAndSendNotification clicked');
+  rejectThisOrder = () => {
+    console.log("confirmOrderAndSendNotification clicked");
 
-    var _this=this;
-    _this.setState({
-      message_optional: _this.state.message_optional,
-      orderStatus: 'rejected'
-    },_this.confirmOrderAndSendNotification )
-    
+    var _this = this;
+    _this.setState(
+      {
+        message_optional: _this.state.message_optional,
+        orderStatus: "rejected",
+      },
+      _this.confirmOrderAndSendNotification
+    );
 
     this.refs.rejectOderPickup.hide();
-
-  }
+  };
 
   /**
-  * addItemToArray  - add item to array
-  * @param {String} name name of the array
-  * @param {Number} howLongItIs count of items, to know the next index
-  */
-  addItemToArray(name,howLongItIs){
-    console.log("Add item to array "+name);
-    console.log("Is just array "+this.state.isJustArray);
+   * addItemToArray  - add item to array
+   * @param {String} name name of the array
+   * @param {Number} howLongItIs count of items, to know the next index
+   */
+  addItemToArray(name, howLongItIs) {
+    console.log("Add item to array " + name);
+    console.log("Is just array " + this.state.isJustArray);
 
     console.log("Data ");
     console.log(this.state.fieldsOfOnsert);
 
-    var dataToInsert=null;
-    var correctPathToInsertIn="";
-    if(this.state.fieldsOfOnsert){
-        if(this.state.isJustArray){
-          console.log("THIS IS Array")
-            dataToInsert=this.state.fieldsOfOnsert[0];
-            correctPathToInsertIn=this.state.firebasePath+Config.adminConfig.urlSeparatorFirestoreSubArray+(parseInt(howLongItIs));
-        }else{
-            dataToInsert=this.state.fieldsOfOnsert[name];
-            dataToInsert=dataToInsert?dataToInsert[0]:null;
-            correctPathToInsertIn=this.state.firebasePath+Config.adminConfig.urlSeparatorFirestoreSubArray+name+Config.adminConfig.urlSeparatorFirestoreSubArray+(parseInt(howLongItIs));
-        }
+    var dataToInsert = null;
+    var correctPathToInsertIn = "";
+    if (this.state.fieldsOfOnsert) {
+      if (this.state.isJustArray) {
+        console.log("THIS IS Array");
+        dataToInsert = this.state.fieldsOfOnsert[0];
+        correctPathToInsertIn =
+          this.state.firebasePath +
+          Config.adminConfig.urlSeparatorFirestoreSubArray +
+          parseInt(howLongItIs);
+      } else {
+        dataToInsert = this.state.fieldsOfOnsert[name];
+        dataToInsert = dataToInsert ? dataToInsert[0] : null;
+        correctPathToInsertIn =
+          this.state.firebasePath +
+          Config.adminConfig.urlSeparatorFirestoreSubArray +
+          name +
+          Config.adminConfig.urlSeparatorFirestoreSubArray +
+          parseInt(howLongItIs);
+      }
     }
 
     console.log("Data to insert");
     console.log(dataToInsert);
     console.log("Path to insert");
     console.log(correctPathToInsertIn);
-   
-    var _this=this;
-    this.updatePartOfObject("DIRECT_VALUE_OF_CURRENT_PATH",dataToInsert,true,null ,this.state.firebasePath,correctPathToInsertIn,function(e){
-       _this.setState({notifications:[{type:"success",content:"New element added."}]});
-      _this.refreshDataAndHideNotification();
-    })
+
+    var _this = this;
+    this.updatePartOfObject(
+      "DIRECT_VALUE_OF_CURRENT_PATH",
+      dataToInsert,
+      true,
+      null,
+      this.state.firebasePath,
+      correctPathToInsertIn,
+      function (e) {
+        _this.setState({
+          notifications: [{ type: "success", content: "New element added." }],
+        });
+        _this.refreshDataAndHideNotification();
+      }
+    );
   }
 
   /**
-  *
-  * C Read U D
-  *
-  */
+   *
+   * C Read U D
+   *
+   */
 
   /**
-  * showSubItems - displays sub object, mimics opening of new page
-  * @param {String} theSubLink , direct link to the sub object
-  */
-  showSubItems(theSubLink){
-    var chunks = theSubLink.split(Config.adminConfig.urlSeparatorFirestoreSubArray);
+   * showSubItems - displays sub object, mimics opening of new page
+   * @param {String} theSubLink , direct link to the sub object
+   */
+  showSubItems(theSubLink) {
+    var chunks = theSubLink.split(
+      Config.adminConfig.urlSeparatorFirestoreSubArray
+    );
     this.setState({
-      itemOfInterest:chunks[1],
-      theSubLink:theSubLink,
-    })
-    var items=this.state.records;
+      itemOfInterest: chunks[1],
+      theSubLink: theSubLink,
+    });
+    var items = this.state.records;
     console.log(items);
     for (var i = 1; i < chunks.length; i++) {
       console.log(chunks[i]);
-      items=items[chunks[i]];
+      items = items[chunks[i]];
     }
     console.log("--- NEW ITEMS ");
-    console.log(items)
+    console.log(items);
     this.processRecords(items);
   }
 
   /**
-  *
-  * C R U Delete
-  *
-  */
+   *
+   * C R U Delete
+   *
+   */
 
   /**
-  * deleteFieldAction - displays sub object, mimics opening of new page
-  * @param {String} key to be updated
-  * @param {Boolean} isItArrayItem 
-  * @param {String} theLink 
-  */
-  deleteFieldAction(key,isItArrayItem=false,theLink=null){
-    console.log("Delete "+key);
+   * deleteFieldAction - displays sub object, mimics opening of new page
+   * @param {String} key to be updated
+   * @param {Boolean} isItArrayItem
+   * @param {String} theLink
+   */
+  deleteFieldAction(key, isItArrayItem = false, theLink = null) {
+    console.log("Delete " + key);
     console.log(theLink);
-    if(theLink!=null){
-      theLink=theLink.replace("/firestorevendor","");
+    if (theLink != null) {
+      theLink = theLink.replace("/firestorevendor", "");
     }
-    if(isNaN(key)){
-      isItArrayItem=false;
+    if (isNaN(key)) {
+      isItArrayItem = false;
     }
-    console.log("Is it array: "+isItArrayItem);
-    var firebasePathToDelete=(this.props.route.path.replace(ROUTER_PATH,"").replace(":sub",""))+(this.props.params&&this.props.params.sub?this.props.params.sub:"").replace(/\+/g,"/");
-    if(key!=null){
+    console.log("Is it array: " + isItArrayItem);
+    var firebasePathToDelete =
+      this.props.route.path.replace(ROUTER_PATH, "").replace(":sub", "") +
+      (this.props.params && this.props.params.sub
+        ? this.props.params.sub
+        : ""
+      ).replace(/\+/g, "/");
+    if (key != null) {
       //firebasePathToDelete+=("/"+key)
     }
 
-    console.log("firebasePath for delete:"+firebasePathToDelete);
-    this.setState({pathToDelete:theLink?theLink:firebasePathToDelete,isItArrayItemToDelete:isItArrayItem,keyToDelete:theLink?"":key});
+    console.log("firebasePath for delete:" + firebasePathToDelete);
+    this.setState({
+      pathToDelete: theLink ? theLink : firebasePathToDelete,
+      isItArrayItemToDelete: isItArrayItem,
+      keyToDelete: theLink ? "" : key,
+    });
     window.scrollTo(0, 0);
     this.refs.deleteDialog.show();
-
   }
 
   /**
-  * doDelete - do the actual deleting based on the data in the state
-  */
-  doDelete(){
-    var _this=this;
+   * doDelete - do the actual deleting based on the data in the state
+   */
+  doDelete() {
+    var _this = this;
     console.log("Do delete ");
-    console.log("Is it array "+this.state.isItArrayItemToDelete);
-    console.log("Path to delete: "+this.state.pathToDelete)
-    var completeDeletePath=this.state.pathToDelete+"/"+this.state.keyToDelete;
-    console.log("completeDeletePath to delete: "+completeDeletePath)
-    if(this.state.pathToDelete.indexOf(Config.adminConfig.urlSeparatorFirestoreSubArray)>-1){
+    console.log("Is it array " + this.state.isItArrayItemToDelete);
+    console.log("Path to delete: " + this.state.pathToDelete);
+    var completeDeletePath =
+      this.state.pathToDelete + "/" + this.state.keyToDelete;
+    console.log("completeDeletePath to delete: " + completeDeletePath);
+    if (
+      this.state.pathToDelete.indexOf(
+        Config.adminConfig.urlSeparatorFirestoreSubArray
+      ) > -1
+    ) {
       //Sub data
       _this.refs.deleteDialog.hide();
-       this.updatePartOfObject("DIRECT_VALUE_OF_CURRENT_PATH","DELETE_VALUE",true,null ,this.state.firebasePath,this.state.pathToDelete,function(e){
-         _this.setState({notifications:[{type:"success",content:"Element deleted."}]});
-        _this.refreshDataAndHideNotification();
-      })
-    }else{
+      this.updatePartOfObject(
+        "DIRECT_VALUE_OF_CURRENT_PATH",
+        "DELETE_VALUE",
+        true,
+        null,
+        this.state.firebasePath,
+        this.state.pathToDelete,
+        function (e) {
+          _this.setState({
+            notifications: [{ type: "success", content: "Element deleted." }],
+          });
+          _this.refreshDataAndHideNotification();
+        }
+      );
+    } else {
       //Normal data
 
-      var chunks=completeDeletePath.split("/");
+      var chunks = completeDeletePath.split("/");
 
       var db = firebase.app.firestore();
-     
 
-      if(chunks.length%2){
+      if (chunks.length % 2) {
         //odd
         //Delete fields from docuemnt
         var refToDoc = db.doc(this.state.pathToDelete);
 
         // Remove the 'capital' field from the document
-        var deleteAction={};
-        deleteAction[this.state.keyToDelete]=firebaseREF.firestore.FieldValue.delete();
-        refToDoc.update(deleteAction).then(function() {
+        var deleteAction = {};
+        deleteAction[
+          this.state.keyToDelete
+        ] = firebaseREF.firestore.FieldValue.delete();
+        refToDoc
+          .update(deleteAction)
+          .then(function () {
             console.log("Document successfully deleted!");
             _this.refs.deleteDialog.hide();
-            _this.setState({keyToDelete:null,pathToDelete:null,notifications:[{type:"success",content:"Field is deleted."}]});
+            _this.setState({
+              keyToDelete: null,
+              pathToDelete: null,
+              notifications: [
+                { type: "success", content: "Field is deleted." },
+              ],
+            });
             _this.refreshDataAndHideNotification();
-        }).catch(function(error) {
+          })
+          .catch(function (error) {
             console.error("Error removing document: ", error);
-        });
-      }else{
+          });
+      } else {
         //even
         //delete document from collection
         //alert("Delete document "+completeDeletePath);
-        db.collection(this.state.pathToDelete).doc(this.state.keyToDelete).delete().then(function() {
+        db.collection(this.state.pathToDelete)
+          .doc(this.state.keyToDelete)
+          .delete()
+          .then(function () {
             console.log("Document successfully deleted!");
             _this.refs.deleteDialog.hide();
-            _this.setState({pathToDelete:null,notifications:[{type:"success",content:"Field is deleted."}]});
+            _this.setState({
+              pathToDelete: null,
+              notifications: [
+                { type: "success", content: "Field is deleted." },
+              ],
+            });
             _this.refreshDataAndHideNotification();
-        }).catch(function(error) {
+          })
+          .catch(function (error) {
             console.error("Error removing document: ", error);
-        });
-        
+          });
       }
-
     }
-    
-
-    
 
     /*firebase.database().ref(this.state.pathToDelete).set(null).then((e)=>{
       console.log("Delete res: "+e)
@@ -1443,211 +1853,294 @@ class Firestorevendor extends Component {
   }
 
   /**
-  * cancelDelete - user click on cancel
-  */
-  cancelDelete(){
+   * cancelDelete - user click on cancel
+   */
+  cancelDelete() {
     console.log("Cancel Delete");
-    this.refs.deleteDialog.hide()
+    this.refs.deleteDialog.hide();
   }
 
-  cancelAddFirstItem(){
+  cancelAddFirstItem() {
     console.log("Cancel Add");
-    this.refs.addCollectionDialog.hide()
+    this.refs.addCollectionDialog.hide();
   }
 
-
-
-   /**
+  /**
    *
    * UI GENERATORS
    *
    */
 
   /**
-  * This function finds the headers for the current menu
-  * @param firebasePath - we will use current firebasePath to find the current menu
-  */
-  findHeadersBasedOnPath(firebasePath){
-     var headers=null;
+   * This function finds the headers for the current menu
+   * @param firebasePath - we will use current firebasePath to find the current menu
+   */
+  findHeadersBasedOnPath(firebasePath) {
+    var headers = null;
 
-     var itemFound=false;
-     var navigation=Config.vendorNavigation;
-     for(var i=0;i<navigation.length&&!itemFound;i++){
-       if(navigation[i].path==firebasePath&&navigation[i].tableFields&&navigation[i].link=="firestorevendor"){
-         headers=navigation[i].tableFields;
-         itemFound=true;
-       }
+    var itemFound = false;
+    var navigation = Config.vendorNavigation;
+    for (var i = 0; i < navigation.length && !itemFound; i++) {
+      if (
+        navigation[i].path == firebasePath &&
+        navigation[i].tableFields &&
+        navigation[i].link == "firestorevendor"
+      ) {
+        headers = navigation[i].tableFields;
+        itemFound = true;
+      }
 
-       //Look into the sub menus
-       if(navigation[i].subMenus){
-         for(var j=0;j<navigation[i].subMenus.length;j++){
-           if(navigation[i].subMenus[j].path==firebasePath&&navigation[i].subMenus[j].tableFields&&navigation[i].subMenus[j].link=="firestorevendor"){
-             headers=navigation[i].subMenus[j].tableFields;
-             itemFound=true;
-           }
-         }
-       }
-     }
-     return headers;
+      //Look into the sub menus
+      if (navigation[i].subMenus) {
+        for (var j = 0; j < navigation[i].subMenus.length; j++) {
+          if (
+            navigation[i].subMenus[j].path == firebasePath &&
+            navigation[i].subMenus[j].tableFields &&
+            navigation[i].subMenus[j].link == "firestorevendor"
+          ) {
+            headers = navigation[i].subMenus[j].tableFields;
+            itemFound = true;
+          }
+        }
+      }
+    }
+    return headers;
   }
 
   /**
-  * makeCollectionTable
-  * Creates single collection documents
-  */
-  makeCollectionTable(){
-      var name=this.state.currentCollectionName;
-      if(name==="restaurant"){
-        console.log("resutorant 1");
-        return (
-          <CardUI name={name} showAction={true} action={()=>{this.addDocumentToCollection(name)}} title={Common.capitalizeFirstLetter(name)}>
-            <Table
-                caller={"firestore"}
-                headers={this.findHeadersBasedOnPath(this.state.firebasePath)} 
-                deleteFieldAction={this.deleteFieldAction} 
-                fromObjectInArray={true} 
-                name={name} 
-                routerPath={this.props.route.path} 
-                isJustArray={false} 
-                sub={this.props.params&&this.props.params.sub?this.props.params.sub:""} 
-                data={this.state.documents}
-                />
-          </CardUI>
-        )
-      }else{
-        return (
-          <CardUI name={name} showAction={false} title={Common.capitalizeFirstLetter(name)}>
-            <Table
-                caller={"firestore"}
-                headers={this.findHeadersBasedOnPath(this.state.firebasePath)} 
-                deleteFieldAction={this.deleteFieldAction} 
-                fromObjectInArray={true} 
-                name={name} 
-                routerPath={this.props.route.path} 
-                isJustArray={false} 
-                sub={this.props.params&&this.props.params.sub?this.props.params.sub:""} 
-                data={this.state.documents}
-                />
-          </CardUI>
-        )
-      }
-      
+   * makeCollectionTable
+   * Creates single collection documents
+   */
+  makeCollectionTable() {
+    var name = this.state.currentCollectionName;
+    if (name === "restaurant") {
+      console.log("resutorant 1");
+      return (
+        <CardUI
+          name={name}
+          showAction={true}
+          action={() => {
+            this.addDocumentToCollection(name);
+          }}
+          title={Common.capitalizeFirstLetter(name)}
+        >
+          <Table
+            caller={"firestore"}
+            headers={this.findHeadersBasedOnPath(this.state.firebasePath)}
+            deleteFieldAction={this.deleteFieldAction}
+            fromObjectInArray={true}
+            name={name}
+            routerPath={this.props.route.path}
+            isJustArray={false}
+            sub={
+              this.props.params && this.props.params.sub
+                ? this.props.params.sub
+                : ""
+            }
+            data={this.state.documents}
+          />
+        </CardUI>
+      );
+    } else {
+      return (
+        <CardUI
+          name={name}
+          showAction={false}
+          title={Common.capitalizeFirstLetter(name)}
+        >
+          <Table
+            caller={"firestore"}
+            headers={this.findHeadersBasedOnPath(this.state.firebasePath)}
+            deleteFieldAction={this.deleteFieldAction}
+            fromObjectInArray={true}
+            name={name}
+            routerPath={this.props.route.path}
+            isJustArray={false}
+            sub={
+              this.props.params && this.props.params.sub
+                ? this.props.params.sub
+                : ""
+            }
+            data={this.state.documents}
+          />
+        </CardUI>
+      );
+    }
   }
 
   /**
    * Creates single array section
    * @param {String} name, used as key also
    */
-  makeArrayCard(name){
-      return (
-        <CardUI name={name} showAction={true} action={()=>{this.addItemToArray(name,this.state.arrays[name].length)}} title={Common.capitalizeFirstLetter(name)}>
-          <Table 
-              caller={"firestore"}
-              isFirestoreSubArray={true}
-              showSubItems={this.showSubItems}
-              headers={this.findHeadersBasedOnPath(this.state.firebasePath)} 
-              deleteFieldAction={this.deleteFieldAction} 
-              fromObjectInArray={false} name={name}
-              routerPath={this.props.route.path} 
-              isJustArray={this.state.isJustArray} 
-              sub={this.props.params&&this.props.params.sub?this.props.params.sub:""} 
-              data={this.state.arrays[name]}/>
-        </CardUI>
-      )
+  makeArrayCard(name) {
+    return (
+      <CardUI
+        name={name}
+        showAction={true}
+        action={() => {
+          this.addItemToArray(name, this.state.arrays[name].length);
+        }}
+        title={Common.capitalizeFirstLetter(name)}
+      >
+        <Table
+          caller={"firestore"}
+          isFirestoreSubArray={true}
+          showSubItems={this.showSubItems}
+          headers={this.findHeadersBasedOnPath(this.state.firebasePath)}
+          deleteFieldAction={this.deleteFieldAction}
+          fromObjectInArray={false}
+          name={name}
+          routerPath={this.props.route.path}
+          isJustArray={this.state.isJustArray}
+          sub={
+            this.props.params && this.props.params.sub
+              ? this.props.params.sub
+              : ""
+          }
+          data={this.state.arrays[name]}
+        />
+      </CardUI>
+    );
   }
 
   /**
    * Creates  table section for the elements object
    * @param {String} name, used as key also
    */
-  makeTableCardForElementsInArray(){
-      var name=this.state.lastPathItem;
-      return (
-        <CardUI name={name} showAction={false}  title={Common.capitalizeFirstLetter(name)}>
-          <Table 
-              caller={"firestore"}
-              isFirestoreSubArray={true}
-              showSubItems={this.showSubItems}
-              headers={this.findHeadersBasedOnPath(this.state.firebasePath)} deleteFieldAction={this.deleteFieldAction} fromObjectInArray={true} name={name} routerPath={this.props.route.path} isJustArray={this.state.isJustArray} sub={this.props.params&&this.props.params.sub?this.props.params.sub:""} data={this.state.elementsInArray}>
-          </Table>
-        </CardUI>
-      )
+  makeTableCardForElementsInArray() {
+    var name = this.state.lastPathItem;
+    return (
+      <CardUI
+        name={name}
+        showAction={false}
+        title={Common.capitalizeFirstLetter(name)}
+      >
+        <Table
+          caller={"firestore"}
+          isFirestoreSubArray={true}
+          showSubItems={this.showSubItems}
+          headers={this.findHeadersBasedOnPath(this.state.firebasePath)}
+          deleteFieldAction={this.deleteFieldAction}
+          fromObjectInArray={true}
+          name={name}
+          routerPath={this.props.route.path}
+          isJustArray={this.state.isJustArray}
+          sub={
+            this.props.params && this.props.params.sub
+              ? this.props.params.sub
+              : ""
+          }
+          data={this.state.elementsInArray}
+        ></Table>
+      </CardUI>
+    );
   }
 
   /**
-    * Creates direct value section
-    * @param {String} value, valu of the current path
-    */
-   makeValueCard(value){
-     var name=this.state.currentCollectionName;
-     return (
-      <CardUI name={name} showAction={false}  title={"Value"}>
-        <Input updateAction={this.updateAction} class="" theKey="DIRECT_VALUE_OF_CURRENT_PATH" value={value} />
+   * Creates direct value section
+   * @param {String} value, valu of the current path
+   */
+  makeValueCard(value) {
+    var name = this.state.currentCollectionName;
+    return (
+      <CardUI name={name} showAction={false} title={"Value"}>
+        <Input
+          updateAction={this.updateAction}
+          class=""
+          theKey="DIRECT_VALUE_OF_CURRENT_PATH"
+          value={value}
+        />
       </CardUI>
-     )
-   }
-
+    );
+  }
 
   /**
    * generateNavBar
    */
-  generateNavBar(){
-      var subPath=this.props.params&&this.props.params.sub?this.props.params.sub:""
-      var items=subPath.split(Config.adminConfig.urlSeparator);
-      var name=this.state.currentCollectionName;
-      console.log("colect name "+name);
-      var path="/firestorevendor/"
-      return (
-        <div>
-          <NavBar 
-            items={items} 
-            path={path} 
-            title={items.length>0?Common.capitalizeFirstLetter(items[items.length-1]):""} />
-            <div style={{ float: 'right', 'margin-top' : '-40px', 'margin-right' : '28px', 'padding-top' : '8px'}}>
-              {name === 'restaurant_collection' ?
-                <a className="btn btn-primary" onClick={()=>this.viewCreateRestaurantDialog()}>{translate('addNewRestaurant')}</a>
-                :
-                ""
-              }
-              {name === 'restaurant' ?
-                <a className="btn btn-primary" onClick={()=>this.viewCreateMenuDialog()}>{translate('addNewMenuItem')}</a>
-                :
-                ""
-              }
-            </div>
-          
+  generateNavBar() {
+    var subPath =
+      this.props.params && this.props.params.sub ? this.props.params.sub : "";
+    var items = subPath.split(Config.adminConfig.urlSeparator);
+    var name = this.state.currentCollectionName;
+    console.log("colect name " + name);
+    var path = "/firestorevendor/";
+    return (
+      <div>
+        <NavBar
+          items={items}
+          path={path}
+          title={
+            items.length > 0
+              ? Common.capitalizeFirstLetter(items[items.length - 1])
+              : ""
+          }
+        />
+        <div
+          style={{
+            float: "right",
+            "margin-top": "-40px",
+            "margin-right": "28px",
+            "padding-top": "8px",
+          }}
+        >
+          {name === "restaurant_collection" ? (
+            <a
+              className="btn btn-primary"
+              onClick={() => this.viewCreateRestaurantDialog()}
+            >
+              {translate("addNewRestaurant")}
+            </a>
+          ) : (
+            ""
+          )}
+          {name === "restaurant" ? (
+            <a
+              className="btn btn-primary"
+              onClick={() => this.viewCreateMenuDialog()}
+            >
+              {translate("addNewMenuItem")}
+            </a>
+          ) : (
+            ""
+          )}
         </div>
-        ) 
+      </div>
+    );
   }
 
   /**
    * generateNotifications
    * @param {Object} item - notification to be created
    */
-  generateNotifications(item){
-      return (
-          <div className="col-md-12">
-              <Notification type={item.type} >{item.content}</Notification>
-          </div>
-      )
+  generateNotifications(item) {
+    return (
+      <div className="col-md-12">
+        <Notification type={item.type}>{item.content}</Notification>
+      </div>
+    );
   }
 
   /**
-  * refreshDataAndHideNotification
-  * @param {Boolean} refreshData 
-  * @param {Number} time 
-  */
-  refreshDataAndHideNotification(refreshData=true,time=3000){
+   * refreshDataAndHideNotification
+   * @param {Boolean} refreshData
+   * @param {Number} time
+   */
+  refreshDataAndHideNotification(refreshData = true, time = 3000) {
     //Refresh data,
-    if(refreshData){
+    if (refreshData) {
       this.resetDataFunction();
     }
 
     //Hide notifications
-    setTimeout(function(){this.setState({notifications:[]})}.bind(this), time);
+    setTimeout(
+      function () {
+        this.setState({ notifications: [] });
+      }.bind(this),
+      time
+    );
   }
 
-  //MAIN RENDER FUNCTION 
+  //MAIN RENDER FUNCTION
   render() {
     return (
       <div className="content">
@@ -1960,17 +2453,23 @@ class Firestorevendor extends Component {
             </div>
             <div>
               <row>
-              <label className="col-sm-3 label-on-left">Order Status</label>
-              <select className="col-sm-9 form-control form-control-sm" value={this.state.orderStatus} onChange={(e)=>this.setState({orderStatus: e.target.value})}>
-                <option value="">select</option>                
-                <option value="confirmed">Order Confirmed</option>                
-                <option value="ready_to_pick">Ready To Pick</option>
-                <option value="picked_up">Picked Up</option>
-                <option value="canceled">Order Canceled</option>
-                <option value="out_for_delivery">Out For Delivery</option>
-                <option value="delivered">Order Delivered</option>
-                <option value="cannot_deliver">Cannot Deliver</option>
-              </select>
+                <label className="col-sm-3 label-on-left">Order Status</label>
+                <select
+                  className="col-sm-9 form-control form-control-sm"
+                  value={this.state.orderStatus}
+                  onChange={(e) =>
+                    this.setState({ orderStatus: e.target.value })
+                  }
+                >
+                  <option value="">select</option>
+                  <option value="confirmed">Order Confirmed</option>
+                  <option value="ready_to_pick">Ready To Pick</option>
+                  <option value="picked_up">Picked Up</option>
+                  <option value="canceled">Order Canceled</option>
+                  <option value="out_for_delivery">Out For Delivery</option>
+                  <option value="delivered">Order Delivered</option>
+                  <option value="cannot_deliver">Cannot Deliver</option>
+                </select>
               </row>
             </div>
             <br />
@@ -2017,73 +2516,145 @@ class Firestorevendor extends Component {
             <div className="col-sm-3 "></div>
           </div>
         </SkyLight>
-        
-        <SkyLight hideOnOverlayClicked ref="completeOrder" title="">
-          <span>
-            <h3 className="center-block">Change Order status</h3>
-          </span>
-          <div className="card-content">
-            <div className="row">
-              {/* <h5>Change the order status</h5> */}
-              <h5>Order ID : {this.state.currentCollectionName}</h5>
-            </div>
-            <div>
-              <row>
-              <label className="col-sm-3 label-on-left">Order Status</label>
-              <select className="col-sm-9 form-control form-control-sm" value={this.state.orderStatus} onChange={(e)=>this.setState({orderStatus: e.target.value})}>
-                <option value="">select</option>                
-                <option value="confirmed">Order Confirmed</option>                
-                <option value="ready_to_pick">Ready To Pick</option>
-                <option value="picked_up">Picked Up</option>
-                <option value="canceled">Order Canceled</option>
-                <option value="out_for_delivery">Out For Delivery</option>
-                <option value="delivered">Order Delivered</option>
-                <option value="cannot_deliver">Cannot Deliver</option>
-              </select>
-              </row>
-            </div>
-            <br />
-            <div>
-              <label className="col-sm-3 label-on-left">Expected Time</label>
-              <br />
-              <input
-                type="text"
-                onChange={(event) =>
-                  this.setState({
-                    expected_time_of_delivery: event.target.value,
-                  })
-                }
-                value={this.state.expected_time_of_delivery}
-                className="col-sm-6 form-control"
-                name="expected_time_of_delivery"
-              />
-              <br />
-              <label className="col-sm-3 label-on-left">
-                Message (Optional)
-              </label>
-              <textarea
-                onChange={(event) =>
-                  this.setState({ message_optional: event.target.value })
-                }
-                value={this.state.message_optional}
-                className="form-control"
-                cols={3}
-                name="message_optional"
-              ></textarea>
-            </div>
-          </div>
 
-          <div className="col-sm-12 ">
-            <div className="col-sm-3 "></div>
-            <div className="col-sm-6 center-block">
-              <a
-                onClick={this.confirmOrderAndSendNotification}
-                className="btn btn-rose btn-round center-block"
-              >
-                <i className="fa fa-save"></i>Change status
-              </a>
-            </div>
-            <div className="col-sm-3 "></div>
+        <SkyLight
+          dialogStyles={{ height: "600px" }}
+          hideOnOverlayClicked
+          ref="completeOrder"
+          title={translate("completeOrder")}
+        >
+          <div className="card-content">
+            {this.state.orderDetails && this.state.orderOwner ? (
+              <div>
+                {/* Order Id   */}
+                <div className="row">
+                  <div className="col-md-3">
+                    <h5>{translate("orderID")} : </h5>
+                  </div>
+                  <div className="col-md-9">
+                    <h5>{this.state.currentCollectionName} </h5>
+                  </div>
+                </div>
+                {/* End Order Id   */}
+
+                {/* Order Total   */}
+                <div className="row">
+                  <div className="col-md-3">
+                    <h5>{translate("orderValue")} : </h5>
+                  </div>
+                  <div className="col-md-9">
+                    <h5>{this.state.orderDetails.total} </h5>
+                  </div>
+                </div>
+                {/* End Order Total   */}
+
+                {/* Delivery Charges   */}
+                <div className="row">
+                  <div className="col-md-3">
+                    <h5>{translate("deliveryCharges")} : </h5>
+                  </div>
+                  <div className="col-md-9">
+                    <h5>
+                      {this.state.orderDetails.total > 2000
+                        ? 0
+                        : this.state.orderDetails.deliveryCharge}{" "}
+                    </h5>
+                  </div>
+                </div>
+                {/* End Delivery Charges   */}
+
+                {/* Total value   */}
+                <div className="row">
+                  <div className="col-md-3">
+                    <h5>{translate("total")} : </h5>
+                  </div>
+                  <div className="col-md-9">
+                    <h5>
+                      {this.state.orderDetails.total > 2000
+                        ? this.state.orderDetails.total
+                        : this.state.orderDetails.total +
+                          this.state.orderDetails.deliveryCharge}{" "}
+                    </h5>
+                  </div>
+                </div>
+                {/* End Total value   */}
+
+                {/* points available   */}
+                <div className="row">
+                  <div className="col-md-3">
+                    <h5>{translate("pointsAvailable")} : </h5>
+                  </div>
+                  <div className="col-md-9">
+                    <h5>{this.state.orderOwner.points} </h5>
+                  </div>
+                </div>
+                {/* End points available   */}
+
+                {/* points redeem   */}
+                <div className="row">
+                  <div className="col-md-3">
+                    <h5>{translate("pointsRedeem")} : </h5>
+                  </div>
+                  <div className="col-md-9">
+                    <div className="row">
+                      <div className="col-md-4">
+                        <input
+                          style={{ paddingTop: "35px" }}
+                          type="text"
+                          value={this.state.redeemedPoints}
+                          onChange={(e) => {
+                            if (e.target.value <= 100 && e.target.value <= this.state.orderOwner.points ) {
+                              this.setState({ redeemedPoints: e.target.value });
+                            } else {
+                              alert("please check the input");
+                            }
+                          }}
+                          className="form-control"
+                        />
+                      </div>
+                      <div className="col-md-8">
+                        <h5>Max 100</h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* End points redeem   */}
+
+                {/* Amount Payable   */}
+                <div className="row">
+                  <div className="col-md-3">
+                    <h5>{translate("amountPayable")} : </h5>
+                  </div>
+                  <div className="col-md-9">
+                    <h5>
+                      {this.state.orderDetails.total > 2000
+                        ? this.state.orderDetails.total -
+                          this.state.redeemedPoints
+                        : this.state.orderDetails.total +
+                          this.state.orderDetails.deliveryCharge -
+                          this.state.redeemedPoints}
+                    </h5>
+                  </div>
+                </div>
+                {/* End Amount Payable   */}
+
+                <div className="col-sm-12 ">
+                  <div className="col-sm-3 "></div>
+                  <div className="col-sm-6 center-block">
+                    <a
+                      onClick={this.completeOrderAndSendNotification}
+                      className="btn btn-rose btn-round center-block"
+                    >
+                      <i className="fa fa-save"></i>{" "}
+                      {translate("completeOrder")}
+                    </a>
+                  </div>
+                  <div className="col-sm-3 "></div>
+                </div>
+              </div>
+            ) : (
+              <p>Nothing found</p>
+            )}
           </div>
         </SkyLight>
 
