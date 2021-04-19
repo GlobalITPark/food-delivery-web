@@ -29,6 +29,7 @@ export default class CardUI extends Component {
     render() {
         return (
             <div className={this.props.class?this.props.class:"col-md-12"} key={this.props.name}>
+              <p>{this.props.name}</p>
                 <div className="card">
                   {this.actionView()}
                   <form className="form-horizontal">

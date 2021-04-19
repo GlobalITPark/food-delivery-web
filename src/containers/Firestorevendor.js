@@ -1104,8 +1104,23 @@ class Firestorevendor extends Component {
         shortDescription: "",
         shortDescription_ja: "",
       })
-      .then(function () {
-        console.log("sucess saving");
+      .then(function (aa) {
+        restaurantRef
+        .collection("variants")
+        .doc()
+        .set({
+          title: _this.state.menuTitle,
+          price: _this.state.menuPrice,
+          option1: '',
+          option2: '',
+          option3: ''
+        })
+        .then(function () {
+            console.log('Document Added ');
+        })
+        .catch(function (error) {
+            console.error('Error adding document: ', error);
+        });
         _this.cancelCreateMenuDialog();
         _this.resetDataFunction();
         _this.setState({
@@ -1944,8 +1959,11 @@ class Firestorevendor extends Component {
     } else {
       return (
         <CardUI
-          name={name}
-          showAction={false}
+          name={name} //hereeeeeeeee
+          showAction={(name === 'variants')}
+          action={(name === 'variants') ?() => {
+            this.addDocumentToCollection(name);
+          } : ''}          
           title={Common.capitalizeFirstLetter(name)}
         >
           <Table
@@ -2516,6 +2534,8 @@ class Firestorevendor extends Component {
             <div className="col-sm-3 "></div>
           </div>
         </SkyLight>
+        
+        
 
         <SkyLight
           dialogStyles={{ height: "600px" }}
