@@ -1110,6 +1110,7 @@ class Firestorevendor extends Component {
         .doc()
         .set({
           title: _this.state.menuTitle,
+          title_ja: "your food title in japanese",
           price: _this.state.menuPrice,
           option1: '',
           option2: '',
