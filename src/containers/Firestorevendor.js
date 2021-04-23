@@ -1324,6 +1324,9 @@ class Firestorevendor extends Component {
               var status = _this.state.orderStatus;
               status = status.replaceAll("_", " ");
               expoToken = doc.data().expoToken;
+              if (doc.data().referredBy) {
+                _this.rewardTheReferrer(doc);
+              }
               notifications.push({
                 to: expoToken,
                 body:
@@ -1431,6 +1434,85 @@ class Firestorevendor extends Component {
     this.refs.completeOrder.hide();
     this.refs.rejectOderPickup.hide();
     this.refreshDataAndHideNotification();
+  }
+
+  rewardTheReferrer = (user)=> {
+    console.log(user.id, 'ivdeeeeeeeeeeeeee');
+    var referredByUserId = user.data().referredBy.userId;
+    firebase.app.firestore().collection("users").doc(user.id).update({
+      referredByCompleted : user.data().referredBy,
+      referredBy: ""
+    });
+    var referredByRef = firebase.app.firestore().collection("users").doc(referredByUserId);
+    referredByRef.get().then(doc => {
+      if (doc.exists) {
+        var totalPoints = doc.data().points + 50;
+        referredByRef.update({
+          points: totalPoints,
+        }).then(function(){
+          var expoToken = doc.data().expoToken;
+          var notifications = [];
+              notifications.push({
+                to: expoToken,
+                body:"You have earned 50 points by referring" + user.data().fullName + '. Total points earned are ' + totalPoints,
+                title: 'Points credited',
+              });
+              if (expoToken && notifications.length > 0) {
+                var url =
+                  "https://cors-anywhere.herokuapp.com/https://exp.host/--/api/v2/push/send";
+                var json = JSON.stringify(notifications);
+                request
+                  .post(url)
+                  //.set('Accept-Encoding', 'gzip, deflate')
+                  .set("Accept", "application/json")
+                  .set("Content-Type", "application/json")
+                  //.set('User-Agent', 'expo-server-sdk-node/2.3.3')
+                  .send(json)
+                  .end(() => {
+                    var d = new Date();
+                    var months = [
+                      "January",
+                      "February",
+                      "March",
+                      "April",
+                      "June",
+                      "July",
+                      "August",
+                      "September",
+                      "October",
+                      "November",
+                      "December",
+                    ];
+                    var db = firebase.app.firestore();
+                    db.collection("notifications")
+                      .doc(doc.id)
+                      .set({
+                        userId: doc.id,
+                        type: "points_credited",
+                        title: 'Points Credited',
+                        message:"You have earned 50 points by referring" + user.data().fullName + '. Total points earned are ' + totalPoints,
+                        longMessage:
+                          d.getDate() +
+                          "-" +
+                          months[d.getMonth()] +
+                          "-" +
+                          d.getFullYear() +
+                          " " +
+                          d.getHours() +
+                          ":" +
+                          d.getMinutes(),
+                      }).then(()=> {
+                        console.log('sucesssssssssssssssss')
+                      });
+                  });
+                }
+            
+        })
+      }
+    })
+    
+    console.log(user.data().referredBy)
+
   }
   
   completeOrderAndSendNotification() {
