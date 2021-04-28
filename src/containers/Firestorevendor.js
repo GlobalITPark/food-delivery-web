@@ -766,13 +766,12 @@ class Firestorevendor extends Component {
    */
   processValueToSave(value, type) {
     //To handle number values
-    if (!isNaN(value)) {
+    if (value && !isNaN(value)) {
       value = Number(value);
     }
 
     //To handle boolean values
     value = value === "true" ? true : value === "false" ? false : value;
-
     if (type == "date") {
       //To handle date values
       if (moment(value).isValid()) {
@@ -780,7 +779,6 @@ class Firestorevendor extends Component {
         //futureStartAtDate = new Date(moment().locale("en").add(1, 'd').format("MMM DD, YYYY HH:MM"))
       }
     }
-
     return value;
   }
 
