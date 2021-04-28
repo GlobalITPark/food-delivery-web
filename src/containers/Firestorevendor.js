@@ -52,7 +52,8 @@ class Firestorevendor extends Component {
       displayNewOrder: false,
       restaurantTitle: "",
       restaurantDescription: "",
-      menutTitle: "",
+      menuTitle: "",
+      menuTitleJa: "",
       menuDescription: "",
       expected_time_of_delivery: "",
       message_optional: "",
@@ -959,6 +960,7 @@ class Firestorevendor extends Component {
 
   cancelCreateRestaurantDialog() {
     this.refs.viewCreateRestaurantRequest.hide();
+    this.refs.viewCreateMenuRequest.hide();
   }
 
   handleChangeTitle(event) {
@@ -1059,6 +1061,9 @@ class Firestorevendor extends Component {
   handleChangeMenuTitle(event) {
     this.setState({ menuTitle: event.target.value });
   }
+  handleChangeMenuTitleJa(event) {
+    this.setState({ menuTitleJa: event.target.value });
+  }
 
   handleChangeMenuDescription(event) {
     this.setState({ menuDescription: event.target.value });
@@ -1078,9 +1083,9 @@ class Firestorevendor extends Component {
     const collectionRef = firebase.app
       .firestore()
       .collection("restaurant_collection");
-    const collection = collectionRef.doc(this.state.userCollectionId);
+    var collection = collectionRef.doc(this.state.userCollectionId);
     if (this.state.selectedRest) {
-      const collection = collectionRef.doc(this.state.selectedRest);
+      collection = collectionRef.doc(this.state.selectedRest);
     }
 
     const restaurantRef = firebase.app
@@ -1090,7 +1095,7 @@ class Firestorevendor extends Component {
     restaurantRef
       .set({
         title: this.state.menuTitle,
-        title_ja: "",
+        title_ja: this.state.menuTitleJa,
         description: this.state.menuDescription,
         description_ja: "",
         food_categories: [],
@@ -1110,7 +1115,7 @@ class Firestorevendor extends Component {
         .doc()
         .set({
           title: _this.state.menuTitle,
-          title_ja: "your food title in japanese",
+          title_ja: _this.state.menuTitleJa,
           price: _this.state.menuPrice,
           option1: '',
           option2: '',
@@ -1126,6 +1131,7 @@ class Firestorevendor extends Component {
         _this.resetDataFunction();
         _this.setState({
           menuTitle: "",
+          menuTitleJa: "",
           menuDescription: "",
         });
       })
@@ -2844,7 +2850,7 @@ class Firestorevendor extends Component {
                     style={{ marginTop: "0px", marginBottom: "0px" }}
                     className="card-title"
                   >
-                    Add Restaurant
+                    {translate('Add Restaurant')}
                   </h4>
                 </div>
                 <div className="card-content">
@@ -2854,7 +2860,7 @@ class Firestorevendor extends Component {
                       <i className="material-icons">how_to_reg</i>
                     </span>
                     <div className="form-group">
-                      <label className="control-label">Title</label>
+                      <label className="control-label">{translate('title')}</label>
                       <input
                         type="text"
                         value={this.state.restaurantTitle}
@@ -2868,7 +2874,7 @@ class Firestorevendor extends Component {
                       <i className="material-icons">work</i>
                     </span>
                     <div className="form-group">
-                      <label className="control-label">Description</label>
+                      <label className="control-label">{translate('description')}</label>
                       <input
                         type="text"
                         value={this.state.restaurantDescription}
@@ -2883,9 +2889,9 @@ class Firestorevendor extends Component {
                     onClick={this.cancelCreateRestaurantDialog}
                     className="btn btn-info"
                   >
-                    Cancel
+                    {translate('cancel')}
                   </a>
-                  <input type="submit" className="btn btn-danger" />
+                  <input  type="submit" className="btn btn-danger" />
                 </div>
               </div>
             </form>
@@ -2909,7 +2915,7 @@ class Firestorevendor extends Component {
                     style={{ marginTop: "0px", marginBottom: "0px" }}
                     className="card-title"
                   >
-                    Add Menu Item
+                    {translate('Add Menu Item')}
                   </h4>
                 </div>
                 <div className="card-content">
@@ -2919,7 +2925,7 @@ class Firestorevendor extends Component {
                       <i className="material-icons">how_to_reg</i>
                     </span>
                     <div className="form-group">
-                      <label className="control-label">Title</label>
+                      <label className="control-label">{translate('title')}</label>
                       <input
                         type="text"
                         value={this.state.menuTitle}
@@ -2928,9 +2934,23 @@ class Firestorevendor extends Component {
                       />
                     </div>
                   </div>
+                  <div className="input-group">
+                    <span className="input-group-addon">
+                      <i className="material-icons">how_to_reg</i>
+                    </span>
+                    <div className="form-group">
+                      <label className="control-label">{translate('titleJa')}</label>
+                      <input
+                        type="text"
+                        value={this.state.menuTitleJa}
+                        onChange={this.handleChangeMenuTitleJa}
+                        className="form-control"
+                      />
+                    </div>
+                  </div>
                   {this.state.restaurants ? (
                     <div className="form-group">
-                      <label className="control-label">Restaurant</label>
+                      <label className="control-label">{translate('restaurant')}</label>
                       <select
                         className="form-control"
                         value={this.state.selectedRest}
@@ -2950,7 +2970,7 @@ class Firestorevendor extends Component {
                       <i className="material-icons">work</i>
                     </span>
                     <div className="form-group">
-                      <label className="control-label">Description</label>
+                      <label className="control-label">{translate('description')}</label>
                       <input
                         type="text"
                         value={this.state.menuDescription}
@@ -2964,7 +2984,7 @@ class Firestorevendor extends Component {
                       <i className="material-icons">money</i>
                     </span>
                     <div className="form-group">
-                      <label className="control-label">Price</label>
+                      <label className="control-label">{translate('price')}</label>
                       <input
                         type="text"
                         value={this.state.menuPrice}
@@ -2973,7 +2993,7 @@ class Firestorevendor extends Component {
                       />
                     </div>
                   </div>
-                  <div className="input-group">
+                  {/* <div className="input-group">
                     <span className="input-group-addon">
                       <i className="material-icons">emoji_food_beverage</i>
                     </span>
@@ -2986,14 +3006,14 @@ class Firestorevendor extends Component {
                         className="form-control"
                       />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="footer text-center">
                   <a
                     onClick={this.cancelCreateRestaurantDialog}
                     className="btn btn-info"
                   >
-                    Cancel
+                    {translate('cancel')}
                   </a>
                   <input type="submit" className="btn btn-danger" />
                 </div>
