@@ -51,7 +51,9 @@ class Firestorevendor extends Component {
       restaurantID: "",
       displayNewOrder: false,
       restaurantTitle: "",
+      restaurantTitleJa: "",
       restaurantDescription: "",
+      restaurantDescriptionJa: "",
       menuTitle: "",
       menuTitleJa: "",
       menuDescription: "",
@@ -964,9 +966,17 @@ class Firestorevendor extends Component {
   handleChangeTitle(event) {
     this.setState({ restaurantTitle: event.target.value });
   }
+  
+  handleChangeTitleJa(event) {
+    this.setState({ restaurantTitleJa: event.target.value });
+  }
 
   handleChangeDescription(event) {
     this.setState({ restaurantDescription: event.target.value });
+  }
+  
+  handleChangeDescriptionJa(event) {
+    this.setState({ restaurantDescriptionJa: event.target.value });
   }
 
   createRestaurant(event) {
@@ -980,10 +990,10 @@ class Firestorevendor extends Component {
     restaurantRef
       .set({
         title: this.state.restaurantTitle,
-        title_ja: "",
+        title_ja: this.state.restaurantTitleJa,
         categories: [],
         description: this.state.restaurantDescription,
-        description_ja: "",
+        description_ja: this.state.restaurantDescriptionJa,
         restaurant_location: {
           Latitude: 0,
           Longitude: 0,
@@ -991,6 +1001,7 @@ class Firestorevendor extends Component {
         owner: this.state.user.email,
         image: "https://i.imgur.com/80vu1wL.jpg",
         active_status: 0,
+        isDineInAvailable: false,
         delivery_charge: 0,
         count: 1,
       })
@@ -1098,8 +1109,9 @@ class Firestorevendor extends Component {
         description_ja: "",
         food_categories: [],
         owner: this.state.user.email,
-        image: "https://i.imgur.com/80vu1wL.jpg",
-        status: false,
+        image: "https://i.imgur.com/dwsrHbH.jpeg",
+        //status: false,
+        isActive: true,
         calories: this.state.menuCalories,
         collection: collection,
         price: this.state.menuPrice,
@@ -2867,6 +2879,21 @@ class Firestorevendor extends Component {
                       />
                     </div>
                   </div>
+                  
+                  <div className="input-group">
+                    <span className="input-group-addon">
+                      <i className="material-icons">how_to_reg</i>
+                    </span>
+                    <div className="form-group">
+                      <label className="control-label">{translate('titleJa')}</label>
+                      <input
+                        type="text"
+                        value={this.state.restaurantTitleJa}
+                        onChange={this.handleChangeTitleJa}
+                        className="form-control"
+                      />
+                    </div>
+                  </div>
                   <div className="input-group">
                     <span className="input-group-addon">
                       <i className="material-icons">work</i>
@@ -2877,6 +2904,21 @@ class Firestorevendor extends Component {
                         type="text"
                         value={this.state.restaurantDescription}
                         onChange={this.handleChangeDescription}
+                        className="form-control"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="input-group">
+                    <span className="input-group-addon">
+                      <i className="material-icons">work</i>
+                    </span>
+                    <div className="form-group">
+                      <label className="control-label">{translate('descriptionJa')}</label>
+                      <input
+                        type="text"
+                        value={this.state.restaurantDescriptionJa}
+                        onChange={this.handleChangeDescriptionJa}
                         className="form-control"
                       />
                     </div>
