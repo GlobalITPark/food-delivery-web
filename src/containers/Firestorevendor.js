@@ -4,7 +4,7 @@
 /*eslint radix: "off"*/
 /*eslint no-redeclare: "off"*/
 import React, { Component } from "react";
-import { Link } from "react-router";
+import { Link, Redirect } from "react-router";
 import firebase from "../config/database";
 import Fields from "../components/fields/Fields.js";
 import Input from "../components/fields/Input.js";
@@ -65,7 +65,8 @@ class Firestorevendor extends Component {
       orderOwner: null,
       menuCalories: 0,
       redeemedPoints: 0,
-      menuPrice: 0,
+      menuPrice: null,
+      addMenuItemFormError: false,
     };
 
     //Bind function to this
@@ -1070,7 +1071,7 @@ class Firestorevendor extends Component {
   handleChangeMenuTitle(event) {
     this.setState({ menuTitle: event.target.value });
   }
-  handleChangeMenuTitleJa(event) {
+  handleChangeMenuTitleJa = (event)=> {
     this.setState({ menuTitleJa: event.target.value });
   }
 
@@ -1086,7 +1087,11 @@ class Firestorevendor extends Component {
     this.setState({ menuPrice: event.target.value });
   }
 
+  //Function called when create menu Item form submit
   createMenuItem(event) {
+    if (this.state.menuTitle && this.state.menuPrice && this.state.selectedRest) {
+
+    
     console.log("create Menu item");
     var _this = this;
     const collectionRef = firebase.app
@@ -1112,14 +1117,15 @@ class Firestorevendor extends Component {
         image: "https://i.imgur.com/dwsrHbH.jpeg",
         //status: false,
         isActive: true,
-        calories: this.state.menuCalories,
+        //calories: this.state.menuCalories,
         collection: collection,
         price: this.state.menuPrice,
         options: "",
         shortDescription: "",
         shortDescription_ja: "",
       })
-      .then(function (aa) {
+      .then(function (aa) {        
+        
         restaurantRef
         .collection("variants")
         .doc()
@@ -1127,12 +1133,14 @@ class Firestorevendor extends Component {
           title: _this.state.menuTitle,
           title_ja: _this.state.menuTitleJa,
           price: _this.state.menuPrice,
-          option1: '',
-          option2: '',
-          option3: ''
+          isActive: true
         })
         .then(function () {
             console.log('Document Added ');
+            //just to redirect to edit page
+           // window.location.href = '/dashboard#/firestorevendor/restaurant+'+restaurantRef.id;
+           //window.location.reload()
+           
         })
         .catch(function (error) {
             console.error('Error adding document: ', error);
@@ -1148,7 +1156,11 @@ class Firestorevendor extends Component {
       .catch(function (error) {
         console.log(error.message);
       });
-
+    } else {
+      this.setState({
+        addMenuItemFormError: true
+      })
+    }
     event.preventDefault();
   }
 
@@ -2028,7 +2040,6 @@ class Firestorevendor extends Component {
   makeCollectionTable() {
     var name = this.state.currentCollectionName;
     if (name === "restaurant") {
-      console.log("resutorant 1");
       return (
         <CardUI
           name={name}
@@ -2058,7 +2069,7 @@ class Firestorevendor extends Component {
     } else {
       return (
         <CardUI
-          name={name} //hereeeeeeeee
+          name={name} 
           showAction={(name === 'variants')}
           action={(name === 'variants') ?() => {
             this.addDocumentToCollection(name);
@@ -2375,11 +2386,12 @@ class Firestorevendor extends Component {
             )}
 
             {/* ARRAYS */}
-            {this.state.arrayNames
+            {/* Just Hide these for time being */}
+            {/* {this.state.arrayNames
               ? this.state.arrayNames.map((key) => {
                   return this.makeArrayCard(key);
                 })
-              : ""}
+              : ""} */}
 
             {/* ELEMENTS MERGED IN ARRAY */}
             {this.state.elementsInArray && this.state.elementsInArray.length > 0
@@ -2973,6 +2985,7 @@ class Firestorevendor extends Component {
                         className="form-control"
                       />
                     </div>
+                    {(this.state.addMenuItemFormError && !this.state.menuTitle) ? <span style={{color: 'red', fontSize: '12px'}} >{translate('thisFieldIsRequired')}</span> : null}
                   </div>
                   <div className="input-group">
                     <span className="input-group-addon">
@@ -3001,6 +3014,7 @@ class Firestorevendor extends Component {
                           return <option value={rest.val}>{rest.title}</option>;
                         })}
                       </select>
+                      {(this.state.addMenuItemFormError && !this.state.selectedRest) ? <span style={{color: 'red', fontSize: '12px'}} >{translate('thisFieldIsRequired')}</span> : null}
                     </div>
                   ) : (
                     <div></div>
@@ -3026,12 +3040,13 @@ class Firestorevendor extends Component {
                     <div className="form-group">
                       <label className="control-label">{translate('price')}</label>
                       <input
-                        type="text"
+                        type='number'
                         value={this.state.menuPrice}
                         onChange={this.handleChangeMenuPrice}
                         className="form-control"
                       />
                     </div>
+                    {(this.state.addMenuItemFormError && !this.state.menuPrice) ? <span style={{color: 'red', fontSize: '12px'}} >{translate('thisFieldIsRequired')}</span> : null}
                   </div>
                   {/* <div className="input-group">
                     <span className="input-group-addon">

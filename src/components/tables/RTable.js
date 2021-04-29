@@ -178,6 +178,7 @@ export default class RTable extends Component {
                </div> 
             )
         });
+       
 
         this.setState({
             columns: columns

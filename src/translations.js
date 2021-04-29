@@ -8,7 +8,7 @@ const availableLangs = {
     account:"Account",
     logout:"Logout",
     restaurantCollection:"Restaurants",
-    "restaurant":"Restaurants",
+    "restaurant":"Restaurant",
     addNewRestaurant:"Add New Restaurant",
     approve:"Approve",
     actions:"Actions",
@@ -41,10 +41,12 @@ const availableLangs = {
     pointsRedeem:"Points Redeem",
     amountPayable:"Amount Payable",
     "Add Restaurant":"Add Restaurant",
-    "description":"Description",
-    "descriptionJa":"Description in japanese",
-    "cancel":"Cancel",
-    "titleJa":"Title japanese",
+    description:"Description",
+    descriptionJa:"Description in japanese",
+    cancel:"Cancel",
+    titleJa:"Title japanese",
+    thisFieldIsRequired:"This field is required",
+    menuItem:"Menu items",
 },
   'jp' : {
     dashboard:"レストランのトップページ",
@@ -82,6 +84,7 @@ const availableLangs = {
     restaurantName:"レストラン名",
     phone:"電話",
     noOfSeats:"座席数",
+    thisFieldIsRequired:"この項目は必須です",
     dineInDate:"デートで食事",
     dineInTime:"時間内に食事",
     changeOrderStatusNotifyUser:"注文ステータスの変更とユーザーへの通知",
@@ -93,6 +96,7 @@ const availableLangs = {
     pointsAvailable:"Points Available_ja",
     pointsRedeem:"Points Redeem_ja",
     amountPayable:"Amount Payable_ja",
+    menuItem:"Menu items_ja",
     
 }
 };

@@ -29,12 +29,11 @@ export default class CardUI extends Component {
     render() {
         return (
             <div className={this.props.class?this.props.class:"col-md-12"} key={this.props.name}>
-              <p>{this.props.name}</p>
                 <div className="card">
                   {this.actionView()}
                   <form className="form-horizontal">
                     <div className="card-header card-header-text" data-background-color="rose">
-                      <h5 className="card-title">{translate(this.props.title)}</h5>
+                      <h5 className="card-title">{(this.props.title == 'Restaurant') ? translate('menuItem') : translate(this.props.title) }</h5>
                     </div>
                     <br />
                     <div className="col-md-12">

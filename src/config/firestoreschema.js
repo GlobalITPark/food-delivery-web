@@ -58,12 +58,13 @@ var collectionMeta={
 	},
 	"variants":{
 		"fields":{
-			"option1":"Yes",
-			"option2":"",
-			"option3":"",
+			//"option1":"Yes",
+			//"option2":"",
+			//"option3":"",
 			"price":10,
-			"title":"VIP",
-			"title_ja":"title in japanese"
+			"title":"title in english",
+			"title_ja":"title in japanese",
+			"isActive" : true
 		},
 		"collections":[],
     },
@@ -134,12 +135,13 @@ var collectionMeta={
 	},
 	"variants":{
 		"fields":{
-			"option1":"Big",
-			"option2":"",
-			"option3":"",
+			//"option1":"Big",
+			//"option2":"",
+			//"option3":"",
 			"price":0,
 			"title":"Variant Title",
-			"title_ja":"title in japanese"
+			"title_ja":"title in japanese",
+			"isActive": true
 		},
 		"collections":[],
 	},
@@ -177,12 +179,13 @@ var collectionMeta={
 	},
 	"variants":{
 		"fields":{
-			"option1":"Yes",
-			"option2":"",
-			"option3":"",
+			//"option1":"Yes",
+			//"option2":"",
+			//"option3":"",
 			"price":10,
-			"title":"VIP",
-			"title_ja":"title in japanese"
+			"title":"title in english",
+			"title_ja":"title in japanese",
+			"isActive":true
 		},
 		"collections":[],
     },
@@ -251,12 +254,13 @@ var collectionMeta={
 	},
 	"variants":{
 		"fields":{
-			"option1":"Yes",
-			"option2":"",
-			"option3":"",
+			//"option1":"Yes",
+			//"option2":"",
+			//"option3":"",
 			"price":10,
-			"title":"VIP",
-			"title_ja":"title in japanese"
+			"title":"title in english",
+			"title_ja":"title in japanese",
+			"isActive": true
 		},
 		"collections":[],
     },
