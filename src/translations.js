@@ -47,6 +47,11 @@ const availableLangs = {
     titleJa:"Title japanese",
     thisFieldIsRequired:"This field is required",
     menuItem:"Menu items",
+    slNo:"SL No",
+    orderDate:"Order date",
+    name:"Name",
+    loading:"Loading please wait...",
+    notFound:"No items found",
 },
   'jp' : {
     dashboard:"レストランのトップページ",
@@ -97,6 +102,11 @@ const availableLangs = {
     pointsRedeem:"Points Redeem_ja",
     amountPayable:"Amount Payable_ja",
     menuItem:"Menu items_ja",
+    slNo:"slNo_ja",
+    orderDate:"orderDate_ja",
+    name:"name_ja",
+    loading:"読み込み中。。。待って下さい",
+    notFound:"項目は見つかりませんでした",
     
 }
 };
