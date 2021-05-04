@@ -7,6 +7,7 @@ import firebase from "../config/database";
 import { Table } from "react-bootstrap";
 
 class Appvendor extends Component {
+  intervalId = null;
   constructor(props) {
     super(props);
     this.state = {
@@ -19,9 +20,19 @@ class Appvendor extends Component {
 
   componentDidMount = () => {
     this.setupDashboardTables();
-    //this.fetchPendingOrders()
-    //this.fetchPendingDineIns()
+    var _this = this;
+    this.intervalId = setInterval(function() {
+      if(!_this.state.isLoading) {
+        _this.fetchPendingOrdersAndDineIn()
+      }
+    }, 60000);
+    
   };
+
+  componentWillUnmount = ()=> {
+    console.log('Im called')
+    clearInterval(this.intervalId);
+  }
 
   setupDashboardTables = async () => {
     var restaurantIDs = await this.fetchRestaurantIDs();
@@ -29,7 +40,7 @@ class Appvendor extends Component {
       {
         restaurantIDs: restaurantIDs,
       },
-      this.fetchPendingOrders
+      this.fetchPendingOrdersAndDineIn
     );
   };
 
@@ -54,31 +65,36 @@ class Appvendor extends Component {
   };
 
   // fetch all the pending orders for the vendor
-  fetchPendingOrders = () => {
+  fetchPendingOrdersAndDineIn = async() => {
+    console.log('called meeeeeeeeee')
     if (this.state.restaurantIDs.length > 0) {
-      this.state.restaurantIDs.forEach((restId) => {
+      var totalOrdersTemp = [];
+      var totalDineTemp = [];      
+      for (const restId of this.state.restaurantIDs) {
         try { 
-          this.getPendingOrderForRestaurant(restId);
-          this.getPendingDineInForRestaurant(restId)
-
-        } catch (e) {
-          
+          var pendingOrders = await this.getPendingOrderForRestaurant(restId);
+          totalOrdersTemp = totalOrdersTemp.concat(pendingOrders);
+          var pendingDine = await this.getPendingDineInForRestaurant(restId)
+          totalDineTemp = totalDineTemp.concat(pendingDine)
+        } catch (e) {       
 
         }
        
-      });
+      };
       this.setState({
         isLoading: false,
+        pendingOrders: totalOrdersTemp,
+        pendingDineIns: totalDineTemp
       });
     }
+    this.forceUpdate()
   };
 
   getPendingOrderForRestaurant = (restId) => {
     //Get reference to fireStore
     var db = firebase.app.firestore();
-    var _this = this;
-    var ordersTemp = _this.state.pendingOrders;
-    db.collection("orders")
+    var ordersTemp = [];
+    return db.collection("orders")
       .where("restaurantID", "==", restId)
       .where("status", "in", ["confirmed", "ready_to_pick", "out_for_delivery"])
       .get()
@@ -88,23 +104,21 @@ class Appvendor extends Component {
           objectToAdd.id = doc.id;
           ordersTemp.push(objectToAdd);
         });
-        _this.setState({
-          pendingOrders: ordersTemp,
-        });
+        
+       return ordersTemp;
       });
   };
 
   getPendingDineInForRestaurant = (restId) => {
     //Get reference to fireStore
     var db = firebase.app.firestore();
-    var _this = this;
-    var ordersTemp = _this.state.pendingDineIns;
+    var ordersTemp = [];
     var startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
     var endOfToday = new Date();
     endOfToday.setHours(23, 59, 59, 999);
 
-    db.collection("dinein")
+    return db.collection("dinein")
       .where("restaurantID", "==", restId)      
       .where("createdTime", ">=", startOfToday)
       .where("createdTime", "<=", endOfToday)
@@ -118,9 +132,8 @@ class Appvendor extends Component {
           }
           
         });
-        _this.setState({
-          pendingDineIns: ordersTemp,
-        });
+        
+        return ordersTemp;
       });
   };
 
