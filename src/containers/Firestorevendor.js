@@ -67,6 +67,7 @@ class Firestorevendor extends Component {
       redeemedPoints: 0,
       menuPrice: null,
       addMenuItemFormError: false,
+      filteredRestaurantId: '',
     };
 
     //Bind function to this
@@ -349,8 +350,11 @@ class Firestorevendor extends Component {
 
     if (isCollection) {
       if (collection === "restaurant") {
-        db.collection("restaurant_collection")
-          .get()
+        var ref = db.collection("restaurant_collection");
+        if (this.state.user.email) {
+          ref.where('owner', '==', this.state.user.email)
+        }
+          ref.get()
           .then(function (querySnapshot) {
             var datacCount = 0;
             querySnapshot.forEach(function (doc) {
@@ -388,8 +392,8 @@ class Firestorevendor extends Component {
 
       //COLLECTIONS - GET DOCUMENTS
 
-      db.collection(collection)
-        .get()
+      var colRef = db.collection(collection)
+        colRef.get()
         .then(function (querySnapshot) {
           var datacCount = 0;
           querySnapshot.forEach(function (doc) {
@@ -459,6 +463,7 @@ class Firestorevendor extends Component {
       //Find the collections of this document
       this.findDocumentCollections(parrentCollection);
 
+     
       docRef
         .get()
         .then(function (doc) {
@@ -488,7 +493,6 @@ class Firestorevendor extends Component {
                         orderStatus: doc.data().status ? doc.data().status : "",
                         orderDetails: doc.data(),
                         orderedRestaurant: rest.data(),
-                        // Itha ivde anu modify cheyendathu
                       },
                       () => {
                         if (userId) {
@@ -2239,6 +2243,88 @@ class Firestorevendor extends Component {
     );
   }
 
+  // Filter the menu items based on currently selected Restaurant
+  filterMenuItems = ()=> {
+    if (this.state.filteredRestaurantId) {
+      var _this= this;
+    var foodItems= [];
+    var db = firebase.app.firestore();
+    const restaurantCollectionRef = db
+    .collection("restaurant_collection")
+   .doc(this.state.filteredRestaurantId);
+   const food =  db.collection("restaurant")
+  .where('collection', '==', restaurantCollectionRef);
+
+  
+  food.get().then(snapshot=> {
+    snapshot.docs.forEach((doc) => {
+      //Get the object
+      var currentDocument = doc.data();
+
+      //Sace uidOfFirebase inside him
+      currentDocument.uidOfFirebase = doc.id;
+      foodItems.push(currentDocument);
+    })
+    console.log(foodItems)
+    _this.setState({documents: []}, _this.forceUpdate)
+    _this.setState({documents:foodItems}, _this.forceUpdate)
+  })
+
+  this.forceUpdate()
+
+    }
+    
+     
+  }
+  
+  /**
+   * generateRestaurantFilter
+   */
+   generateRestaurantFilter() {
+    var name = this.state.currentCollectionName;
+    return (name === "restaurant" ? (
+      <div>
+              <row>
+                <div className='col-md-6'>
+                <label className="col-sm-3">{translate('filterByRestaurant')}</label>
+                {this.state.restaurants ? (
+                    <div className="form-group">
+                      <select
+                        className="form-control"
+                        value={this.state.filteredRestaurantId}
+                        onChange={(e) =>
+                          this.setState({ filteredRestaurantId: e.target.value })
+                        }
+                      >
+                        <option value="">select</option>
+                        {this.state.restaurants.map((rest, index) => {
+                          return <option value={rest.val}>{rest.title}</option>;
+                        })}
+                      </select>
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
+                <a
+              className="btn btn-primary"
+              onClick={() => this.filterMenuItems()}
+            >
+              {translate("filter")}
+            </a>
+            {this.state.filteredRestaurantId ? <a
+              className="btn btn-danger"
+              onClick={() => window.location.reload()}
+            >
+              {translate("clear")}
+            </a> : ''}
+              </row>
+            </div>
+    ) : (
+      ""
+    ));
+  }
+
   /**
    * generateNotifications
    * @param {Object} item - notification to be created
@@ -2276,6 +2362,7 @@ class Firestorevendor extends Component {
     return (
       <div className="content">
         {this.generateNavBar()}
+        {this.generateRestaurantFilter()}
 
         <div className="content" sub={this.state.lastSub}>
           <div className="container-fluid">
@@ -2298,7 +2385,7 @@ class Firestorevendor extends Component {
             {/* Documents in collection */}
             {this.state.isCollection && this.state.documents.length > 0
               ? this.makeCollectionTable()
-              : ""}
+              : translate('notFound')}
 
             {/* DIRECT VALUE */}
             {this.state.directValue && this.state.directValue.length > 0

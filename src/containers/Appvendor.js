@@ -65,8 +65,7 @@ class Appvendor extends Component {
   };
 
   // fetch all the pending orders for the vendor
-  fetchPendingOrdersAndDineIn = async() => {
-    console.log('called meeeeeeeeee')
+  fetchPendingOrdersAndDineIn = async() => {    
     if (this.state.restaurantIDs.length > 0) {
       var totalOrdersTemp = [];
       var totalDineTemp = [];      

@@ -52,8 +52,10 @@ const availableLangs = {
     name:"Name",
     loading:"Loading please wait...",
     notFound:"No items found",
+    filterByRestaurant:"Filter by restaurant",
 },
   'jp' : {
+    filterByRestaurant:"レストランでフィルタリング",
     dashboard:"レストランのトップページ",
     myRestaurant:"マイレストラン",
     menuItems:"メニュー",
