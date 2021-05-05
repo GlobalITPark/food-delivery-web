@@ -169,6 +169,8 @@ class Firestorevendor extends Component {
 
   componentWillMount() {}
 
+ 
+
   /**
    * Convert field starting with REFERENCE: to native reference
    * ex. 
@@ -2265,7 +2267,6 @@ class Firestorevendor extends Component {
       currentDocument.uidOfFirebase = doc.id;
       foodItems.push(currentDocument);
     })
-    console.log(foodItems)
     _this.setState({documents: []}, _this.forceUpdate)
     _this.setState({documents:foodItems}, _this.forceUpdate)
   })
