@@ -1144,8 +1144,8 @@ class Firestorevendor extends Component {
         .then(function () {
             console.log('Document Added ');
             //just to redirect to edit page
-           // window.location.href = '/dashboard#/firestorevendor/restaurant+'+restaurantRef.id;
-           //window.location.reload()
+            window.location.href = '/dashboard#/firestorevendor/restaurant+'+restaurantRef.id;
+           window.location.reload()
            
         })
         .catch(function (error) {
@@ -2386,7 +2386,7 @@ class Firestorevendor extends Component {
             {/* Documents in collection */}
             {this.state.isCollection && this.state.documents.length > 0
               ? this.makeCollectionTable()
-              : translate('notFound')}
+              : this.state.isCollection ? translate('notFound') : ''}
 
             {/* DIRECT VALUE */}
             {this.state.directValue && this.state.directValue.length > 0

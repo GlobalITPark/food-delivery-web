@@ -95,7 +95,7 @@ class Appvendor extends Component {
     var ordersTemp = [];
     return db.collection("orders")
       .where("restaurantID", "==", restId)
-      .where("status", "in", ["confirmed", "ready_to_pick", "out_for_delivery"])
+      .where("status", "in", ["just_created", "confirmed", "ready_to_pick", "out_for_delivery"])
       .get()
       .then(function (querySnapshot) {
         querySnapshot.forEach(function (doc) {
@@ -124,7 +124,7 @@ class Appvendor extends Component {
       .get()
       .then(function (querySnapshot) {
         querySnapshot.forEach(function (doc) {
-          if (doc.data().status != 'canceled') {
+          if (doc.data().status != 'canceled' && doc.data().status != 'rejected') {
             var objectToAdd = doc.data();
             objectToAdd.id = doc.id;
             ordersTemp.push(objectToAdd);
