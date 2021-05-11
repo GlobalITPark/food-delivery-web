@@ -57,6 +57,7 @@ class Firestorevendor extends Component {
       menuTitle: "",
       menuTitleJa: "",
       menuDescription: "",
+      menuDescriptionJa: "",
       expected_time_of_delivery: "",
       message_optional: "",
       orderStatus: "",
@@ -1084,6 +1085,9 @@ class Firestorevendor extends Component {
   handleChangeMenuDescription(event) {
     this.setState({ menuDescription: event.target.value });
   }
+  handleChangeMenuDescriptionJa = (event)=> {
+    this.setState({ menuDescriptionJa: event.target.value });
+  }
 
   handleChangeMenuCalories(event) {
     this.setState({ menuCalories: event.target.value });
@@ -1117,7 +1121,7 @@ class Firestorevendor extends Component {
         title: this.state.menuTitle,
         title_ja: this.state.menuTitleJa,
         description: this.state.menuDescription,
-        description_ja: "",
+        description_ja: this.state.menuDescriptionJa,
         food_categories: [],
         owner: this.state.user.email,
         image: "https://i.imgur.com/dwsrHbH.jpeg",
@@ -1157,6 +1161,7 @@ class Firestorevendor extends Component {
           menuTitle: "",
           menuTitleJa: "",
           menuDescription: "",
+          menuDescriptionJa: "",
         });
       })
       .catch(function (error) {
@@ -3065,7 +3070,7 @@ class Firestorevendor extends Component {
                   <h4>{this.props.error}</h4>
                   <div className="input-group">
                     <span className="input-group-addon">
-                      <i className="material-icons">how_to_reg</i>
+                      <i className="material-icons">title</i>
                     </span>
                     <div className="form-group">
                       <label className="control-label">{translate('title')}</label>
@@ -3080,7 +3085,7 @@ class Firestorevendor extends Component {
                   </div>
                   <div className="input-group">
                     <span className="input-group-addon">
-                      <i className="material-icons">how_to_reg</i>
+                      <i className="material-icons">title</i>
                     </span>
                     <div className="form-group">
                       <label className="control-label">{translate('titleJa')}</label>
@@ -3093,6 +3098,10 @@ class Firestorevendor extends Component {
                     </div>
                   </div>
                   {this.state.restaurants ? (
+                    <div className="input-group">
+                       <span className="input-group-addon">
+                      <i className="material-icons">restaurant</i>
+                    </span>
                     <div className="form-group">
                       <label className="control-label">{translate('restaurant')}</label>
                       <select
@@ -3106,22 +3115,40 @@ class Firestorevendor extends Component {
                         })}
                       </select>
                       {(this.state.addMenuItemFormError && !this.state.selectedRest) ? <span style={{color: 'red', fontSize: '12px'}} >{translate('thisFieldIsRequired')}</span> : null}
+                      </div>
                     </div>
                   ) : (
                     <div></div>
                   )}
                   <div className="input-group">
                     <span className="input-group-addon">
-                      <i className="material-icons">work</i>
+                      <i className="material-icons">description</i>
                     </span>
                     <div className="form-group">
                       <label className="control-label">{translate('description')}</label>
-                      <input
-                        type="text"
-                        value={this.state.menuDescription}
-                        onChange={this.handleChangeMenuDescription}
-                        className="form-control"
-                      />
+                      <textarea
+                      className="form-control"
+                      style={{minHeight: 75}}
+                       onChange={this.handleChangeMenuDescription} >
+                        {this.state.menuDescription}
+                      </textarea>
+                      
+                    </div>
+                  </div>
+                  
+                  <div className="input-group">
+                    <span className="input-group-addon">
+                      <i className="material-icons">description</i>
+                    </span>
+                    <div className="form-group">
+                      <label className="control-label">{translate('description_ja')}</label>
+                      <textarea
+                      className="form-control"
+                      style={{minHeight: 75}}
+                       onChange={this.handleChangeMenuDescriptionJa} >
+                        {this.state.menuDescriptionJa}
+                      </textarea>
+                      
                     </div>
                   </div>
                   <div className="input-group">

@@ -124,7 +124,7 @@ class Appvendor extends Component {
       .get()
       .then(function (querySnapshot) {
         querySnapshot.forEach(function (doc) {
-          if (doc.data().status != 'canceled' && doc.data().status != 'rejected') {
+          if (doc.data().reservationStatus == 'just_created') {
             var objectToAdd = doc.data();
             objectToAdd.id = doc.id;
             ordersTemp.push(objectToAdd);
@@ -204,7 +204,7 @@ class Appvendor extends Component {
             <td>{dine.phone ? dine.phone : "NA"}</td>
             <td>{dine.noOfSeats ? dine.noOfSeats : "NA"}</td>
             <td style={{ textTransform: "capitalize" }}>
-              {dine.status ? dine.status : "NA"}
+              {dine.reservationStatus ? dine.reservationStatus : "NA"}
             </td>
           </tr>
         );

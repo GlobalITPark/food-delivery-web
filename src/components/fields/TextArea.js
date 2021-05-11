@@ -21,7 +21,7 @@ class TextArea extends Component {
     return (
             <div className={Config.designSettings.editElementDivClass}>
                 <label className="control-label"></label>
-                <textarea type="text" className={this.props.class+" form-control"} onChange={this.handleChange}  value={this.state.value} />
+                <textarea type="text" className={this.props.class+" form-control"} style={{minHeight: 100}} onChange={this.handleChange}  value={this.state.value} />
             </div>
     )
   }
