@@ -69,6 +69,8 @@ class Firestorevendor extends Component {
       menuPrice: null,
       addMenuItemFormError: false,
       filteredRestaurantId: '',
+      reservationStatus: '',
+      messageFromRestaurant: '',
     };
 
     //Bind function to this
@@ -1377,17 +1379,29 @@ class Firestorevendor extends Component {
                   : restName,
               });
               if (notifications.length > 0) {
-                var url =
-                  "https://cors-anywhere.herokuapp.com/https://exp.host/--/api/v2/push/send";
-                var json = JSON.stringify(notifications);
-                request
-                  .post(url)
-                  //.set('Accept-Encoding', 'gzip, deflate')
-                  .set("Accept", "application/json")
-                  .set("Content-Type", "application/json")
-                  //.set('User-Agent', 'expo-server-sdk-node/2.3.3')
-                  .send(json)
-                  .end(() => {
+                let data = {
+                  "to": expoToken,
+                  "title":  _this.state.orderedRestaurant.title
+                  ? _this.state.orderedRestaurant.title
+                  : restName,
+                  "body": 
+                  doc.data().fullName != undefined
+                    ? `Hi ${doc.data().fullName} Your order is ${status}.`
+                    : `Your order is ${status}.`,
+                  "sound": "default",
+                  "priority": 'high',
+                  "data": {'type': 'dinein-notification'}
+              }                
+                  fetch("https://exp.host/--/api/v2/push/send", {
+                    'mode': 'no-cors',
+                    'method': 'POST',
+                    'headers': {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                }).catch(err => console.log(err))
+                .finally(() => {
                     var d = new Date();
                     var months = [
                       "January",
@@ -1471,9 +1485,143 @@ class Firestorevendor extends Component {
       });
 
     this.refs.confirmPickup.hide();
+    this.refs.changeDineInStatusModal.hide();
     this.refs.completeOrder.hide();
     this.refs.rejectOderPickup.hide();
     this.refreshDataAndHideNotification();
+  }
+  
+  confirmReservationAndSendNotification = ()=> {
+    console.log("confirmReservationAndSendNotification clicked");
+
+    var _this = this;
+    var document = _this.state.fieldsAsArray;
+    var collection = _this.state.currentCollectionName;
+    var userId;
+    var expoToken;
+    Object.keys(document).forEach(function (key) {
+      if (document[key].theKey === "userID") {
+        userId = document[key].value;
+      }
+    });
+
+
+    firebase.app
+      .firestore()
+      .collection("dinein")
+      .doc(collection)
+      .update({
+        messageFromRestaurant: _this.state.messageFromRestaurant,
+        reservationStatus: _this.state.reservationStatus,
+      })
+      .then(function () {
+        // Send Notification
+        firebase.app.firestore().collection('dinein').doc(collection).get().then(reservation => {
+          if (reservation.exists) {
+            firebase.app
+          .firestore()
+          .collection("users")
+          .doc(userId)
+          .get()
+          .then((doc) => {
+            if (!doc.exists) {
+              console.log("No such user!");
+            } else {
+              var status = _this.state.reservationStatus;
+              status = status.replaceAll("_", " ");
+              expoToken = doc.data().expoToken;
+              
+              if (expoToken) {
+                let data = {
+                  "to": expoToken,
+                  "title": reservation.data().restaurantName,
+                  "body": 
+                  doc.data().fullName != undefined
+                    ? `Hi ${doc.data().fullName} Your reservation is ${status}.`
+                    : `Your reservation is ${status}.`,
+                  "sound": "default",
+                  "priority": 'high',
+                  "data": {
+                    'type': 'dinein-notification',
+                    'dineInDate': reservation.data().dineInDate,
+                    'dineInTime': reservation.data().dineInTime,
+                    'noOfSeats': reservation.data().noOfSeats,
+                    'reservationStatus': _this.state.reservationStatus,
+                  }
+              }                
+                  fetch("https://exp.host/--/api/v2/push/send", {
+                    'mode': 'no-cors',
+                    'method': 'POST',
+                    'headers': {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                }).catch(err => console.log(err))
+                .finally(() => {
+                    var d = new Date();
+                    var months = [
+                      "January",
+                      "February",
+                      "March",
+                      "April",
+                      "May",
+                      "June",
+                      "July",
+                      "August",
+                      "September",
+                      "October",
+                      "November",
+                      "December",
+                    ];
+                    var db = firebase.app.firestore();
+                    db.collection("notifications")
+                      .doc(userId)
+                      .set({
+                        userId: userId,
+                        type: "dinein_update",
+                        title: reservation.data().restaurantName,
+                        message:
+                          doc.data().fullName != undefined
+                            ? `Hi ${
+                                doc.data().fullName
+                              } Your reservation is ${status}.`
+                            : `Your reservation is ${status}.`,
+                        longMessage:
+                          d.getDate() +
+                          "-" +
+                          months[d.getMonth()] +
+                          "-" +
+                          d.getFullYear() +
+                          " " +
+                          d.getHours() +
+                          ":" +
+                          d.getMinutes(),
+                      });
+                  });
+              } else {
+                alert("There are no subscribed tokens");
+              }
+            }
+          })
+          .catch((err) => {
+            console.log("Error getting user", err);
+          });
+          }
+        })
+
+      })
+      .catch(function (error) {
+        // The document probably doesn't exist.
+        console.error("Error updating document: ", error);
+      });
+
+    _this.refs.confirmPickup.hide();
+    _this.refs.changeDineInStatusModal.hide();
+    _this.refs.completeOrder.hide();
+    _this.refs.rejectOderPickup.hide();
+    _this.refs.changeDineInStatusModal.hide();
+    _this.refreshDataAndHideNotification();
   }
 
   rewardTheReferrer = (user)=> {
@@ -1498,17 +1646,22 @@ class Firestorevendor extends Component {
                 title: 'Points credited',
               });
               if (expoToken && notifications.length > 0) {
-                var url =
-                  "https://cors-anywhere.herokuapp.com/https://exp.host/--/api/v2/push/send";
-                var json = JSON.stringify(notifications);
-                request
-                  .post(url)
-                  //.set('Accept-Encoding', 'gzip, deflate')
-                  .set("Accept", "application/json")
-                  .set("Content-Type", "application/json")
-                  //.set('User-Agent', 'expo-server-sdk-node/2.3.3')
-                  .send(json)
-                  .end(() => {
+
+                var dataToSend = {
+                  to: expoToken,
+                  body:"You have earned 50 points by referring" + user.data().fullName + '. Total points earned are ' + totalPoints,
+                  title: 'Points credited',
+                  "data": {'type': 'dinein-notification'}
+                }
+                fetch("https://exp.host/--/api/v2/push/send", {
+                  'mode': 'no-cors',
+                  'method': 'POST',
+                  'headers': {
+                      'Accept': 'application/json',
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(dataToSend)
+              }).finally(() => {
                     var d = new Date();
                     var months = [
                       "January",
@@ -1635,17 +1788,27 @@ class Firestorevendor extends Component {
                   : restName,
               });
               if (expoToken && notifications.length > 0) {
-                var url =
-                  "https://cors-anywhere.herokuapp.com/https://exp.host/--/api/v2/push/send";
-                var json = JSON.stringify(notifications);
-                request
-                  .post(url)
-                  //.set('Accept-Encoding', 'gzip, deflate')
-                  .set("Accept", "application/json")
-                  .set("Content-Type", "application/json")
-                  //.set('User-Agent', 'expo-server-sdk-node/2.3.3')
-                  .send(json)
-                  .end(() => {
+                var dataToSend = {
+                  to: expoToken,
+                  body:
+                    doc.data().fullName != undefined
+                      ? `Hi ${doc.data().fullName} Your order is picked up.`
+                      : `Your order is picked up.`,
+                  title: _this.state.orderedRestaurant.title
+                    ? _this.state.orderedRestaurant.title
+                    : restName,
+                  "data": {'type': 'dinein-notification'}
+                }
+                var json = JSON.stringify(dataToSend);
+                fetch("https://exp.host/--/api/v2/push/send", {
+                  'mode': 'no-cors',
+                  'method': 'POST',
+                  'headers': {
+                      'Accept': 'application/json',
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(dataToSend)
+              }).finally(() => {
                     var d = new Date();
                     var months = [
                       "January",
@@ -2412,6 +2575,12 @@ class Firestorevendor extends Component {
                     ? () => this.refs.confirmPickup.show()
                     : ""
                 }
+                changeDineInStatus={
+                  this.state.lastSub ===
+                  "dinein+" + this.state.currentCollectionName
+                    ? () => this.refs.changeDineInStatusModal.show()
+                    : ""
+                }
                 completeOrder={
                   this.state.lastSub ===
                   "orders+" + this.state.currentCollectionName
@@ -2733,6 +2902,62 @@ class Firestorevendor extends Component {
             <div className="col-sm-6 center-block">
               <a
                 onClick={this.confirmOrderAndSendNotification}
+                className="btn btn-rose btn-round center-block"
+              >
+                <i className="fa fa-save"></i>Change status
+              </a>
+            </div>
+            <div className="col-sm-3 "></div>
+          </div>
+        </SkyLight>
+        
+        <SkyLight hideOnOverlayClicked ref="changeDineInStatusModal" title="">
+          <span>
+            <h3 className="center-block">Change Reservation status</h3>
+          </span>
+          <div className="card-content">
+            <div className="row">
+              {/* <h5>Change the order status</h5> */}
+              <h5>Reservation ID : {this.state.currentCollectionName}</h5>
+            </div>
+            <div>
+              <row>
+                <label className="col-sm-3 label-on-left">Reservation Status</label>
+                <select
+                  className="col-sm-9 form-control form-control-sm"
+                  value={this.state.reservationStatus}
+                  onChange={(e) =>
+                    this.setState({ reservationStatus: e.target.value })
+                  }
+                >
+                  <option value="">select</option>
+                  <option value="confirmed">Confirm</option>
+                  <option value="rejected">Reject</option>
+                </select>
+              </row>
+            </div>
+            <br />
+            <div>              
+              <label className="col-sm-3 label-on-left">
+                Message (Optional)
+              </label>
+              <textarea
+                onChange={(event) =>
+                  this.setState({ messageFromRestaurant: event.target.value })
+                }
+                value={this.state.messageFromRestaurant}
+                className="form-control"
+                cols={3}
+                name="messageFromRestaurant"
+              ></textarea>
+            </div>
+          </div>
+
+          <div className="col-sm-12 ">
+            <div className="col-sm-3 "></div>
+            <div className="col-sm-6 center-block">
+              <a
+                onClick={this.confirmReservationAndSendNotification}
                 className="btn btn-rose btn-round center-block"
               >
                 <i className="fa fa-save"></i>Change status
