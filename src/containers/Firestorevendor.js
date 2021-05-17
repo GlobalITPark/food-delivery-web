@@ -67,6 +67,7 @@ class Firestorevendor extends Component {
       menuCalories: 0,
       redeemedPoints: 0,
       menuPrice: null,
+      taxPercentage: null,
       addMenuItemFormError: false,
       filteredRestaurantId: '',
       reservationStatus: '',
@@ -115,6 +116,7 @@ class Firestorevendor extends Component {
     );
     this.handleChangeMenuCalories = this.handleChangeMenuCalories.bind(this);
     this.handleChangeMenuPrice = this.handleChangeMenuPrice.bind(this);
+    this.handleChangeTaxPercentage = this.handleChangeTaxPercentage.bind(this);
     this.createMenuItem = this.createMenuItem.bind(this);
     this.viewCreateMenuDialog = this.viewCreateMenuDialog.bind(this);
     this.cancelCreateMenuDialog = this.cancelCreateMenuDialog.bind(this);
@@ -1098,6 +1100,9 @@ class Firestorevendor extends Component {
   handleChangeMenuPrice(event) {
     this.setState({ menuPrice: event.target.value });
   }
+  handleChangeTaxPercentage(event) {
+    this.setState({ taxPercentage: event.target.value });
+  }
 
   //Function called when create menu Item form submit
   createMenuItem(event) {
@@ -1132,6 +1137,7 @@ class Firestorevendor extends Component {
         //calories: this.state.menuCalories,
         collection: collection,
         price: this.state.menuPrice,
+        taxPercentage: this.state.taxPercentage,
         options: "",
         shortDescription: "",
         shortDescription_ja: "",
@@ -1390,7 +1396,7 @@ class Firestorevendor extends Component {
                     : `Your order is ${status}.`,
                   "sound": "default",
                   "priority": 'high',
-                  "data": {'type': 'dinein-notification'}
+                  "data": {'type': 'order_update'}
               }                
                   fetch("https://exp.host/--/api/v2/push/send", {
                     'mode': 'no-cors',
@@ -1419,9 +1425,10 @@ class Firestorevendor extends Component {
                     ];
                     var db = firebase.app.firestore();
                     db.collection("notifications")
-                      .doc(userId)
-                      .set({
+                      .add({
                         userId: userId,
+                        referenceId: collection,
+                        isRead: false,
                         type: "order_update",
                         title: _this.state.orderedRestaurant.title
                           ? _this.state.orderedRestaurant.title
@@ -1576,9 +1583,10 @@ class Firestorevendor extends Component {
                     ];
                     var db = firebase.app.firestore();
                     db.collection("notifications")
-                      .doc(userId)
-                      .set({
+                      .add({
                         userId: userId,
+                        referenceId: collection,
+                        isRead: false,
                         type: "dinein_update",
                         title: reservation.data().restaurantName,
                         message:
@@ -1651,7 +1659,7 @@ class Firestorevendor extends Component {
                   to: expoToken,
                   body:"You have earned 50 points by referring" + user.data().fullName + '. Total points earned are ' + totalPoints,
                   title: 'Points credited',
-                  "data": {'type': 'dinein-notification'}
+                  "data": {'type': 'points-credited'}
                 }
                 fetch("https://exp.host/--/api/v2/push/send", {
                   'mode': 'no-cors',
@@ -1679,9 +1687,9 @@ class Firestorevendor extends Component {
                     ];
                     var db = firebase.app.firestore();
                     db.collection("notifications")
-                      .doc(doc.id)
-                      .set({
+                      .add({
                         userId: doc.id,
+                        referenceId: user.id,
                         type: "points_credited",
                         title: 'Points Credited',
                         message:"You have earned 50 points by referring" + user.data().fullName + '. Total points earned are ' + totalPoints,
@@ -1797,7 +1805,7 @@ class Firestorevendor extends Component {
                   title: _this.state.orderedRestaurant.title
                     ? _this.state.orderedRestaurant.title
                     : restName,
-                  "data": {'type': 'dinein-notification'}
+                  "data": {'type': 'order_update'}
                 }
                 var json = JSON.stringify(dataToSend);
                 fetch("https://exp.host/--/api/v2/push/send", {
@@ -1826,9 +1834,10 @@ class Firestorevendor extends Component {
                     ];
                     var db = firebase.app.firestore();
                     db.collection("notifications")
-                      .doc(userId)
-                      .set({
+                      .add({
                         userId: userId,
+                        referenceId: collection,
+                        isRead: false,
                         type: "order_update",
                         title: _this.state.orderedRestaurant.title
                           ? _this.state.orderedRestaurant.title
@@ -3271,7 +3280,7 @@ class Firestorevendor extends Component {
           </div>
         </SkyLight>
         <SkyLight
-          dialogStyles={{ height: "75%" }}
+          dialogStyles={{ height: "85%" }}
           hideOnOverlayClicked
           ref="viewCreateMenuRequest"
           title=""
@@ -3390,6 +3399,21 @@ class Firestorevendor extends Component {
                       />
                     </div>
                     {(this.state.addMenuItemFormError && !this.state.menuPrice) ? <span style={{color: 'red', fontSize: '12px'}} >{translate('thisFieldIsRequired')}</span> : null}
+                  </div>
+                  <div className="input-group">
+                    <span className="input-group-addon">
+                      <i className="material-icons">money</i>
+                    </span>
+                    <div className="form-group">
+                      <label className="control-label">{translate('tax_in_percentage')}</label>
+                      <input
+                        type='number'
+                        value={this.state.taxPercentage}
+                        onChange={this.handleChangeTaxPercentage}
+                        className="form-control"
+                      />
+                    </div>
+                    {(this.state.addMenuItemFormError && !this.state.taxPercentage) ? <span style={{color: 'red', fontSize: '12px'}} >{translate('thisFieldIsRequired')}</span> : null}
                   </div>
                   {/* <div className="input-group">
                     <span className="input-group-addon">
