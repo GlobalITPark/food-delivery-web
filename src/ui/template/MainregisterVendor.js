@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Config from '../../config/app'
 import {BrowserRouter as Router, Link,NavLink } from 'react-router-dom';
+import { translate } from '../../translations';
 
 // const ConditionalDisplay = ({condition, children}) => condition ? children : <div></div>;
 
@@ -105,7 +106,7 @@ export default class MainregisterVendorUI extends Component {
                                     <form onSubmit={this.handleSubmit}>
                                         <div className="card card-login">
                                             <div style={{background:'#d81b60'}} className="card-header text-center" data-background-color="#d81b60">
-                                                <h4 style={{marginTop:'0px',marginBottom:'0px'}} className="card-title">Register</h4>
+                                                <h4 style={{marginTop:'0px',marginBottom:'0px'}} className="card-title">{translate('register')}</h4>
                                             </div>
                                             <div className="card-content">
                                                 <h4>{this.props.error}</h4>
@@ -114,7 +115,7 @@ export default class MainregisterVendorUI extends Component {
                                                         <i className="material-icons">how_to_reg</i>
                                                     </span>
                                                     <div className="form-group">
-                                                        <label className="control-label">Restaurant Title</label>
+                                                        <label className="control-label">{translate('restaurantName')}</label>
                                                         <input type="text" value={this.state.title} onChange={this.handleChangeTitle} className="form-control" />
                                                     </div>
                                                 </div>
@@ -123,7 +124,7 @@ export default class MainregisterVendorUI extends Component {
                                                         <i className="material-icons">work</i>
                                                     </span>
                                                     <div className="form-group">
-                                                        <label className="control-label">Description</label>
+                                                        <label className="control-label">{translate('description')}</label>
                                                         <input type="text" value={this.state.description} onChange={this.handleChangeDescription} className="form-control" />
                                                     </div>
                                                 </div>
@@ -132,7 +133,7 @@ export default class MainregisterVendorUI extends Component {
                                                         <i className="material-icons">email</i>
                                                     </span>
                                                     <div className="form-group">
-                                                        <label className="control-label">Email address</label>
+                                                        <label className="control-label">{translate('email')}</label>
                                                         <input type="email" value={this.state.username} onChange={this.handleChangeUsername} className="form-control" />
                                                     </div>
                                                 </div>
@@ -141,7 +142,7 @@ export default class MainregisterVendorUI extends Component {
                                                         <i className="material-icons">lock_outline</i>
                                                     </span>
                                                     <div className="form-group">
-                                                        <label className="control-label">Password</label>
+                                                        <label className="control-label">{translate('password')}</label>
                                                         <input type="password" value={this.state.password} onChange={this.handleChangePassword} className="form-control" />
                                                     </div>
                                                 </div>
@@ -150,19 +151,19 @@ export default class MainregisterVendorUI extends Component {
                                                         <i className="material-icons">lock_outline</i>
                                                     </span>
                                                     <div className="form-group">
-                                                        <label className="control-label">Confirm Password</label>
+                                                        <label className="control-label">{translate('confirmPassword')}</label>
                                                         <input type="password" value={this.state.passwordConfirm} onChange={this.handleChangePasswordConfirm} className="form-control" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className="footer text-center">
-                                                <input type="submit" className="btn btn-danger" />
+                                                <input type="submit" className="btn btn-danger" />{translate('submit')}
                                             </div>
-                                            <div style={{"text-align": "center"}}>
+                                            {/* <div style={{"text-align": "center"}}>
                                                 <Link to="/register">
                                                     Register as a user?
                                                 </Link>     
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </form> 
                                     </div>

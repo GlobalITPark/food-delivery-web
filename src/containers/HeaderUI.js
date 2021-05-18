@@ -124,9 +124,9 @@ class HeaderUI extends Component {
                             {/* <li>
                                 <NavLink exact activeStyle={{backgroundColor:'#0000003a'}} to="/about">About</NavLink> 
                             </li> */}
-                            <li>
+                            {/* <li>
                                 <NavLink style={{color:'#000'}} exact activeStyle={{backgroundColor:'#0000003a'}} to="/centre">レストラン</NavLink> 
-                            </li>
+                            </li> */}
                             
                             {!this.props.isLoggedIn ?
                             <li className={this.props.isRegister ? "active" : ""}>
@@ -147,7 +147,7 @@ class HeaderUI extends Component {
 
                             {!this.props.isLoggedIn ?
                             <li className={this.props.isRegister ? "active" : ""} >
-                                <NavLink exact activeStyle={{backgroundColor:'#fffcff1a'}} to="/register">
+                                <NavLink exact activeStyle={{backgroundColor:'#fffcff1a'}} to="/register-vendor">
                                     <a style={{color:'#771d03'}} className="nav-link" role="button" >
                                         <i className="material-icons">how_to_reg</i>登録
                                     </a>
@@ -158,35 +158,33 @@ class HeaderUI extends Component {
                             this.createUserView()
                             }
 
-                            {(this.props.isLoggedIn && (this.props.currentUser==="visitor")) ?
+                            {/* {(this.props.isLoggedIn && (this.props.currentUser==="visitor")) ?
                             <li>
                                 <NavLink exact activeStyle={{backgroundColor:'#fffcff1a'}} to="/cart"><i className="material-icons">shopping_cart</i>{this.props.cartItems.length}</NavLink> 
                             </li>
                             :""
-                            }
-                            {(this.props.isLoggedIn && (this.props.currentUser==="vendor")) ?
-                            <li>
-                               <div style={{flexDirection: 'row', alignContent: 'center', paddingTop: 20}}>
-                               <input type="radio" name="locale" 
-                                   value={"result.SITE_NAME"} 
-                                   checked={this.state.chosenLocale === "en"} 
-                                   onChange={()=> {
+                            } */}
+                           
+                            <li style={{paddingTop: '5px', cursor: 'pointer'}} >
+                              
+                            <span onClick={()=> {
                                     setChosenLocale('en');
                                     this.setState({chosenLocale: 'en'}, ()=>location.reload())
-                                   }} /> English  
-                               
-                               <input type="radio" name="locale" 
-                                   value={"result.SITE_NAME"} 
-                                   checked={this.state.chosenLocale === "jp"} 
-                                   onChange={()=> {
+                                   }} style={{display: 'flex'}} className="navbar-brand">
+                                <img style={{width:'20px',height: '20px', marginRight: '5px'}} alt="" src="/assets/img/united-states.png"></img>
+                                <p style={{marginTop:'-1px', fontWeight: 'bold', color: (this.state.chosenLocale === "en") ? '#000000' : '#ffffff', textDecoration: (this.state.chosenLocale === "en") ? 'underline' : 'none' }}>English</p>
+                            </span>
+                            </li>
+                            
+                            <li style={{paddingTop: '5px', cursor: 'pointer'}} >
+                            <span onClick={()=> {
                                     setChosenLocale('jp');
                                     this.setState({chosenLocale: 'jp'}, ()=>location.reload())
-                                   }} />Japanese  
-                               </div>
+                                   }} style={{display: 'flex'}} className="navbar-brand" >
+                                <img style={{width:'20px',height: '20px', marginRight: '5px'}} alt="" src="/assets/img/japan.png"></img>
+                                <p style={{marginTop:'-1px', fontWeight: 'bold', color: (this.state.chosenLocale === "jp") ? '#000000' : '#ffffff', textDecoration: (this.state.chosenLocale === "jp") ? 'underline' : 'none' }}>日本語</p>
+                            </span>
                             </li>
-                            :""
-                            }
-                            
                             
                         </ul>
                                     
@@ -217,17 +215,31 @@ class HeaderUI extends Component {
                             <div className="footer-column w-col w-col-2">
                                 <div className="footer-title">お問い合わせ</div>
                                 <div className="section-divider"></div>
-                                <ul className="footer-list w-list-unstyled">
-                                    <li className="footer-list-item">
-                                        
+                                {
+                                    (this.state.chosenLocale == 'en') ? 
+                                    <ul className="footer-list w-list-unstyled">
+                                    
+                                    <li className="footer-list-item" style={{minWidth: 'max-content'}}>
+                                        <a style={{color:'#b8b8b8'}} className="link footer-link" href="#">Adam Innovations Co., Ltd</a>
+                                        <a style={{color:'#b8b8b8'}} className="link footer-link" href="#">1188-2, Urasa, Minamai Uonuma</a>
+                                        <a style={{color:'#b8b8b8'}} className="link footer-link" href="#">Niigata 9497302 Japan</a>
+                                        <a style={{color:'#b8b8b8'}} className="link footer-link" href="tel:+8125-788-0665">Tel: (+81)25-788-0665</a>
+                                        <a style={{color:'#b8b8b8'}} className="link footer-link" href="mailto:tabetai@adam-i.jp">Mail: tabetai@adam-i.jp</a>
                                     </li>
-                                    <li className="footer-list-item">
-                                        <a style={{color:'#b8b8b8'}} className="link footer-link" href="tel:03-6868-8666"><strong>電話</strong>: 03-6868-8666</a>
-                                    </li>
-                                    {/* <li className="footer-list-item">
-                                        <a style={{color:'#b8b8b8'}} className="link footer-link email-link" href="mailto:info@srilankafestival.jp"><strong>メール</strong>: info@kamakura.jp</a>
-                                    </li> */}
+                                   
                                 </ul>
+                                    : 
+                                    <ul className="footer-list w-list-unstyled">
+                                    <li className="footer-list-item" style={{minWidth: 'max-content'}}>
+                                        <a style={{color:'#b8b8b8'}} className="link footer-link" href="#">Adam Innovations 株式会社</a>
+                                        <a style={{color:'#b8b8b8'}} className="link footer-link" href="#">〒949-7302 新潟県南魚沼市浦佐 1188-2</a>
+                                        <a style={{color:'#b8b8b8'}} className="link footer-link" href="#">ゴローバルITパーク</a>
+                                        <a style={{color:'#b8b8b8'}} className="link footer-link" href="tel:+8125-788-0665">電話番号: 025-7880665</a>
+                                        <a style={{color:'#b8b8b8'}} className="link footer-link" href="mailto:tabetai@adam-i.jp">Eメール: tabetai@adam-i.jp</a>
+                                    </li>
+                                </ul>
+                                }
+                                
                             </div>
 
                             
