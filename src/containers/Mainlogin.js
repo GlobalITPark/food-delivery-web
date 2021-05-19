@@ -7,6 +7,7 @@ import {Redirect} from 'react-router-dom'
 require("firebase/firestore");
 var randomString = require('randomstring');
 import fire from 'firebase';
+import { translate } from '../translations';
 
 class Mainlogin extends Component {
 
@@ -269,7 +270,7 @@ class Mainlogin extends Component {
             </a>
         </p>
         <br />
-        <p className="category text-center">Login using email</p>
+        <p className="category text-center">{translate('login')}</p>
       </div>
     )
    

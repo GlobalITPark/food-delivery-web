@@ -110,16 +110,20 @@ class HeaderUI extends Component {
                                 <span className="icon-bar"></span>
                                 <span className="icon-bar"></span>
                             </button>
-                            <a style={{display: 'flex','justify-content': 'flex-start'}} className="navbar-brand" href="/">
-                                <img style={{width:'200px',height: '35px'}} alt="" src="/assets/img/tabetai.png"></img>
+                            {(this.state.chosenLocale == 'en') ? <a style={{display: 'flex','justify-content': 'flex-start'}} className="navbar-brand" href="/">
+                                <img style={{width:'200px',height: '35px'}} alt="" src="/assets/img/app_logo.png"></img>
                                 {/* <h5 style={{marginTop:'10px'}}>食べたい</h5> */}
                             </a>
+                            : <a style={{display: 'flex','justify-content': 'flex-start'}} className="navbar-brand" href="/">
+                            <img style={{width:'200px',height: '35px'}} alt="" src="/assets/img/tabetai.png"></img>
+                            {/* <h5 style={{marginTop:'10px'}}>食べたい</h5> */}
+                        </a>}
                         </div>
                         <div className="collapse navbar-collapse">
                         
                         <ul className="nav navbar-nav navbar-right">
                             <li>
-                                <NavLink style={{color:'#000'}} exact activeStyle={{backgroundColor:'#0000003a'}} to="/">ホーム</NavLink> 
+                                <NavLink style={{color:'#000'}} exact activeStyle={{backgroundColor:'#0000003a'}} to="/">{translate('home')}</NavLink> 
                             </li>
                             {/* <li>
                                 <NavLink exact activeStyle={{backgroundColor:'#0000003a'}} to="/about">About</NavLink> 
@@ -132,7 +136,7 @@ class HeaderUI extends Component {
                             <li className={this.props.isRegister ? "active" : ""}>
                                 <NavLink exact activeStyle={{backgroundColor:'#fffcff1a'}} to="/login">
                                     <a style={{color:'#771d03'}} className="nav-link" role="button" >
-                                        <i className="material-icons">fingerprint</i>ログイン
+                                        <i className="material-icons">fingerprint</i>{translate('login')}
                                     </a>
                                 </NavLink>
                                 
@@ -149,7 +153,7 @@ class HeaderUI extends Component {
                             <li className={this.props.isRegister ? "active" : ""} >
                                 <NavLink exact activeStyle={{backgroundColor:'#fffcff1a'}} to="/register-vendor">
                                     <a style={{color:'#771d03'}} className="nav-link" role="button" >
-                                        <i className="material-icons">how_to_reg</i>登録
+                                        <i className="material-icons">how_to_reg</i>{translate('register')}
                                     </a>
                                 </NavLink>
                                 

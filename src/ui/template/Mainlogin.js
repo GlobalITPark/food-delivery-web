@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Config from '../../config/app';
 import Notification from '../../components/Notification';
+import { translate } from '../../translations';
 
 const ConditionalDisplay = ({condition, children}) => condition ? children : <div></div>;
 
@@ -119,7 +120,7 @@ export default class MainloginUI extends Component {
                                             <div className="card card-login">
                                                 <div className="card-header text-center" data-background-color="rose">
                                                     <h4 style={{marginTop:'0px',marginBottom:'0px'}} className="card-title">{
-                                                        this.state.isResetPassword?"Reset Password":"Login"
+                                                        this.state.isResetPassword? translate('resetPassword'):translate('login')
                                                     }</h4>
                                                 </div>
                                                 <div className="card-content">
@@ -136,7 +137,7 @@ export default class MainloginUI extends Component {
                                                             <i className="material-icons">email</i>
                                                         </span>
                                                         <div className="form-group label-floating">
-                                                            <label className="control-label">Email address</label>
+                                                            <label className="control-label">{translate('email')}</label>
                                                             <input type="email" value={this.state.username} onChange={this.handleChangeUsername} className="form-control" />
                                                         </div>
                                                     </div>
@@ -147,7 +148,7 @@ export default class MainloginUI extends Component {
                                                         </span>
                                                         
                                                         <div className="form-group label-floating">
-                                                            <label className="control-label">Password</label>
+                                                            <label className="control-label">{translate('password')}</label>
                                                             <input type="password" value={this.state.password} onChange={this.handleChangePassword} className="form-control" />
                                                         </div>
                                                         
@@ -159,7 +160,7 @@ export default class MainloginUI extends Component {
                                                 </div>
                                                 <div style={{"textAlign": "center"}}>
                                                     <a onClick={()=>{ this.setState({isResetPassword: !this.state.isResetPassword} )}} role="button">{
-                                                        !this.state.isResetPassword?"Forgot your password?":"Back to Login"
+                                                        !this.state.isResetPassword?  translate('forgotPassword?'): translate('backToLogin')
                                                     }</a>
                                                 </div>
                                             </div>
