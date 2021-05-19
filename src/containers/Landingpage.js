@@ -238,7 +238,7 @@ class Landingpage extends Component {
         <p>「食べたい」は皆様のお好みにあった食事　飲み物　ケーキやスイーツ　フレッシュな食材、カットされた肉類などをご提供します。 </p>
         <p>このアプリでは２０００円以上のご注文は無料配達いたします。</p>
         <p>GPS機能を使い注文品の追跡が可能です。支払いは配達時に現金支払いができす。</p>
-        <p>加えてユーザーはアプリの使い心地を評価することができます。ここ をクリックして下さい。 <a href="https://play.google.com/store/apps/details?id=com.adami.tabetai">Android</a>  <a href="https://apps.apple.com/in/app/tabetai/id1562102113">IOS</a></p>
+        <p>加えてユーザーはアプリの使い心地を評価することができます。ここ をクリックして下さい。</p>
                 
         
         <h5>ぜひこのアプリをお試しください</h5>
@@ -369,16 +369,16 @@ class Landingpage extends Component {
             </ul>
 
             <h5>加盟店登録するには</h5>
-            <p>加盟店になるには以下のフォームにご記入ください。{" "}
-              <Link to="/register-vendor">form</Link> 
+            <p>会員ストアになるには、<Link to="/register-vendor" style={{textDecoration: 'underline'}}><strong>こちら</strong></Link> のフォームにご記入ください。
+               
             </p>
             <h5>フェースブックでフォローお願いします</h5>
-            <p>「食べたい」はフェースブックコミュニティーの一員です。 フェースブックをご覧ください。<a
+            <p>「食べたい」はフェースブックコミュニティーの一員です。 <a
                 target="_blank"
                 href="https://www.facebook.com/tabetaiminamiuonuma"
               >
-                <strong>here</strong>
-              </a>
+                <strong>フェースブック </strong>
+              </a>をご覧ください。
             </p>
           </div>
         </div>

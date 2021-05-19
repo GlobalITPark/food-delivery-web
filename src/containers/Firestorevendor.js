@@ -67,7 +67,7 @@ class Firestorevendor extends Component {
       menuCalories: 0,
       redeemedPoints: 0,
       menuPrice: null,
-      taxPercentage: null,
+      taxPercentage: 8,
       addMenuItemFormError: false,
       filteredRestaurantId: '',
       reservationStatus: '',
