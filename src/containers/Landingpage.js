@@ -374,6 +374,7 @@ class Landingpage extends Component {
             </p>
             <h5>フェースブックでフォローお願いします</h5>
             <p>「食べたい」はフェースブックコミュニティーの一員です。 <a
+              style={{textDecoration: 'underline'}}
                 target="_blank"
                 href="https://www.facebook.com/tabetaiminamiuonuma"
               >
