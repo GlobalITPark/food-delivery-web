@@ -153,7 +153,7 @@ class Appvendor extends Component {
             <td>{order.delivery.name ? order.delivery.name : "NA"}</td>
             <td>{order.delivery.phone ? order.delivery.phone : "NA"}</td>
             <td>{order.deliveryAddress ? order.deliveryAddress : "NA"}</td>
-            <td style={{ textTransform: "capitalize" }}>
+            <td>
               {order.status ? order.status : "NA"}
             </td>
           </tr>
@@ -203,7 +203,7 @@ class Appvendor extends Component {
             <td>{dine.userName ? dine.userName : "NA"}</td>
             <td>{dine.phone ? dine.phone : "NA"}</td>
             <td>{dine.noOfSeats ? dine.noOfSeats : "NA"}</td>
-            <td style={{ textTransform: "capitalize" }}>
+            <td>
               {dine.reservationStatus ? dine.reservationStatus : "NA"}
             </td>
           </tr>

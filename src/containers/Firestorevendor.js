@@ -1384,16 +1384,16 @@ class Firestorevendor extends Component {
                   ? _this.state.orderedRestaurant.title
                   : restName,
               });
-              if (notifications.length > 0) {
+              if (expoToken) {
+                var restNameEn = _this.state.orderedRestaurant.title ? _this.state.orderedRestaurant.title : restName;
+                var restNameJa = _this.state.orderedRestaurant.title_ja ? _this.state.orderedRestaurant.title_ja : restName;
+                var bodyEn =  doc.data().fullName != undefined ? `Hi ${doc.data().fullName} Your order is ${status}.` : `Your order is ${status}.`;
+                var bodyJa =  '注文の更新';
+                var userCurrentLanguage =  (doc.data().currentLocale) ? doc.data().currentLocale : 'en';
                 let data = {
                   "to": expoToken,
-                  "title":  _this.state.orderedRestaurant.title
-                  ? _this.state.orderedRestaurant.title
-                  : restName,
-                  "body": 
-                  doc.data().fullName != undefined
-                    ? `Hi ${doc.data().fullName} Your order is ${status}.`
-                    : `Your order is ${status}.`,
+                  "title":  (userCurrentLanguage == 'en') ? restNameEn : restNameJa,
+                  "body":  (userCurrentLanguage == 'en') ? bodyEn : bodyJa,
                   "sound": "default",
                   "priority": 'high',
                   "data": {'type': 'order_update'}
@@ -1426,13 +1426,21 @@ class Firestorevendor extends Component {
                     var db = firebase.app.firestore();
                     db.collection("notifications")
                       .add({
+                        createdAt: new Date(),
                         userId: userId,
                         referenceId: collection,
                         isRead: false,
                         type: "order_update",
+                        data: {
+                          title : restNameEn,
+                          titleJa : restNameJa, 
+                          createdBy : doc.data().fullName,
+                          content : `Your order is ${status}`,
+                          status : status,
+                        },
                         title: _this.state.orderedRestaurant.title
                           ? _this.state.orderedRestaurant.title
-                          : restName,
+                          : restName,  
                         message:
                           doc.data().fullName != undefined
                             ? `Hi ${
@@ -1539,13 +1547,15 @@ class Firestorevendor extends Component {
               expoToken = doc.data().expoToken;
               
               if (expoToken) {
+                var restNameEn = reservation.data().restaurantName;
+                var restNameJa = (reservation.data().restaurantNameJa) ? reservation.data().restaurantNameJa : reservation.data().restaurantName;
+                var bodyEn =  doc.data().fullName != undefined ? `Hi ${doc.data().fullName} Your reservation is ${status}.` : `Your reservation is ${status}.`;
+                var bodyJa =  '予約の更新';
+                var userCurrentLanguage =  (doc.data().currentLocale) ? doc.data().currentLocale : 'en';
                 let data = {
                   "to": expoToken,
-                  "title": reservation.data().restaurantName,
-                  "body": 
-                  doc.data().fullName != undefined
-                    ? `Hi ${doc.data().fullName} Your reservation is ${status}.`
-                    : `Your reservation is ${status}.`,
+                  "title":  (userCurrentLanguage == 'en') ? restNameEn : restNameJa,
+                  "body":  (userCurrentLanguage == 'en') ? bodyEn : bodyJa,
                   "sound": "default",
                   "priority": 'high',
                   "data": {
@@ -1584,11 +1594,19 @@ class Firestorevendor extends Component {
                     var db = firebase.app.firestore();
                     db.collection("notifications")
                       .add({
+                        createdAt: new Date(),
                         userId: userId,
                         referenceId: collection,
                         isRead: false,
                         type: "dinein_update",
                         title: reservation.data().restaurantName,
+                        data: {
+                          title : reservation.data().restaurantName,
+                          titleJa : reservation.data().restaurantNameJa, 
+                          createdBy : doc.data().fullName,
+                          content : `Your reservation is ${status}`,
+                          status : status,
+                        },
                         message:
                           doc.data().fullName != undefined
                             ? `Hi ${
@@ -1633,7 +1651,6 @@ class Firestorevendor extends Component {
   }
 
   rewardTheReferrer = (user)=> {
-    console.log(user.id, 'ivdeeeeeeeeeeeeee');
     var referredByUserId = user.data().referredBy.userId;
     firebase.app.firestore().collection("users").doc(user.id).update({
       referredByCompleted : user.data().referredBy,
@@ -1647,18 +1664,16 @@ class Firestorevendor extends Component {
           points: totalPoints,
         }).then(function(){
           var expoToken = doc.data().expoToken;
-          var notifications = [];
-              notifications.push({
-                to: expoToken,
-                body:"You have earned 50 points by referring" + user.data().fullName + '. Total points earned are ' + totalPoints,
-                title: 'Points credited',
-              });
-              if (expoToken && notifications.length > 0) {
-
+          console.log('YESSSSSSSSSSSS REACHED HEREEE')
+              if (expoToken) {
+                var titleEn = 'Points credited';
+                var titleJa = '付与されたポイント';
+                var bodyEn = "You have earned 50 points by referring " + doc.data().fullName + '. Total points earned are ' + totalPoints;
+                var bodyJa = `あなたは ${doc.data().fullName} を紹介し、50ポイントを獲得し、合計ポイントを獲得しました ${totalPoints}`;
                 var dataToSend = {
                   to: expoToken,
-                  body:"You have earned 50 points by referring" + user.data().fullName + '. Total points earned are ' + totalPoints,
-                  title: 'Points credited',
+                  body: (doc.data().currentLocale === 'en') ? bodyEn : bodyJa,
+                  title: (doc.data().currentLocale === 'en') ? titleEn : titleJa,
                   "data": {'type': 'points-credited'}
                 }
                 fetch("https://exp.host/--/api/v2/push/send", {
@@ -1688,11 +1703,21 @@ class Firestorevendor extends Component {
                     var db = firebase.app.firestore();
                     db.collection("notifications")
                       .add({
+                        createdAt: new Date(),
                         userId: doc.id,
                         referenceId: user.id,
                         type: "points_credited",
                         title: 'Points Credited',
-                        message:"You have earned 50 points by referring" + user.data().fullName + '. Total points earned are ' + totalPoints,
+                        titleJa: titleJa,
+                        data: {
+                          title : 'Points Credited',
+                          titleJa : titleJa, 
+                          createdBy : doc.data().fullName,
+                          content : "You have earned 50 points by referring " + doc.data().fullName + ' Total points earned are ' + totalPoints,
+                          contentJa : bodyJa,
+                          status : 'points credited',
+                        },
+                        message: "You have earned 50 points by referring " + doc.data().fullName + '. Total points earned are ' + totalPoints,
                         longMessage:
                           d.getDate() +
                           "-" +
@@ -1784,30 +1809,19 @@ class Firestorevendor extends Component {
         points: doc.data().points - _this.state.redeemedPoints,
       })
               
-              expoToken = doc.data().expoToken;
-              notifications.push({
-                to: expoToken,
-                body:
-                  doc.data().fullName != undefined
-                    ? `Hi ${doc.data().fullName} Your order is picked up.`
-                    : `Your order is picked up.`,
-                title: _this.state.orderedRestaurant.title
-                  ? _this.state.orderedRestaurant.title
-                  : restName,
-              });
-              if (expoToken && notifications.length > 0) {
+              expoToken = doc.data().expoToken;              
+              if (expoToken) {
+                var restNameEn =  _this.state.orderedRestaurant.title ? _this.state.orderedRestaurant.title : restName;
+                var restNameJa = _this.state.orderedRestaurant.title_ja ? _this.state.orderedRestaurant.title_ja : restName;
+                var bodyEn =  doc.data().fullName != undefined  ? `Hi ${doc.data().fullName} Your order is picked up.`  : `Your order is picked up.`;
+                var bodyJa =  'ご注文を承ります。';
+                var userCurrentLanguage =  (doc.data().currentLocale) ? doc.data().currentLocale : 'en';               
                 var dataToSend = {
                   to: expoToken,
-                  body:
-                    doc.data().fullName != undefined
-                      ? `Hi ${doc.data().fullName} Your order is picked up.`
-                      : `Your order is picked up.`,
-                  title: _this.state.orderedRestaurant.title
-                    ? _this.state.orderedRestaurant.title
-                    : restName,
+                  body:(userCurrentLanguage == 'en') ? bodyEn : bodyJa,
+                  title:(userCurrentLanguage == 'en') ? restNameEn : restNameJa,
                   "data": {'type': 'order_update'}
                 }
-                var json = JSON.stringify(dataToSend);
                 fetch("https://exp.host/--/api/v2/push/send", {
                   'mode': 'no-cors',
                   'method': 'POST',
@@ -1835,10 +1849,18 @@ class Firestorevendor extends Component {
                     var db = firebase.app.firestore();
                     db.collection("notifications")
                       .add({
+                        createdAt: new Date(),
                         userId: userId,
                         referenceId: collection,
                         isRead: false,
                         type: "order_update",
+                        data: {
+                          title : restNameEn,
+                          titleJa : restNameJa, 
+                          createdBy : doc.data().fullName,
+                          content : 'Your order is picked up',
+                          status : 'picked_up',
+                        },
                         title: _this.state.orderedRestaurant.title
                           ? _this.state.orderedRestaurant.title
                           : restName,
@@ -2661,11 +2683,13 @@ class Firestorevendor extends Component {
 
             {/* ARRAYS */}
             {/* Just Hide these for time being */}
-            {/* {this.state.arrayNames
+            {(this.state.lastSub ===
+                  "orders+" + this.state.currentCollectionName
+                     && this.state.arrayNames)
               ? this.state.arrayNames.map((key) => {
                   return this.makeArrayCard(key);
                 })
-              : ""} */}
+              : ""}
 
             {/* ELEMENTS MERGED IN ARRAY */}
             {this.state.elementsInArray && this.state.elementsInArray.length > 0
