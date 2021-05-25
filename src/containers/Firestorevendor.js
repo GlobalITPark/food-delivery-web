@@ -20,6 +20,7 @@ import INSERT_STRUCTURE from "../config/firestoreschema.js";
 import * as firebaseREF from "firebase";
 var request = require("superagent");
 require("firebase/firestore");
+import Moment from 'moment';
 
 const ROUTER_PATH = "/firestorevendor/";
 import { PulseLoader } from "halogenium";
@@ -60,6 +61,7 @@ class Firestorevendor extends Component {
       menuDescriptionJa: "",
       expected_time_of_delivery: "",
       message_optional: "",
+      deliveryCharge: 0,
       orderStatus: "",
       orderedRestaurant: "",
       orderDetails: null,
@@ -445,6 +447,22 @@ class Firestorevendor extends Component {
           console.log("DOCS----");
           console.log(documents);
 
+          // SORTING THE DOCS
+          if (collection === 'orders') {
+            documents.sort(function(x, y){
+              var date1 = Moment(x.timeStamp);
+              var date2 = Moment(y.timeStamp);
+              return Moment(date2).diff(date1);
+            })
+          }
+          if (collection === 'dinein') {
+            documents.sort(function(x, y){
+              var date1 = Moment(x.createdTime);
+              var date2 = Moment(y.createdTime);
+              return Moment(date2).diff(date1);
+            })
+          }
+
           //Save the douments in the sate
           _this.setState({
             isLoading: false,
@@ -499,6 +517,7 @@ class Firestorevendor extends Component {
                           : "",
                         orderStatus: doc.data().status ? doc.data().status : "",
                         orderDetails: doc.data(),
+                        deliveryCharge: doc.data().deliveryCharge,
                         orderedRestaurant: rest.data(),
                       },
                       () => {
@@ -1014,6 +1033,7 @@ class Firestorevendor extends Component {
         image: "https://i.imgur.com/80vu1wL.jpg",
         active_status: 0,
         isDineInAvailable: false,
+        website: '',
         delivery_charge: 0,
         count: 1,
       })
@@ -1356,6 +1376,7 @@ class Firestorevendor extends Component {
         status: _this.state.orderStatus ? _this.state.orderStatus : "confirmed",
         expected_time_of_delivery: _this.state.expected_time_of_delivery,
         message_optional: _this.state.message_optional,
+        deliveryCharge: _this.state.deliveryCharge,
       })
       .then(function () {
         // Send Notification
@@ -1460,7 +1481,8 @@ class Firestorevendor extends Component {
                       });
                   });
               } else {
-                alert("There are no subscribed tokens");
+                //alert("There are no subscribed tokens");
+                console.log("There are no subscribed tokens");
               }
             }
           })
@@ -1626,7 +1648,8 @@ class Firestorevendor extends Component {
                       });
                   });
               } else {
-                alert("There are no subscribed tokens");
+                console.log("There are no subscribed tokens");
+                //alert("There are no subscribed tokens");
               }
             }
           })
@@ -2913,6 +2936,21 @@ class Firestorevendor extends Component {
                 value={this.state.expected_time_of_delivery}
                 className="col-sm-6 form-control"
                 name="expected_time_of_delivery"
+              />
+              <br />
+              
+              <label className="col-sm-3 label-on-left">{translate('deliveryCharge')}</label>
+              <br />
+              <input
+                type="text"
+                onChange={(event) =>
+                  this.setState({
+                    deliveryCharge: event.target.value,
+                  })
+                }
+                value={this.state.deliveryCharge}
+                className="col-sm-6 form-control"
+                name="deliveryCharge"
               />
               <br />
               <label className="col-sm-3 label-on-left">

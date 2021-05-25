@@ -5,6 +5,7 @@ import NavBar from "./../ui/template/NavBar";
 // import NavBarDefault from './../ui/template/NavBarDefault'
 import firebase from "../config/database";
 import { Table } from "react-bootstrap";
+import Moment from 'moment';
 
 class Appvendor extends Component {
   intervalId = null;
@@ -96,6 +97,7 @@ class Appvendor extends Component {
     return db.collection("orders")
       .where("restaurantID", "==", restId)
       .where("status", "in", ["just_created", "confirmed", "ready_to_pick", "out_for_delivery"])
+      
       .get()
       .then(function (querySnapshot) {
         querySnapshot.forEach(function (doc) {
@@ -103,6 +105,12 @@ class Appvendor extends Component {
           objectToAdd.id = doc.id;
           ordersTemp.push(objectToAdd);
         });
+
+        ordersTemp.sort(function(x, y){
+          var date1 = Moment(x.timeStamp);
+          var date2 = Moment(y.timeStamp);
+          return Moment(date2).diff(date1);
+      })
         
        return ordersTemp;
       });
@@ -124,13 +132,18 @@ class Appvendor extends Component {
       .get()
       .then(function (querySnapshot) {
         querySnapshot.forEach(function (doc) {
-          if (doc.data().reservationStatus == 'just_created') {
+          if (doc.data().reservationStatus !== 'rejected') {
             var objectToAdd = doc.data();
             objectToAdd.id = doc.id;
             ordersTemp.push(objectToAdd);
           }
           
         });
+        ordersTemp.sort(function(x, y){
+          var date1 = Moment(x.createdTime);
+          var date2 = Moment(y.createdTime);
+          return Moment(date2).diff(date1);
+        })
         
         return ordersTemp;
       });
@@ -140,7 +153,7 @@ class Appvendor extends Component {
   get getPendingOrdersTable() {
     var pendingOrdersTr = null;
     var isProcessing = (this.state.pendingOrders.length > 0 || this.state.isLoading);
-    if (this.state.pendingOrders.length > 0) {
+    if (this.state.pendingOrders.length > 0) {      
       pendingOrdersTr = this.state.pendingOrders.map((order, index) => {
         return (
           <tr key={Math.random()}>
@@ -148,13 +161,13 @@ class Appvendor extends Component {
               <a href={`#/firestorevendor/orders+${order.id}`}>{order.id}</a>
             </td>
             <td>
-              {order.orderDateTime ? order.orderDateTime : order.timeStamp}
+              {order.timeStamp ? Moment(order.timeStamp).format('D-MMM-YYYY H:mm') : "NA"}
             </td>
             <td>{order.delivery.name ? order.delivery.name : "NA"}</td>
             <td>{order.delivery.phone ? order.delivery.phone : "NA"}</td>
             <td>{order.deliveryAddress ? order.deliveryAddress : "NA"}</td>
             <td>
-              {order.status ? order.status : "NA"}
+              {order.status ? translate(order.status) : "NA"}
             </td>
           </tr>
         );
@@ -162,12 +175,12 @@ class Appvendor extends Component {
     }
     return (
       <div>
-        <h4>Pending orders</h4>
+        <h4>{translate('pendingOrders')}</h4>
         {pendingOrdersTr ? (
           <Table striped style={{ border: 1 }}>
             <thead>
               <tr>
-                <th>{translate("orderId")}</th>
+                <th>{translate("orderID")}</th>
                 <th>{translate("orderDate")}</th>
                 <th>{translate("delivery.name")}</th>
                 <th>{translate("delivery.phone")}</th>
@@ -198,13 +211,13 @@ class Appvendor extends Component {
               <a href={`#/firestorevendor/dinein+${dine.id}`}>{dine.id}</a>
             </td>
             <td>
-              {dine.dineInDate ? dine.dineInDate + ' ' + dine.dineInTime : 'NA'}
+              {dine.dineInDate ? Moment(dine.dineInDate + ' ' + dine.dineInTime).format('D-MMM-YYYY H:mm') : 'NA'}
             </td>
             <td>{dine.userName ? dine.userName : "NA"}</td>
             <td>{dine.phone ? dine.phone : "NA"}</td>
             <td>{dine.noOfSeats ? dine.noOfSeats : "NA"}</td>
             <td>
-              {dine.reservationStatus ? dine.reservationStatus : "NA"}
+              {dine.reservationStatus ? translate(dine.reservationStatus) : "NA"}
             </td>
           </tr>
         );
@@ -213,12 +226,12 @@ class Appvendor extends Component {
     }
     return (
       <div>
-        <h4>Pending dineIns</h4>
+        <h4>{translate('pendingDineIns')}</h4>
         {pendingDineInsTr ? (
           <Table striped style={{ border: 1 }}>
             <thead>
               <tr>
-                <th>{translate("id")}</th>
+                <th>{translate("orderID")}</th>
                 <th>{translate("reservationDate")}</th>
                 <th>{translate("name")}</th>
                 <th>{translate("phone")}</th>

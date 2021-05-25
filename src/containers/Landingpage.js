@@ -208,9 +208,7 @@ class Landingpage extends Component {
               taking your business directly to the palm of your
               customers and the entire city in a unique way. To be a
               merchant complete this{" "}
-              <a href="/register-vendor">
-                <strong>form</strong>
-              </a>{" "}
+              <Link to="/register-vendor" style={{textDecoration: 'underline'}}><strong>form</strong></Link>{" "}
               or contact us
             </p>
             <p>
@@ -391,7 +389,13 @@ class Landingpage extends Component {
       <div className="wrapper wrapper-full-page">
         <div className="full-page landing-page">
           <div className="content">
+          
             <div className="tempContent container w-container boxes">
+            <img
+                      style={{ width: "100%", maxWidth: '100%' }}
+                      alt="Get it on App Store"
+                      src="/assets/img/banner.png"
+                    />
               {(this.state.chosenLocale == 'en') ? 
               this.getEnglishLandingPageContent
               : this.getJapanLandingPageContent

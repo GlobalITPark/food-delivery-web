@@ -13,7 +13,7 @@
     "match-sorter": "2.3.0",
     "md5": "2.2.1",
     "mobidonia-firebase-paginator": "1.1.1",
-    "moment": "2.23.0",
+    "moment": "^2.23.0",
     "qrcode.react": "^0.9.3",
     "randomstring": "^1.1.5",
     "react": "15.4.2",

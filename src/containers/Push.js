@@ -133,7 +133,8 @@ class App extends Component {
                     .send(json)
                     .end(_this.sendCallback)
              }else{
-                 alert("There are no subscribed tokens");
+                console.log("There are no subscribed tokens");
+                 //alert("There are no subscribed tokens");
              }
 
           });
@@ -188,7 +189,8 @@ class App extends Component {
                     .send(json)
                     .end(_this.sendCallback)
              }else{
-                 alert("There are no subscribed tokens");
+                console.log("There are no subscribed tokens");
+                 //alert("There are no subscribed tokens");
              }
 
           });
