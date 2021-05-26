@@ -2896,7 +2896,7 @@ class Firestorevendor extends Component {
           </div>
         </SkyLight>
 
-        <SkyLight dialogStyles={{ height: "85%" }} hideOnOverlayClicked ref="confirmPickup" title="">
+        <SkyLight dialogStyles={{ height: "60%" }} hideOnOverlayClicked ref="confirmPickup" title="">
           <span>
             <h3 className="center-block">Change Order status</h3>
           </span>
