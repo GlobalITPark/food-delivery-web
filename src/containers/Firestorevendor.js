@@ -1457,6 +1457,7 @@ class Firestorevendor extends Component {
                           titleJa : restNameJa, 
                           createdBy : doc.data().fullName,
                           content : `Your order is ${status}`,
+                          optionalMessage: _this.state.message_optional,
                           status : status,
                         },
                         title: _this.state.orderedRestaurant.title
@@ -1627,6 +1628,7 @@ class Firestorevendor extends Component {
                           titleJa : reservation.data().restaurantNameJa, 
                           createdBy : doc.data().fullName,
                           content : `Your reservation is ${status}`,
+                          optionalMessage : _this.state.messageFromRestaurant,
                           status : status,
                         },
                         message:
@@ -1738,6 +1740,7 @@ class Firestorevendor extends Component {
                           createdBy : doc.data().fullName,
                           content : "You have earned 50 points by referring " + doc.data().fullName + ' Total points earned are ' + totalPoints,
                           contentJa : bodyJa,
+                          optionalMessage : '',
                           status : 'points credited',
                         },
                         message: "You have earned 50 points by referring " + doc.data().fullName + '. Total points earned are ' + totalPoints,
@@ -1882,6 +1885,7 @@ class Firestorevendor extends Component {
                           titleJa : restNameJa, 
                           createdBy : doc.data().fullName,
                           content : 'Your order is picked up',
+                          optionalMessage : '',
                           status : 'picked_up',
                         },
                         title: _this.state.orderedRestaurant.title
