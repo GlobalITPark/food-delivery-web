@@ -19,6 +19,7 @@ import CardUI from './../ui/template/Card'
 import INSERT_STRUCTURE from "../config/firestoreschema.js"
 import * as firebaseREF from 'firebase';
 require("firebase/firestore");
+import Moment from 'moment';
 
 
 
@@ -181,7 +182,6 @@ class Firestoreadmin extends Component {
 
       //Save this in state
       this.setState(pathData);
-
       //Go to next step of finding the collection data
       this.getCollecitonDataFromFireStore(firebasePath);
   }
@@ -219,7 +219,11 @@ class Firestoreadmin extends Component {
     if(isCollection){
         //COLLECTIONS - GET DOCUMENTS 
        
-        db.collection(collection).get().then(function(querySnapshot) {
+        var ref = db.collection(collection);
+        if (collection === 'users') {
+          ref = ref.orderBy('registeredAt', 'desc');
+        }
+        ref.get().then(function(querySnapshot) {
           var datacCount=0;
           querySnapshot.forEach(function(doc) {
 
@@ -235,10 +239,26 @@ class Firestoreadmin extends Component {
             console.log(doc.id, " => ", currentDocument);
 
             //Save in the list of documents
-            documents.push(currentDocument)
+            if (collection == 'users') {
+              if (currentDocument.email !="") {
+                documents.push(currentDocument) 
+              }
+            
+            } else {
+              documents.push(currentDocument) 
+            }
           });
           console.log("DOCS----");
           console.log(documents);
+
+          if (collection == 'users') {
+            documents.sort(function(x, y){
+              var date1 = x.registeredAt;
+              var date2 = y.registeredAt;
+              return date2 - date1;
+              
+            })
+          }
 
           //Save the douments in the sate
           _this.setState({

@@ -46,7 +46,7 @@ exports.adminConfig={
 
 "fieldsTypes":{
   "photo":["photo","image","category_image"],
-  "dateTime":["datetime","start","eventDateStart","eventDateEnd","date"],
+  "dateTime":["datetime","start","eventDateStart","eventDateEnd","date", "registeredAt"],
   "date":["datefield","created"],
   "time":["time"],
   "map":["map","latlng","location","eventLocation"],
@@ -204,7 +204,7 @@ exports.navigation=[
     "path": "users",
     "name": "Manage users",
     "icon": "perm_identity",
-    "tableFields":["username","email","userRole"],
+    "tableFields":["fullName","email","registeredAt","userRole"],
   },
   // {
   //   "link": "firestoreadmin",

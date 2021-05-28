@@ -5,6 +5,7 @@
 import React, { Component,PropTypes } from 'react'
 import Config from   '../../config/app'
 import Common from '../../common.js'
+import moment from 'moment'
 import { Link } from 'react-router'
 import ReactTable from "react-table"
 import "react-table/react-table.css"
@@ -168,13 +169,14 @@ export default class RTable extends Component {
             Cell: row => (
                <div className="disabled-sorting text-center">
                    {this.createEditButton(this.returnLink(row, row.index))}
-                    <a onClick={
+                   {this.props.name !== 'users' ? <a onClick={
                         ()=>{ 
                             this.deleteAction(this.props.fromObjectInArray?row.original.uidOfFirebase:row.index,this.returnLink(row, row.index))
                         }
                         }>
                         <span className="btn btn-simple btn-danger btn-icon delete"><i className="material-icons">delete</i></span>
-                    </a>
+                    </a> : <p></p>}
+                    
                </div> 
             )
         });
@@ -251,13 +253,12 @@ export default class RTable extends Component {
     //Create row depending of type 
     rowCreator(row, colIndex, rowIndex){
         var key=row.column.id;
-
         if(Config.adminConfig.fieldsTypes.photo.indexOf(key)>-1){
             //This is photo 
             return (<div className="tableImageDiv"><Link to={this.returnLink(row, rowIndex)}><img alt={row.original.name} className="tableImage" src={row.value}  width={"200px"} /></Link></div>)
         }if(Config.adminConfig.fieldsTypes.dateTime.indexOf(key)>-1){
             //This is date time
-            return (<div className="text-center">{row.value}</div>)
+            return (<div className="text-center"><p>{(row.value && row.value.seconds) ? moment(new Date(row.value.seconds*1000)).format('D-MMM-YYYY H:mm') : '--'}</p></div>)
         }if(typeof(row.value) === "boolean"){
             //This is boolean
             return (<div className="text-center">{row.value?"True":"False"}</div>)
