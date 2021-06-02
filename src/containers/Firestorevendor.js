@@ -462,6 +462,10 @@ class Firestorevendor extends Component {
               return Moment(date2).diff(date1);
             })
           }
+          if (collection === "restaurant") {
+            documents = [];            
+            _this.getRealMenuItemsForThisUser(_this.state.user.email)
+          }
 
           //Save the douments in the sate
           _this.setState({
@@ -550,6 +554,43 @@ class Firestorevendor extends Component {
         .catch(function (error) {
           console.log("2nd Error getting document:", error);
         });
+    }
+  }
+
+  getRealMenuItemsForThisUser = (email) => {
+    var _this = this;
+    var menuItems = [];
+    if (email) {
+      _this.setState({isLoading: true,})
+      var resRef = firebase.app
+      .firestore()
+      .collection("restaurant_collection")
+      .where('owner', '==', email);
+      resRef.get()
+        .then(function (querySnapshot) {
+          querySnapshot.docs.forEach(function (rest) {
+            _this.setState({isLoading: true,})
+            firebase.app
+            .firestore()
+            .collection("restaurant").where(
+              "collection",
+              "==",
+              firebase.app.firestore().doc("restaurant_collection/" + rest.id)).get().then((snapShot) => {
+                if (snapShot) {                  
+                  snapShot.docs.forEach((doc) => {
+                    var objToAdd = doc.data();
+                    objToAdd.uidOfFirebase = doc.id;
+                    menuItems.push(objToAdd);
+                  });                                  
+                }
+                _this.setState({documents: []}, _this.forceUpdate)
+                _this.setState({documents:menuItems}, _this.forceUpdate)                
+              });
+          });
+          _this.setState({isLoading: false,})
+        });
+        _this.forceUpdate()
+
     }
   }
 
