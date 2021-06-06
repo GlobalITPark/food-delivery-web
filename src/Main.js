@@ -23,6 +23,7 @@ import ScrollToTop from './ScrollToTop';
 import store from "./config/store";
 import { Provider } from "react-redux";
 import Dinein from './containers/Dinein';
+import OrderDetailsForEmailLink from './containers/OrderDetailsForEmailLink';
 
 
 class Main extends Component{
@@ -172,6 +173,7 @@ class Main extends Component{
               <HeaderUI currentUser={this.state.currentUser} isLoggedIn={this.state.isLoggedIn} >
                 <Route exact path={"/"} component={Landingpage}/>
                 <Route path="/landing" component={Landingpage}/>
+                <Route path="/order-details/:id" component={OrderDetailsForEmailLink}/>
                 <Route path="/about" component={About}/>
                 <Route path="/centre" component={Centre}/>
                 <Route path="/products/:id" component={(props)=>
