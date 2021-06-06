@@ -92,8 +92,12 @@ const availableLangs = {
     "variant" : "Variant",
     "deliveryCharge" : "Delivery charges",
     "deliveredSuccessfully" : "Delivered Successfully",
+    "success" : "Success",
+    "currentStatus" : "Current status",
 },
   'jp' : {
+    "success" : "成功",
+    "currentStatus" : "現在の状態",
     "orderDetails" : "注文詳細",
     "orderNo" : "注文番号",
     "Delivery/ Pickup Time" : "配達/集荷時間",
