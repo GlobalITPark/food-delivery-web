@@ -105,11 +105,10 @@ class Appvendor extends Component {
           objectToAdd.id = doc.id;
           ordersTemp.push(objectToAdd);
         });
-
-        ordersTemp.sort(function(x, y){
-          var date1 = Moment(x.timeStamp);
-          var date2 = Moment(y.timeStamp);
-          return Moment(date2).diff(date1);
+      ordersTemp.sort(function(x, y){
+        var date1 = Moment(x.timeStamp);
+        var date2 = Moment(y.timeStamp);
+        return Moment(date2).diff(date1);
       })
         
        return ordersTemp;
