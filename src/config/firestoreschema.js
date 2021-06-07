@@ -128,6 +128,7 @@ var collectionMeta={
 			"description":"Your food description",			
 			"description_ja":"Your food description in japanese",			
 			"price":10,			
+			"sortOrder":0,			
 			"options":"",
 			"isActive":true,
 		},
