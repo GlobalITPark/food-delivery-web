@@ -27,7 +27,8 @@ class HeaderUI extends Component {
     componentDidMount(){
         this.authListener();       
     }
-      
+
+    
     authListener(){
     console.log("HEADER : componentDidMount");
     const setUser=(user)=>{
@@ -169,7 +170,7 @@ class HeaderUI extends Component {
                             :""
                             } */}
                            
-                            <li style={{paddingTop: '5px', cursor: 'pointer'}} >
+                            {(this.props.location && this.props.location.search === '?_l=en') ? <li style={{paddingTop: '5px', cursor: 'pointer'}} >
                               
                             <span onClick={()=> {
                                     setChosenLocale('en');
@@ -178,9 +179,9 @@ class HeaderUI extends Component {
                                 <img style={{width:'20px',height: '20px', marginRight: '5px'}} alt="" src="/assets/img/united-states.png"></img>
                                 <p style={{marginTop:'-1px', fontWeight: 'bold', color: (this.state.chosenLocale === "en") ? '#000000' : '#ffffff', textDecoration: (this.state.chosenLocale === "en") ? 'underline' : 'none' }}>English</p>
                             </span>
-                            </li>
+                            </li> : null }
                             
-                            <li style={{paddingTop: '5px', cursor: 'pointer'}} >
+                            {(this.props.location && this.props.location.search === '?_l=en') ? <li style={{paddingTop: '5px', cursor: 'pointer'}} >
                             <span onClick={()=> {
                                     setChosenLocale('jp');
                                     this.setState({chosenLocale: 'jp'}, ()=>location.reload())
@@ -188,7 +189,7 @@ class HeaderUI extends Component {
                                 <img style={{width:'20px',height: '20px', marginRight: '5px'}} alt="" src="/assets/img/japan.png"></img>
                                 <p style={{marginTop:'-1px', fontWeight: 'bold', color: (this.state.chosenLocale === "jp") ? '#000000' : '#ffffff', textDecoration: (this.state.chosenLocale === "jp") ? 'underline' : 'none' }}>日本語</p>
                             </span>
-                            </li>
+                            </li> : null }
                             
                         </ul>
                                     

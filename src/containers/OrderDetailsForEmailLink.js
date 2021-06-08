@@ -9,13 +9,13 @@ class OrderDetailsForEmailLink extends Component {
         super(props);
         
         this.state = {
-            order: null
+            order: null,
+            userAvailablePoints: 0
           }
     }
 
     componentDidMount = ()=> {
         const { match: { params } } = this.props;
-        console.log(this.props.location);
         console.log(this.props.location.search);
         console.log(params);
         this.getOrderDetails(params.id);   
@@ -38,9 +38,25 @@ class OrderDetailsForEmailLink extends Component {
         orderRef.get().then(function(doc){
             if (doc.exists) {
                 var temp = doc.data();
-            temp.id= doc.id;
+                temp.id= doc.id;
+                _this.getUserAvailablePoints(temp.userID)
             _this.setState({
                 order:temp,
+            })
+            }
+            
+        })
+    }
+    
+    //Get the user's available points
+    getUserAvailablePoints = (userId)=> {
+        const _this=this;
+        var orderRef = firebase.app.firestore().collection("users");
+        orderRef = orderRef.doc(userId);
+        orderRef.get().then(function(doc){
+            if (doc.exists) {                
+            _this.setState({
+                userAvailablePoints:doc.data().points,
             })
             }
             
@@ -369,13 +385,21 @@ class OrderDetailsForEmailLink extends Component {
                         <strong>{this.state.order.deliveryAddress}</strong>
                     </div>
                 </div>
+                {(this.state.order.deliveryLocation && (this.state.order.deliveryLocation).latitude) ? <div className="row">
+                    <div className="col-md-5">
+                        <h6 className="mb-3"> {translate('deliveryLocation')} :</h6>
+                    </div>
+                    <div className="col-md-7" style={{paddingTop: '26px'}}>
+                        <a href={`https://www.google.com/maps?q=${(this.state.order.deliveryLocation) ? this.state.order.deliveryLocation.latitude: ''},${(this.state.order.deliveryLocation) ?this.state.order.deliveryLocation.longitude : ''}`}><strong>{translate('viewOnMap')}</strong></a>
+                    </div>
+                </div> : null }
                 
                 <div className="row">
                     <div className="col-md-5">
                         <h6 className="mb-3"> {translate('currentStatus')} :</h6>
                     </div>
                     <div className="col-md-7" style={{paddingTop: '26px'}}>
-                        <strong style={{padding: '8px',backgroundColor: 'green', color: 'white', borderRadius: '100px'}}>{this.state.order.status.replaceAll('_', ' ')}</strong>
+                        <strong style={{padding: '8px',backgroundColor: 'green', color: 'white', borderRadius: '100px'}}>{translate(this.state.order.status)}</strong>
                     </div>
                 </div>
         </div>
@@ -393,7 +417,11 @@ class OrderDetailsForEmailLink extends Component {
               </tr>
             </thead>
             <tbody>{this.getOrderItemsTr(this.state.order.order)}
-            <tr><td>{translate('deliveryCharge')}</td><td></td><td></td><td></td><td>{this.state.order.deliveryCharge}</td></tr><tr><td>{translate('total')}</td><td></td><td></td><td></td><td>{this.state.order.total}</td></tr>
+            <tr><td>{translate('deliveryCharge')}</td><td></td><td></td><td></td><td>{this.state.order.deliveryCharge}</td></tr>
+            <tr><td>{translate('total')}</td><td></td><td></td><td></td><td>{`${(parseFloat(this.state.order.total) + parseFloat(this.state.order.deliveryCharge) + parseFloat(this.state.order.pointsRedeemed))}` }</td></tr>
+            <tr><td>{translate('pointsAvailable')}</td><td></td><td></td><td></td><td>{this.state.userAvailablePoints}</td></tr>
+            <tr><td>{translate('pointsRedeemed')}</td><td></td><td></td><td></td><td>{(this.state.order.pointsRedeemed) ? this.state.order.pointsRedeemed : 0}</td></tr>
+            <tr><td>{translate('amountPayable')}</td><td></td><td></td><td></td><td>{this.state.order.total}</td></tr>
             </tbody>
           </Table>        
       </div>
