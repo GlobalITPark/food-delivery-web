@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import firebase from '../config/database'
-import { translate } from "../translations";
+import { setChosenLocale, translate } from "../translations";
 import { Table } from "react-bootstrap";
 
 class OrderDetailsForEmailLink extends Component {
@@ -15,7 +15,18 @@ class OrderDetailsForEmailLink extends Component {
 
     componentDidMount = ()=> {
         const { match: { params } } = this.props;
+        console.log(this.props.location);
+        console.log(this.props.location.search);
+        console.log(params);
         this.getOrderDetails(params.id);   
+        if (this.props.location.search === '?_l=en') {
+          setChosenLocale('en');
+          this.setState({}, this.forceUpdate)
+        } else {
+          setChosenLocale('jp');
+          this.setState({}, this.forceUpdate)
+        }
+        
     }
 
     //Get the order details
