@@ -390,7 +390,7 @@ class OrderDetailsForEmailLink extends Component {
                         <h6 className="mb-3"> {translate('deliveryLocation')} :</h6>
                     </div>
                     <div className="col-md-7" style={{paddingTop: '26px'}}>
-                        <a href={`https://www.google.com/maps?q=${(this.state.order.deliveryLocation) ? this.state.order.deliveryLocation.latitude: ''},${(this.state.order.deliveryLocation) ?this.state.order.deliveryLocation.longitude : ''}`}><strong>{translate('viewOnMap')}</strong></a>
+                        <a target="_blank" href={`https://www.google.com/maps?q=${(this.state.order.deliveryLocation) ? this.state.order.deliveryLocation.latitude: ''},${(this.state.order.deliveryLocation) ?this.state.order.deliveryLocation.longitude : ''}`}><strong>{translate('viewOnMap')}</strong></a>
                     </div>
                 </div> : null }
                 

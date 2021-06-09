@@ -170,7 +170,7 @@ class HeaderUI extends Component {
                             :""
                             } */}
                            
-                            {(this.props.location && this.props.location.search === '?_l=en') ? <li style={{paddingTop: '5px', cursor: 'pointer'}} >
+                            {(!window.location.pathname.match('/order-details')) ? <li style={{paddingTop: '5px', cursor: 'pointer'}} >
                               
                             <span onClick={()=> {
                                     setChosenLocale('en');
@@ -181,7 +181,7 @@ class HeaderUI extends Component {
                             </span>
                             </li> : null }
                             
-                            {(this.props.location && this.props.location.search === '?_l=en') ? <li style={{paddingTop: '5px', cursor: 'pointer'}} >
+                            {(!window.location.pathname.match('/order-details')) ? <li style={{paddingTop: '5px', cursor: 'pointer'}} >
                             <span onClick={()=> {
                                     setChosenLocale('jp');
                                     this.setState({chosenLocale: 'jp'}, ()=>location.reload())
