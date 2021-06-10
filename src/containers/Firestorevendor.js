@@ -1824,7 +1824,7 @@ class Firestorevendor extends Component {
       }
     });
 
-    var amountPayable =  _this.state.orderDetails.total > 2000
+    var amountPayable =  _this.state.orderDetails.total >= 2000
       ? _this.state.orderDetails.total -
       _this.state.redeemedPoints
       : _this.state.orderDetails.total +
