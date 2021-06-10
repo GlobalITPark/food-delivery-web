@@ -98,8 +98,10 @@ const availableLangs = {
     "amountPayable" : "Amount payable",
     "deliveryLocation" : "Delivery location",
     "viewOnMap" : "View on map",
+    "viewOrder" : "表示の順序",
 },
   'jp' : {
+    "viewOrder" : "地図で見る",
     "viewOnMap" : "地図で見る",
     "deliveryLocation" : "お届け場所名",
     "pointsRedeemed" : "交換ポイント",

@@ -1,11 +1,12 @@
 /*eslint no-useless-constructor: "off"*/
 import React, { Component } from "react";
-import { translate } from "../translations";
+import { translate, getLocale } from "../translations";
 import NavBar from "./../ui/template/NavBar";
 // import NavBarDefault from './../ui/template/NavBarDefault'
 import firebase from "../config/database";
 import { Table } from "react-bootstrap";
 import Moment from 'moment';
+import { Link } from "react-router-dom";
 
 class Appvendor extends Component {
   intervalId = null;
@@ -14,6 +15,7 @@ class Appvendor extends Component {
     this.state = {
       isLoading: true,
       restaurantIDs: [],
+      restaurantIDAndNames: [],
       pendingOrders: [],
       pendingDineIns: [],
     };
@@ -47,10 +49,12 @@ class Appvendor extends Component {
 
   // fetch all the restaurant Ids the vendor currently have
   fetchRestaurantIDs = () => {
+    var _this = this;
     //Get reference to fireStore
     var db = firebase.app.firestore();
     var vendorEmail = firebase.app.auth().currentUser.email;
     var restaurantIDs = [];
+    var restaurantIDAndNames = [];
     return db
       .collection("restaurant_collection")
       .where("owner", "==", vendorEmail)
@@ -58,9 +62,15 @@ class Appvendor extends Component {
       .then(function (querySnapshot) {
         querySnapshot.forEach(function (doc) {
           if (vendorEmail === doc.data().owner) {
+            var temp = {};
+            temp.id= doc.id;
+            temp.title= doc.data().title;
+            temp.title_ja= doc.data().title_ja;
             restaurantIDs.push(doc.id);
+            restaurantIDAndNames.push(temp);
           }
         });
+        _this.setState({restaurantIDAndNames})
         return restaurantIDs;
       });
   };
@@ -81,6 +91,19 @@ class Appvendor extends Component {
         }
        
       };
+
+      console.log(this.state.restaurantIDAndNames);
+      totalOrdersTemp.forEach(order => {
+        var temp = order;
+        this.state.restaurantIDAndNames.forEach(rest => {
+          if (temp.restaurantID == rest.id) {
+            temp.restNameEn =  rest.title;
+            temp.restNameJa =  rest.title_ja;
+          }
+        }) 
+        return temp;
+        
+      });
       this.setState({
         isLoading: false,
         pendingOrders: totalOrdersTemp,
@@ -110,7 +133,6 @@ class Appvendor extends Component {
         var date2 = Moment(y.timeStamp);
         return Moment(date2).diff(date1);
       })
-        
        return ordersTemp;
       });
   };
@@ -138,9 +160,10 @@ class Appvendor extends Component {
           }
           
         });
+        
         ordersTemp.sort(function(x, y){
-          var date1 = Moment(x.createdTime);
-          var date2 = Moment(y.createdTime);
+          var date1 = Moment(x.orderDateTime);
+          var date2 = Moment(y.orderDateTime);
           return Moment(date2).diff(date1);
         })
         
@@ -155,16 +178,18 @@ class Appvendor extends Component {
     if (this.state.pendingOrders.length > 0) {      
       pendingOrdersTr = this.state.pendingOrders.map((order, index) => {
         return (
-          <tr key={Math.random()}>
+          <tr style={{fontWeight: (order.status == 'just_created') ? 'bold' : 'normal'}} key={Math.random()}>
             <td>
               <a href={`#/firestorevendor/orders+${order.id}`}>{order.id}</a>
             </td>
             <td>
-              {order.timeStamp ? Moment(order.timeStamp).format('D-MMM-YYYY H:mm') : "NA"}
+              {order.orderDateTime ? Moment(order.orderDateTime).format('D-MMM-YYYY H:mm') : "NA"}
             </td>
             <td>{order.delivery.name ? order.delivery.name : "NA"}</td>
-            <td>{order.delivery.phone ? order.delivery.phone : "NA"}</td>
-            <td>{order.deliveryAddress ? order.deliveryAddress : "NA"}</td>
+            {/* <td>{order.delivery.phone ? order.delivery.phone : "NA"}</td> */}
+            {/* <td>{order.deliveryAddress ? order.deliveryAddress : "NA"}</td> */}
+            <td>{getLocale() == 'en' && order.restNameEn  ? order.restNameEn : order.restNameJa}</td>
+            <td><Link target={'_blank'} to={`/order-details/${btoa(order.id)}?_l=${getLocale()}`}>{translate('viewOrder')}</Link></td>
             <td>
               {order.status ? translate(order.status) : "NA"}
             </td>
@@ -182,8 +207,9 @@ class Appvendor extends Component {
                 <th>{translate("orderID")}</th>
                 <th>{translate("orderDate")}</th>
                 <th>{translate("delivery.name")}</th>
-                <th>{translate("delivery.phone")}</th>
-                <th>{translate("location")}</th>
+                {/* <th>{translate("delivery.phone")}</th> */}
+                <th>{translate("restaurant")}</th>
+                <th>{translate("viewOrder")}</th>
                 <th>{translate("status")}</th>
               </tr>
             </thead>
