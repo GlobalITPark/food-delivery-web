@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import firebase from '../config/database'
-import { setChosenLocale, translate } from "../translations";
+import { getLocale, setChosenLocale, translate } from "../translations";
 import { Table } from "react-bootstrap";
 
 class OrderDetailsForEmailLink extends Component {
@@ -305,9 +305,9 @@ class OrderDetailsForEmailLink extends Component {
     getOrderItemsTr(orderItems) {
         var orderItemsTr = orderItems.map((item) => {
             return (
-                <tr key={Math.random()}><td>{item.name}</td><td>{item.quantity}</td><td>{
-                    item.variant
-                  }</td><td>{item.price}</td><td>{
+                <tr key={Math.random()}><td>{(getLocale() =='en') ? item.name : item.name_ja}</td><td>{item.quantity}</td>
+                {/* <td>{item.variant}</td> */}
+                  <td>{item.price}</td><td>{
                     item.quantity * item.price
                   }</td></tr>
             );
@@ -411,17 +411,17 @@ class OrderDetailsForEmailLink extends Component {
               <tr>
                 <th>{translate("foodName")}</th>
                 <th>{translate("qty")}</th>
-                <th>{translate("variant")}</th>
+                {/* <th>{translate("variant")}</th> */}
                 <th>{translate("price") + '(¥)'}</th>
                 <th>{translate("total") + '(¥)'}</th>
               </tr>
             </thead>
             <tbody>{this.getOrderItemsTr(this.state.order.order)}
-            <tr><td>{translate('deliveryCharge')}</td><td></td><td></td><td></td><td>{this.state.order.deliveryCharge}</td></tr>
-            <tr><td>{translate('total')}</td><td></td><td></td><td></td><td>{`${(parseFloat(this.state.order.total) + parseFloat(this.state.order.deliveryCharge) + parseFloat(this.state.order.pointsRedeemed))}` }</td></tr>
-            <tr><td>{translate('pointsAvailable')}</td><td></td><td></td><td></td><td>{this.state.userAvailablePoints}</td></tr>
-            <tr><td>{translate('pointsRedeemed')}</td><td></td><td></td><td></td><td>{(this.state.order.pointsRedeemed) ? this.state.order.pointsRedeemed : 0}</td></tr>
-            <tr><td>{translate('amountPayable')}</td><td></td><td></td><td></td><td>{this.state.order.total}</td></tr>
+            <tr><td>{translate('deliveryCharge')}</td><td></td><td></td><td>{this.state.order.deliveryCharge}</td></tr>
+            <tr><td>{translate('total')}</td><td></td><td></td><td>{`${(parseFloat(this.state.order.total) + parseFloat(this.state.order.pointsRedeemed))}` }</td></tr>
+            <tr><td>{translate('pointsAvailable')}</td><td></td><td></td><td>{this.state.userAvailablePoints}</td></tr>
+            <tr><td>{translate('pointsRedeemed')}</td><td></td><td></td><td>{(this.state.order.pointsRedeemed) ? this.state.order.pointsRedeemed : 0}</td></tr>
+            <tr><td>{translate('amountPayable')}</td><td></td><td></td><td>{this.state.order.total}</td></tr>
             </tbody>
           </Table>        
       </div>
