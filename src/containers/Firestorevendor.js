@@ -1198,6 +1198,7 @@ class Firestorevendor extends Component {
         //calories: this.state.menuCalories,
         collection: collection,
         price: this.state.menuPrice,
+        sortOrder: 0,
         taxPercentage: this.state.taxPercentage,
         options: "",
         shortDescription: "",
