@@ -304,6 +304,7 @@ class OrderDetailsForEmailLink extends Component {
     // build order Items table rows
     getOrderItemsTr(orderItems) {
         var orderItemsTr = orderItems.map((item) => {
+          if (item) {
             return (
                 <tr key={Math.random()}><td>{(getLocale() =='en') ? item.name : item.name_ja}</td><td>{item.quantity}</td>
                 {/* <td>{item.variant}</td> */}
@@ -311,6 +312,8 @@ class OrderDetailsForEmailLink extends Component {
                     item.quantity * item.price
                   }</td></tr>
             );
+          }
+            
           });
           return orderItemsTr;
 
