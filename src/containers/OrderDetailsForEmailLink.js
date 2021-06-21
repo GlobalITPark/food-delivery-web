@@ -477,7 +477,6 @@ class OrderDetailsForEmailLink extends Component {
   //On Edit confirm we delete  the currently available menItem
   onEditConfirm = async ()=> {
     if (this.state.selectedMenuItem) {
-      console.log(this.state.selectedFoodVariant)
       this.setState({isLoading: true})
       var newItem = {
         id : this.state.selectedMenuItem.id,
@@ -908,7 +907,7 @@ class OrderDetailsForEmailLink extends Component {
                 >
                   <option value="">select</option>
                         {this.state.menuItems.map((item, key) => {
-                          return <option key={key} value={key}>{(getLocale() === 'en')? item.title : item.title_ja}</option>;
+                          return <option value={key}>{(getLocale() === 'en')? item.title : item.title_ja}</option>;
                         })}
                 </select>
               </div>
@@ -931,7 +930,7 @@ class OrderDetailsForEmailLink extends Component {
                 >
                   <option value="">select</option>
                         {this.state.foodVariants.map((item, key) => {
-                          return <option key={Math.random()} value={key}>{(getLocale() === 'en')? item.title : item.title_ja}</option>;
+                          return <option value={key}>{(getLocale() === 'en')? item.title : item.title_ja}</option>;
                         })}
                 </select>
               </div>
@@ -1029,14 +1028,13 @@ class OrderDetailsForEmailLink extends Component {
                   className="col-sm-8 form-control form-control-sm"
                   //value={''}
                   onChange={(e) => {  
-                    console.log(e.target.value)
-                    this.setState({ selectedFoodVariant: this.state.foodVariants[e.target.value] }, ()=>console.log(this.state.foodVariants))
+                    this.setState({ selectedFoodVariant: this.state.foodVariants[e.target.value] })
                   }
                   }
                 >
                   <option value="">select</option>
                         {this.state.foodVariants.map((item, key) => {
-                          return <option key={key} value={key}>{(getLocale() === 'en')? item.title : item.title_ja}</option>;
+                          return <option  value={key}>{(getLocale() === 'en')? item.title : item.title_ja}</option>;
                         })}
                 </select>
               </div>
