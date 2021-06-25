@@ -25,6 +25,7 @@ import Moment from 'moment';
 const ROUTER_PATH = "/firestorevendor/";
 import { PulseLoader } from "halogenium";
 import { translate } from "../translations";
+import RestaurantTimingsTable from "../components/tables/RestaurantTimingsTable";
 
 class Firestorevendor extends Component {
   constructor(props) {
@@ -2805,6 +2806,14 @@ class Firestorevendor extends Component {
             ) : (
               ""
             )}
+            {this.state.lastSub ==="restaurant_collection+"+this.state.currentCollectionName?
+                (
+                  <div>
+                <RestaurantTimingsTable
+                restaurantId ={this.state.currentCollectionName}
+                />
+                </div>
+                ) : '' }
           </div>
         </div>
         <SkyLight hideOnOverlayClicked ref="deleteDialog" title="">

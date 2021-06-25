@@ -991,6 +991,7 @@ class OrderDetailsForEmailLink extends Component {
         dialogStyles={{height: '35%', width: '50%'}}     
           ref="confirmActionPopup"
           title={translate("areYouSureYouWantToDeleteThisItem")}
+          titleStyle={{fontWeight: 'bold', fontSize: '16px'}}
         >
           <div className="card-content">       
             {/* Add button */}
