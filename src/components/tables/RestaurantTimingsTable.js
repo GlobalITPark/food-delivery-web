@@ -4,6 +4,10 @@ import { translate } from "../../translations";
 import SkyLight from "react-skylight";
 import TimePicker from "react-gradient-timepicker";
 import { Table } from "react-bootstrap";
+import Moment from 'moment';
+import { extendMoment } from 'moment-range';
+
+const moment = extendMoment(Moment);
 
 export default class RestaurantTimingsTable extends Component {
   // Lets initialize state
@@ -56,11 +60,49 @@ export default class RestaurantTimingsTable extends Component {
       this.state.closingTime = val
     }
 
+    validateTiming = async ()=> {
+      var timings = (this.state.restaurant && this.state.restaurant.timings) ? this.state.restaurant.timings : [];
+      if (timings.length > 0) {
+        var alreadyAdded = timings.filter((timing) => timing.day === this.state.selectedDay && timing.openingTime.format12 === this.state.openingTime.format12 && timing.closingTime.format12 === this.state.closingTime.format12)
+        if (alreadyAdded.length > 0) {
+          alert('timing already added')
+          return false
+        }
+        var selectedOpeningTimeArr =  this.state.openingTime.format24.split(":");
+        var selectedClosingTimeArr =  this.state.closingTime.format24.split(":");
+        var selectedOpeningTimeInMillieSeconds = (+selectedOpeningTimeArr[0] * (60000 * 60)) + (+selectedOpeningTimeArr[1] * 60000);
+        var selectedClosingTimeInMillieSeconds = (+selectedClosingTimeArr[0] * (60000 * 60)) + (+selectedClosingTimeArr[1] * 60000);
+        if (selectedOpeningTimeInMillieSeconds > selectedClosingTimeInMillieSeconds) {
+          alert('opening time cannot be greater than closing time')
+          return false
+        }
+        var selectedOpeningTime = moment(this.state.openingTime.format12, "h:mm a");
+        var selectedClosingTime = moment(this.state.closingTime.format12, "h:mm a");
+        var isOverlapping = false
+        timings.forEach(timing => {
+          if (this.state.selectedDay === timing.day) {
+            var addedOpeningTime = moment(timing.openingTime.format12, "h:mm a");
+            var addedClosingTime = moment(timing.closingTime.format12, "h:mm a");
+            const range1 = moment.range(selectedOpeningTime, selectedClosingTime);
+            const range2 = moment.range(addedOpeningTime, addedClosingTime);
+            isOverlapping = range1.overlaps(range2)
+          }
+        });
+        if (isOverlapping) {
+          alert('times are overlapping')
+          return false;
+        }
+      }
+      return true;
+    }
+
     // Add each timings from user to restaurant
-  addTimingToRestaurant = () => {
+  addTimingToRestaurant = async () => {
       const _this =this;
     if (this.state.selectedDay && this.state.openingTime && this.state.closingTime && this.state.restaurant) {
-      this.setState({isLoading: true})
+      var isValid = await this.validateTiming()
+      if (isValid) {
+        this.setState({isLoading: true})
         var timings = (this.state.restaurant && this.state.restaurant.timings) ? this.state.restaurant.timings : [];
         var temp = {
             id: new Date().getTime(),
@@ -69,6 +111,7 @@ export default class RestaurantTimingsTable extends Component {
             closingTime: this.state.closingTime
         }
         timings.push(temp)
+        _this.setState({isLoading: false})
         firebase.app
         .firestore()
         .collection("restaurant_collection")
@@ -81,6 +124,8 @@ export default class RestaurantTimingsTable extends Component {
             _this.refs.addTimingsPopup.hide()
             _this.getRestaurantDetails()
         })
+      }
+      
     }
   };
 

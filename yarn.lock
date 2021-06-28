@@ -2819,7 +2819,7 @@
     "es6-symbol" "3.1.1"
     "event-emitter" "~0.3.5"
 
-"es6-symbol@^3.1.1", "es6-symbol@~3.1.1", "es6-symbol@3.1.1":
+"es6-symbol@^3.1.0", "es6-symbol@^3.1.1", "es6-symbol@~3.1.1", "es6-symbol@3.1.1":
   "integrity" "sha1-vwDvT9q2uhtG7Le2KbTH7VcVzHc="
   "resolved" "https://registry.npmjs.org/es6-symbol/-/es6-symbol-3.1.1.tgz"
   "version" "3.1.1"
@@ -5454,7 +5454,14 @@
     "axios" "^0.13.1"
     "firebase-admin" "^4.2.1"
 
-"moment@^2.10.2", "moment@^2.23.0":
+"moment-range@^4.0.2":
+  "integrity" "sha512-n8sceWwSTjmz++nFHzeNEUsYtDqjgXgcOBzsHi+BoXQU2FW+eU92LUaK8gqOiSu5PG57Q9sYj1Fz4LRDj4FtKA=="
+  "resolved" "https://registry.npmjs.org/moment-range/-/moment-range-4.0.2.tgz"
+  "version" "4.0.2"
+  dependencies:
+    "es6-symbol" "^3.1.0"
+
+"moment@^2.10.2", "moment@^2.23.0", "moment@>= 2":
   "integrity" "sha512-3IE39bHVqFbWWaPOMHZF98Q9c3LDKGTmypMiTM2QygGXXElkFWIH7GxfmlwmY2vwa+wmNsoYZmG2iusf1ZjJoA=="
   "resolved" "https://registry.npmjs.org/moment/-/moment-2.23.0.tgz"
   "version" "2.23.0"
