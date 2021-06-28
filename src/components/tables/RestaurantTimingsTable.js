@@ -203,7 +203,7 @@ onConfirmDelete = async ()=> {
               {/* Add new timing */}
               <div className="row">
                 <div className="col-md-9">
-                {(this.state.restaurant) ? <div style={{width: '41%', height: '68px'}} class="card-header card-header-text" data-background-color="rose"><h5 class="card-title">{this.state.restaurant.title}'s timings</h5></div>: null}
+                {(this.state.restaurant) ? <div style={{width: '51%', height: '68px'}} class="card-header card-header-text" data-background-color="rose"><h5 class="card-title">{this.state.restaurant.title}'s timings</h5></div>: null}
                 </div>
                 <div className="col-md-3">
                   <a
