@@ -10,7 +10,7 @@ import { Link } from 'react-router'
 import ReactTable from "react-table"
 import "react-table/react-table.css"
 import matchSorter from 'match-sorter'
-import { translate } from '../../translations'
+import { getLocale, translate } from '../../translations'
 export default class RTable extends Component {
 
     constructor(props){
@@ -161,6 +161,15 @@ export default class RTable extends Component {
                    </div> 
                 )
             });
+        } 
+        if(this.props.name === 'orders'){
+            columns.push({
+                Header: translate('viewOrder'),
+                filterable: false,
+                Cell: row => (
+                    <a target={'_blank'} href={`/order-details/${btoa(row.original.uidOfFirebase)}?_l=${getLocale()}`}>{translate('viewOrder')}</a>
+                )
+            });
         }
 
         columns.push({
@@ -297,7 +306,7 @@ export default class RTable extends Component {
                 }
                 columns={this.state.columns}
                 className="-striped -highlight"  
-                defaultPageSize= {this.state.pageSize}
+                defaultPageSize={this.state.pageSize}
                 showPagination={false}
             />  
         </div>

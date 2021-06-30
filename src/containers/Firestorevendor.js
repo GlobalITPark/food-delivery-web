@@ -24,7 +24,7 @@ import Moment from 'moment';
 
 const ROUTER_PATH = "/firestorevendor/";
 import { PulseLoader } from "halogenium";
-import { translate } from "../translations";
+import { getLocale, translate } from "../translations";
 import RestaurantTimingsTable from "../components/tables/RestaurantTimingsTable";
 
 class Firestorevendor extends Component {
@@ -434,7 +434,9 @@ class Firestorevendor extends Component {
               collection === "orders" &&
               _this.state.restaurantIDs.includes(currentDocument.restaurantID)
             ) {
+              var currentRestaurant = _this.state.restaurants.find((rest)=>rest.id === currentDocument.restaurantID)
               currentDocument.orderID = doc.id;
+              currentDocument.restaurant =  (getLocale() === 'en')? currentRestaurant.title : currentRestaurant.title_ja;              
               documents.push(currentDocument);
             } else if (
               collection === "dinein" &&

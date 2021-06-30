@@ -42,7 +42,7 @@ exports.adminConfig={
 "urlSeparator":"+",
 "urlSeparatorFirestoreSubArray":"~",
 "googleMapsAPIKey":"AIzaSyDc5wWlcOHydNkbCG1lWTExxliRPhNWR48",
-"previewOnlyKeys":["deliveryType", "deliveryAddress", "deliveryInstructions", "delivery.name", "delivery.phone", "timeStamp", "amountPayable", "pointsRedeemed"],
+"previewOnlyKeys":["deliveryType", "deliveryAddress", "deliveryInstructions", "delivery.name", "delivery.phone", "timeStamp", "amountPayable", "pointsRedeemed", 'timings'],
 
 "fieldsTypes":{
   "photo":["photo","image","category_image"],
@@ -239,7 +239,7 @@ exports.navigation=[
     "path": "orders",
     "name": "Orders",
     "icon":"shopping_cart",
-    "tableFields":["id","time","delivery.name","delivery.phone", "status"],
+    "tableFields":["id","time","delivery.name","restaurant", "status"],
   }, 
   {
     "link": "firestoreadmin",
@@ -436,7 +436,7 @@ exports.vendorNavigation=[
     "path": "orders",
     "name": "orders",
     "icon":"shopping_cart",
-    "tableFields":["orderID","timeStamp","delivery.name","delivery.phone", "status"],
+    "tableFields":["orderID","timeStamp","delivery.name","restaurant", "status"],
   },
   {
     "link": "firestorevendor",
