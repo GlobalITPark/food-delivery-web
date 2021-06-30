@@ -137,7 +137,8 @@ export default class RTable extends Component {
     //Create column for every header
     setupColumns(){
         var columns = [];
-        var headers = this.state.headers;
+        var orderColumns = ['name', 'variant', 'quantity', 'price', 'image'];
+        var headers = (this.props.name === 'order') ? orderColumns : this.state.headers;
         headers.map((header, colIndex)=>{
             columns.push({  
                 Header: Common.capitalizeFirstLetter(translate(header)),
