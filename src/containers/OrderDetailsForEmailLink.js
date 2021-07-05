@@ -194,6 +194,7 @@ class OrderDetailsForEmailLink extends Component {
           message_optional: this.state.optionalMessage,
         })
         .then(function () {
+
           // Send Notification
           firebase.app
             .firestore()
@@ -207,6 +208,9 @@ class OrderDetailsForEmailLink extends Component {
               var expoToken = doc.data().expoToken;
               if (doc.data().referredBy) {
                 _this.rewardTheReferrer(doc);
+              }
+              if (order.pointsRedeemed && _this.state.orderStatus === 'canceled' || _this.state.orderStatus === 'rejected' || _this.state.orderStatus === 'cannot_deliver') {
+                _this.addBackRedeemedPoint(doc, order.pointsRedeemed)
               }
               if (expoToken) {
                 var bodyEn =  doc.data().fullName !== undefined ? `Hi ${doc.data().fullName} Your order is ${status}.` : `Your order is ${status}.`;
@@ -300,7 +304,15 @@ class OrderDetailsForEmailLink extends Component {
     this.refs.orderStatusChangePopup.hide()
   }
 
-  // Reward the referrer when completing an order
+  // addBackRedeemedPoint when not delivering  completing an order
+  addBackRedeemedPoint = (user, pointsToAddBack) => {
+    var totalPoints = Math.floor(user.data().points) + Math.floor(pointsToAddBack)
+    firebase.app.firestore().collection("users").doc(user.id).update({
+      points: totalPoints
+    });
+  }
+    
+    // Reward the referrer when completing an order
   rewardTheReferrer = (user) => {
     var referredByUserId = user.data().referredBy.userId;
     firebase.app.firestore().collection("users").doc(user.id).update({
