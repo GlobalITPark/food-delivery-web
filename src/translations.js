@@ -114,8 +114,10 @@ const availableLangs = {
     "addNewTiming" : "Add new timing",
     "closeTime" : "Close time",
     "noDataFound" : "No data found",
+    "sendMessage" : "send a message",
 },
   'jp' : {
+    "sendMessage" : "メッセージを送る",
     "noDataFound" : "何もデータが見つかりませんでした",
     "closeTime" : "新しいタイミングを追加",
     "addNewTiming" : "新しいタイミングを追加",

@@ -25,6 +25,7 @@ import Moment from 'moment';
 
 const ROUTER_PATH="/firestoreadmin/";
 import { PulseLoader } from 'halogenium';
+import { translate } from '../translations';
 
 class Firestoreadmin extends Component {
   
@@ -44,6 +45,7 @@ class Firestoreadmin extends Component {
       fieldsOfOnsert:null,
       isLoading:true,
       showAddCollection:"",
+      messageForUser:"",
       selectedResturantRow:[],
     };
 
@@ -111,6 +113,7 @@ class Firestoreadmin extends Component {
         newState.documents=[];
         newState.collections=[];
         newState.currentCollectionName="";
+        newState.messageForUser="";
         newState.fieldsAsArray=[];
         newState.arrayNames=[];
         newState.fields=[];
@@ -1031,6 +1034,101 @@ cancelApproveResturant() {
   this.refs.approveResturantDialog.hide();
 }
 
+
+/**
+* Cancel approve resturant modal.
+*/
+sendMessage = ()=> { 
+  if (this.state.messageForUser && this.state.currentCollectionName) {
+    var _this = this;
+    var userId = this.state.currentCollectionName
+    // Send Notification
+    firebase.app
+      .firestore()
+      .collection("users")
+      .doc(userId)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+        var expoToken = doc.data().expoToken;            
+        if (expoToken) {
+          var bodyEn =  _this.state.messageForUser;
+          var bodyJa =  _this.state.messageForUser;
+          var userCurrentLanguage =  (doc.data().currentLocale) ? doc.data().currentLocale : 'en';
+          let data = {
+            "to": expoToken,
+            "title":  (userCurrentLanguage === 'en') ? 'Message from Tabetai' : 'タベタイからのメッセージ',
+            "body":  (userCurrentLanguage === 'en') ? bodyEn : bodyJa,
+            "sound": "default",
+            "priority": 'high',
+            "data": {'type': 'notification'}
+        }                
+            fetch("https://exp.host/--/api/v2/push/send", {
+              'mode': 'no-cors',
+              'method': 'POST',
+              'headers': {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data)
+          }).catch(err => console.log(err))
+          .finally(() => {
+              var d = new Date();
+              var months = [
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December",
+              ];
+              var db = firebase.app.firestore();
+              db.collection("notifications")
+                .add({
+                  createdAt: new Date(),
+                  userId: userId,
+                  referenceId: '',
+                  isRead: false,
+                  type: "notification",
+                  data: {
+                    title : 'Message from tabetai',
+                    titleJa : 'タベタイからのメッセージ', 
+                    createdBy : doc.data().fullName,
+                    content : bodyEn
+                  },
+                  title: 'Message from tabetai',  
+                  message: bodyEn,
+                  longMessage:
+                    d.getDate() +
+                    "-" +
+                    months[d.getMonth()] +
+                    "-" +
+                    d.getFullYear() +
+                    " " +
+                    d.getHours() +
+                    ":" +
+                    d.getMinutes(),
+                }).then((a)=>_this.setState({messageForUser: ''}));
+            });
+        } else {
+          //alert("There are no subscribed tokens");
+          console.log("There are no subscribed tokens");
+        }
+      
+      }})
+      .catch((err) => {
+        console.log("Error getting user", err);
+      });
+  }
+  this.refs.sendMessageToUserPopup.hide();
+}
+
 /**
 * Approve resturant.
 */
@@ -1155,6 +1253,12 @@ approveResturant(event) {
     return (
       <div className="content">
         {this.generateNavBar()}
+        {this.state.lastSub ==="users+"+this.state.currentCollectionName?
+                (
+                  <div>
+                <a style={{float:"right"}} className="btn btn-success"  onClick={()=>{this.refs.sendMessageToUserPopup.show()}}>{translate('sendMessage')}</a>
+                </div>
+                ) : '' }
 
         <div className="content" sub={this.state.lastSub}>
 
@@ -1321,6 +1425,43 @@ approveResturant(event) {
             </div>
           </div>
         </SkyLight>
+        
+        {/* sendMessageToUserPopup */}
+        <SkyLight hideOnOverlayClicked ref="sendMessageToUserPopup" title="">
+          <span><h3  className="center-block">Send a message</h3></span>
+          <br />
+          <div  className="card-content">
+            <div className="row">
+              <label className="col-sm-3 label-on-left">Message</label>
+              <div className="col-sm-12">
+              <textarea
+                onChange={(event) =>
+                  this.setState({ messageForUser: event.target.value })
+                }
+                value={this.state.messageForUser}
+                className="form-control"
+                cols={4}
+                name="messageForUser"
+              ></textarea>
+              </div>
+              <div className="col-sm-1">
+              </div>
+            </div>
+          </div><br /><br />          
+          <div className="col-sm-12 ">
+            <div className="col-sm-3 ">
+            </div>
+            <div className="col-sm-6 center-block">
+              <a onClick={this.sendMessage} className="btn btn-rose btn-round center-block"><i className="fa fa-mail"></i>{translate('send')}</a>
+            </div>
+            <div className="col-sm-3 ">
+            </div>
+          </div>
+        </SkyLight>
+        {/* end sendMessageToUserPopup */}
+
+
+
         <SkyLight hideOnOverlayClicked ref="approveResturantDialog" title="">
           <span><h4 className="center-block">Approve resturant</h4></span>
           <div className="col-md-12">
