@@ -21,22 +21,18 @@ class Landingpage extends Component {
 
   componentDidMount = ()=> {
     if (this.props.location.search === "?_dl") {
-      console.log('yea got it')
       if (isAndroid) {
         window.location = 'https://play.google.com/store/apps/details?id=com.adami.tabetai'
       } else if (isIOS) {
         window.location = 'https://apps.apple.com/in/app/tabetai/id1562102113'
       }
     }
-    console.log(window.navigator.platform)
   }
 
 
   get getEnglishLandingPageContent(){
       return <div>
-        <h5>Who We Are</h5>
-        <h5>is Android {isAndroid.toString()}</h5>
-        <h5>is Ios {isIOS.toString()}</h5>
+        <h5>Who We Are</h5>        
         <p>
           Tabetai is a food delivery platform that is powered by Adam-I
           which connects the very best restaurants and stores to people.
