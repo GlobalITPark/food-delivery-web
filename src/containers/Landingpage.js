@@ -18,6 +18,10 @@ class Landingpage extends Component {
     };
   }
 
+  componentDidMount = ()=> {
+    console.log(window.navigator.platform)
+  }
+
 
   get getEnglishLandingPageContent(){
       return <div>
