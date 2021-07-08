@@ -26,6 +26,7 @@ class Landingpage extends Component {
   get getEnglishLandingPageContent(){
       return <div>
         <h5>Who We Are</h5>
+        <h5>{window.navigator.platform}</h5>
         <p>
           Tabetai is a food delivery platform that is powered by Adam-I
           which connects the very best restaurants and stores to people.
