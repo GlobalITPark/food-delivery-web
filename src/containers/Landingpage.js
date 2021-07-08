@@ -5,6 +5,7 @@ import CountDown from "reactjs-countdown";
 import { getLocale } from "../translations";
 import Newsfeed from "./Newsfeed";
 import Promo from "./Promo";
+import { isAndroid, isIOS } from 'react-device-detect';
 
 // Random component
 const Completionist = () => <span>Festival started..!!</span>;
@@ -26,7 +27,8 @@ class Landingpage extends Component {
   get getEnglishLandingPageContent(){
       return <div>
         <h5>Who We Are</h5>
-        <h5>{window.navigator.platform}</h5>
+        <h5>is Android {isAndroid.toString()}</h5>
+        <h5>is Ios {isIOS.toString()}</h5>
         <p>
           Tabetai is a food delivery platform that is powered by Adam-I
           which connects the very best restaurants and stores to people.
