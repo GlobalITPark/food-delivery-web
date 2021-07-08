@@ -20,6 +20,14 @@ class Landingpage extends Component {
   }
 
   componentDidMount = ()=> {
+    if (this.props.location.search === "?_dl") {
+      console.log('yea got it')
+      if (isAndroid) {
+        window.location = 'https://play.google.com/store/apps/details?id=com.adami.tabetai'
+      } else if (isIOS) {
+        window.location = 'https://apps.apple.com/in/app/tabetai/id1562102113'
+      }
+    }
     console.log(window.navigator.platform)
   }
 
