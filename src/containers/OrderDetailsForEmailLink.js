@@ -80,7 +80,7 @@ class OrderDetailsForEmailLink extends Component {
       "==",
       firebase.app.firestore().doc("restaurant_collection/" + restId)
     );
-    menuItemRef.where('isActive', '==', true)
+    menuItemRef = menuItemRef.where('isActive', '==', true);
     menuItemRef.get().then((snapshot) => {
       if (snapshot !== null) {
         var data = [];
@@ -89,6 +89,7 @@ class OrderDetailsForEmailLink extends Component {
           objToAdd.id = doc.id;
           data.push(objToAdd)
         })
+        data = data.sort((a,b)=>a.title.localeCompare(b.title));
         _this.setState({
           menuItems: data
         })
